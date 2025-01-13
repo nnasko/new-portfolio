@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -8,39 +8,61 @@ import { useMediaQuery } from "./hooks/useMediaQuery";
 const projects = [
   {
     title: "surplush",
-    description: "a platform for businesses to get essential supplies cheaper & the eco-friendly way",
+    description:
+      "a platform for businesses to get essential supplies cheaper & the eco-friendly way",
     image: "/surplush/main.png",
     mobileImage: "/surplush/mobile-main.png",
-    link: "/work/surplush"
+    link: "/work/surplush",
   },
   {
     title: "kronos clothing",
     description: "my custom-built store for my clothing brand",
     image: "/kronos/main.png",
     mobileImage: "/kronos/mobile-main.png",
-    link: "/work/kronos"
+    link: "/work/kronos",
   },
   {
     title: "jacked fitness",
-    description: "a place for people to find out more about jack and his abilities as a personal trainer",
+    description:
+      "a place for people to find out more about jack and his abilities as a personal trainer",
     image: "/jacked/main.png",
     mobileImage: "/jacked/mobile-main.png",
-    link: "/work/jacked"
-  }
+    link: "/work/jacked",
+  },
 ];
 
 export default function Home() {
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
       {/* minimal navigation */}
       <nav className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50">
-        <Link href="/" className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors">atanas kyurkchiev</Link>
+        <Link
+          href="/"
+          className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+        >
+          atanas kyurkchiev
+        </Link>
         <div className="space-x-6 text-sm">
-          <Link href="#work" className="hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors">work</Link>
-          <Link href="#about" className="hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors">about</Link>
-          <Link href="#contact" className="hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors">contact</Link>
+          <Link
+            href="#work"
+            className="hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+          >
+            work
+          </Link>
+          <Link
+            href="#about"
+            className="hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+          >
+            about
+          </Link>
+          <Link
+            href="#contact"
+            className="hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+          >
+            contact
+          </Link>
         </div>
       </nav>
 
@@ -53,16 +75,17 @@ export default function Home() {
           className="max-w-2xl"
         >
           <h1 className="text-2xl mb-6">
-            hi, i&apos;m atanas — a software developer focused on creating full-stack, user-friendly applications
+            hi, i&apos;m atanas — a software developer focused on creating
+            full-stack, user-friendly applications
           </h1>
           <div className="flex gap-6 text-sm">
-            <Link 
+            <Link
               href="/cv"
               className="border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
             >
               view cv
             </Link>
-            <Link 
+            <Link
               href="#work"
               className="border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
             >
@@ -73,7 +96,7 @@ export default function Home() {
       </section>
 
       {/* work */}
-      <motion.section 
+      <motion.section
         id="work"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -93,7 +116,11 @@ export default function Home() {
               className="group"
             >
               <Link href={project.link} className="block">
-                <div className={`relative ${isMobile ? 'h-[85vh]' : 'h-[70vh]'} mb-4 bg-neutral-100 dark:bg-neutral-800`}>
+                <div
+                  className={`relative ${
+                    isMobile ? "h-[85vh]" : "h-[70vh]"
+                  } mb-4 bg-neutral-100 dark:bg-neutral-800`}
+                >
                   <Image
                     src={isMobile ? project.mobileImage : project.image}
                     alt={project.title}
@@ -102,7 +129,9 @@ export default function Home() {
                   />
                 </div>
                 <h3 className="text-sm mb-2">{project.title}</h3>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">{project.description}</p>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                  {project.description}
+                </p>
               </Link>
             </motion.div>
           ))}
@@ -137,19 +166,22 @@ export default function Home() {
             <h2 className="text-sm mb-12">about</h2>
             <div className="space-y-6 text-sm">
               <p>
-                i&apos;m a software developer with a focus on creating intuitive and efficient applications. 
-                my approach combines technical expertise with a deep understanding of user needs.
+                i&apos;m a software developer with a focus on creating intuitive
+                and efficient applications. my approach combines technical
+                expertise with a deep understanding of user needs.
               </p>
-              <p>
-                education/work:
-              </p>
+              <p>education/work:</p>
               <ul className="space-y-4 text-neutral-600 dark:text-neutral-400">
-                <li>• software development @ access creative college, 2023-2025</li>
+                <li>
+                  • software development @ access creative college, 2023-2025
+                </li>
                 <li>• developer lead @ surplush</li>
-                <li>• founder @ kronos clothing</li>
+                <li>• founder @ kronos</li>
               </ul>
               <p>
-                when i&apos;m not coding, you can find me exploring nature, improving my health at the gym or enjoying the company of friends.
+                when i&apos;m not coding, you can find me exploring nature,
+                improving my health at the gym or enjoying the company of
+                friends.
               </p>
             </div>
           </div>
@@ -172,13 +204,35 @@ export default function Home() {
           </p>
           <div className="space-y-4 text-sm">
             <p>
-              email: <a href="mailto:me@atanaskyurkchiev.info" className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors">me@atanaskyurkchiev.info</a>
+              email:{" "}
+              <a
+                href="mailto:me@atanaskyurkchiev.info"
+                className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+              >
+                me@atanaskyurkchiev.info
+              </a>
             </p>
             <p>
-              github: <a href="https://github.com/nnasko" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors">github.com/nnasko</a>
+              github:{" "}
+              <a
+                href="https://github.com/nnasko"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+              >
+                github.com/nnasko
+              </a>
             </p>
             <p>
-              linkedin: <a href="https://www.linkedin.com/in/atanas-kyurkchiev-36a609291/" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors">linkedin.com/in/atanas-kyurkchiev</a>
+              linkedin:{" "}
+              <a
+                href="https://www.linkedin.com/in/atanas-kyurkchiev-36a609291/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+              >
+                linkedin.com/in/atanas-kyurkchiev
+              </a>
             </p>
           </div>
         </div>
