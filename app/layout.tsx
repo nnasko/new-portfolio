@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "./context/ThemeContext";
-import { ThemeToggle } from "./components/ThemeToggle";
+import { ClientLayout } from "./components/ClientLayout";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -26,12 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${spaceGrotesk.variable} font-sans text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-900 transition-colors`}
+        className={`${spaceGrotesk.variable} font-sans text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-900 transition-colors cursor-none`}
       >
-        <ThemeProvider>
-          <ThemeToggle />
-          {children}
-        </ThemeProvider>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

@@ -1,10 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { useMediaQuery } from "./hooks/useMediaQuery";
 import { StyleExplanation } from "./components/StyleExplanation";
+import { RevealText } from "./components/RevealText";
+import { MinimalImage } from "./components/MinimalImage";
 
 const projects = [
   {
@@ -75,14 +77,16 @@ export default function Home() {
           transition={{ duration: 0.8 }}
           className="max-w-2xl"
         >
-          <h1 className="text-2xl mb-6">
-            hi, i&apos;m atanas{" "}
-            <span className="inline-flex items-center gap-2">
-              — <StyleExplanation />
-            </span>{" "}
-            a software developer focused on creating full-stack, user-friendly
-            applications
-          </h1>
+          <RevealText>
+            <h1 className="text-2xl mb-6">
+              hi, i&apos;m atanas{" "}
+              <span className="relative inline-flex items-center gap-2">
+                — <StyleExplanation />
+              </span>{" "}
+              a software developer focused on creating full-stack, user-friendly
+              applications
+            </h1>
+          </RevealText>
           <div className="flex gap-6 text-sm">
             <Link
               href="/cv"
@@ -109,7 +113,9 @@ export default function Home() {
         viewport={{ once: true }}
         className="min-h-screen py-24 px-6 md:px-12"
       >
-        <h2 className="text-sm mb-12">selected work</h2>
+        <RevealText>
+          <h2 className="text-sm mb-12">selected work</h2>
+        </RevealText>
         <div className="grid gap-12">
           {projects.map((project, index) => (
             <motion.div
@@ -124,19 +130,26 @@ export default function Home() {
                 <div
                   className={`relative ${
                     isMobile ? "h-[85vh]" : "h-[70vh]"
-                  } mb-4 bg-neutral-100 dark:bg-neutral-800`}
+                  } mb-4`}
                 >
                   <Image
                     src={isMobile ? project.mobileImage : project.image}
                     alt={project.title}
                     fill
-                    className="object-contain grayscale hover:grayscale-0 opacity-90 group-hover:opacity-100 transition-opacity"
+                    sizes="(max-width: 768px) 100vw, 80vw"
+                    quality={90}
+                    className="object-contain grayscale hover:grayscale-0 transition-all"
+                    priority={index === 0}
                   />
                 </div>
-                <h3 className="text-sm mb-2">{project.title}</h3>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                  {project.description}
-                </p>
+                <RevealText>
+                  <h3 className="text-sm mb-2">{project.title}</h3>
+                </RevealText>
+                <RevealText>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                    {project.description}
+                  </p>
+                </RevealText>
               </Link>
             </motion.div>
           ))}
@@ -157,37 +170,45 @@ export default function Home() {
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
-            className="relative aspect-[4/5] bg-neutral-200 dark:bg-neutral-700"
+            className="relative aspect-[4/5]"
           >
-            <Image
-              src="/me.jpg"
-              alt="atanas kyurkchiev"
-              fill
-              className="object-cover grayscale"
-              priority
-            />
+            <MinimalImage src="/me.jpg" alt="atanas kyurkchiev" priority />
           </motion.div>
           <div>
-            <h2 className="text-sm mb-12">about</h2>
+            <RevealText>
+              <h2 className="text-sm mb-12">about</h2>
+            </RevealText>
             <div className="space-y-6 text-sm">
-              <p>
-                i&apos;m a software developer with a focus on creating intuitive
-                and efficient applications. my approach combines technical
-                expertise with a deep understanding of user needs.
-              </p>
-              <p>education/work:</p>
+              <RevealText>
+                <p>
+                  i&apos;m a software developer with a focus on creating
+                  intuitive and efficient applications. my approach combines
+                  technical expertise with a deep understanding of user needs.
+                </p>
+              </RevealText>
+              <RevealText>
+                <p>education/work:</p>
+              </RevealText>
               <ul className="space-y-4 text-neutral-600 dark:text-neutral-400">
-                <li>
-                  • software development @ access creative college, 2023-2025
-                </li>
-                <li>• developer lead @ surplush</li>
-                <li>• founder @ kronos</li>
+                <RevealText>
+                  <li>
+                    • software development @ access creative college, 2023-2025
+                  </li>
+                </RevealText>
+                <RevealText>
+                  <li>• developer lead @ surplush</li>
+                </RevealText>
+                <RevealText>
+                  <li>• founder @ kronos</li>
+                </RevealText>
               </ul>
-              <p>
-                when i&apos;m not coding, you can find me exploring nature,
-                improving my health at the gym or enjoying the company of
-                friends.
-              </p>
+              <RevealText>
+                <p>
+                  when i&apos;m not coding, you can find me exploring nature,
+                  improving my health at the gym or enjoying the company of
+                  friends.
+                </p>
+              </RevealText>
             </div>
           </div>
         </div>
@@ -203,42 +224,52 @@ export default function Home() {
         className="min-h-screen py-24 px-6 md:px-12 flex items-center"
       >
         <div className="max-w-2xl">
-          <h2 className="text-sm mb-12">contact</h2>
-          <p className="text-2xl mb-8">
-            interested in working together? let&apos;s have a conversation
-          </p>
+          <RevealText>
+            <h2 className="text-sm mb-12">contact</h2>
+          </RevealText>
+          <RevealText>
+            <p className="text-2xl mb-8">
+              interested in working together? let&apos;s have a conversation
+            </p>
+          </RevealText>
           <div className="space-y-4 text-sm">
-            <p>
-              email:{" "}
-              <a
-                href="mailto:me@atanaskyurkchiev.info"
-                className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-              >
-                me@atanaskyurkchiev.info
-              </a>
-            </p>
-            <p>
-              github:{" "}
-              <a
-                href="https://github.com/nnasko"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-              >
-                github.com/nnasko
-              </a>
-            </p>
-            <p>
-              linkedin:{" "}
-              <a
-                href="https://www.linkedin.com/in/atanas-kyurkchiev-36a609291/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-              >
-                linkedin.com/in/atanas-kyurkchiev
-              </a>
-            </p>
+            <RevealText>
+              <p>
+                email:{" "}
+                <a
+                  href="mailto:me@atanaskyurkchiev.info"
+                  className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+                >
+                  me@atanaskyurkchiev.info
+                </a>
+              </p>
+            </RevealText>
+            <RevealText>
+              <p>
+                github:{" "}
+                <a
+                  href="https://github.com/nnasko"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+                >
+                  github.com/nnasko
+                </a>
+              </p>
+            </RevealText>
+            <RevealText>
+              <p>
+                linkedin:{" "}
+                <a
+                  href="https://www.linkedin.com/in/atanas-kyurkchiev-36a609291/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+                >
+                  linkedin.com/in/atanas-kyurkchiev
+                </a>
+              </p>
+            </RevealText>
           </div>
         </div>
       </motion.section>

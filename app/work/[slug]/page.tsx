@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -7,11 +7,11 @@ import { notFound } from "next/navigation";
 import { use } from "react";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 
-// Project data - in a real app, this would come from a CMS or database
 const projects = {
-  "surplush": {
+  surplush: {
     title: "surplush",
-    description: "a platform for businesses to get essential supplies cheaper & the eco-friendly way",
+    description:
+      "a platform for businesses to get essential supplies cheaper & the eco-friendly way",
     fullDescription: `
       overview:
       surplush is a next.js-powered marketplace revolutionizing how businesses source their essential supplies. the platform focuses on sustainability and cost-effectiveness, making eco-friendly supplies accessible to all businesses.
@@ -59,18 +59,27 @@ const projects = {
     images: [
       "/surplush/main.png",
       "/surplush/detail1.png",
-      "/surplush/detail2.png"
+      "/surplush/detail2.png",
     ],
     mobileImages: [
       "/surplush/mobile-main.png",
       "/surplush/mobile-detail1.png",
-      "/surplush/mobile-detail2.png"
+      "/surplush/mobile-detail2.png",
     ],
-    tech: ["next.js", "typescript", "tailwind css", "stripe", "klaviyo", "zedify", "prisma", "mysql"],
+    tech: [
+      "next.js",
+      "typescript",
+      "tailwind css",
+      "stripe",
+      "klaviyo",
+      "zedify",
+      "prisma",
+      "mysql",
+    ],
     link: "https://dev.surplush.co.uk",
-    year: "2024 - 2025"
+    year: "2024 - 2025",
   },
-  "kronos": {
+  kronos: {
     title: "kronos clothing",
     description: "my custom-built store for my clothing brand",
     fullDescription: `
@@ -116,23 +125,20 @@ const projects = {
       • secure authentication system
       • automated deployment with netlify
     `,
-    images: [
-      "/kronos/main.png",
-      "/kronos/detail1.png",
-      "/kronos/detail2.png"
-    ],
+    images: ["/kronos/main.png", "/kronos/detail1.png", "/kronos/detail2.png"],
     mobileImages: [
       "/kronos/mobile-main.png",
       "/kronos/mobile-detail1.png",
-      "/kronos/mobile-detail2.png"
+      "/kronos/mobile-detail2.png",
     ],
     tech: ["next.js", "typescript", "resend", "stripe", "prisma", "postgresql"],
     link: "https://wearkronos.store",
-    year: "2024 - 2025"
+    year: "2024 - 2025",
   },
-  "jacked": {
+  jacked: {
     title: "jacked fitness",
-    description: "a place for people to find out more about jack and his abilities as a personal trainer",
+    description:
+      "a place for people to find out more about jack and his abilities as a personal trainer",
     fullDescription: `
       overview:
       jacked fitness is a modern platform designed to showcase professional training services and provide accessible fitness guidance. the site combines sleek design with practical functionality to help users start their fitness journey.
@@ -178,26 +184,26 @@ const projects = {
       • custom animation system
       • automated deployment with netlify
     `,
-    images: [
-      "/jacked/main.png",
-      "/jacked/detail1.png",
-      "/jacked/detail2.png"
-    ],
+    images: ["/jacked/main.png", "/jacked/detail1.png", "/jacked/detail2.png"],
     mobileImages: [
       "/jacked/mobile-main.png",
       "/jacked/mobile-detail1.png",
-      "/jacked/mobile-detail2.png"
+      "/jacked/mobile-detail2.png",
     ],
     tech: ["next.js", "typescript", "tailwind css", "prisma", "postgresql"],
     link: "https://jackedfitness.com",
-    year: "2024 - 2025"
-  }
+    year: "2024 - 2025",
+  },
 };
 
-export default function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
+export default function ProjectPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const resolvedParams = use(params);
   const project = projects[resolvedParams.slug as keyof typeof projects];
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   if (!project) {
     notFound();
@@ -207,11 +213,14 @@ export default function ProjectPage({ params }: { params: Promise<{ slug: string
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900 pt-24">
       {/* navigation */}
       <nav className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50">
-        <Link href="/" className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors">
+        <Link
+          href="/"
+          className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+        >
           atanas kyurkchiev
         </Link>
-        <Link 
-          href="/#work" 
+        <Link
+          href="/#work"
           className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
         >
           back to work
@@ -228,13 +237,15 @@ export default function ProjectPage({ params }: { params: Promise<{ slug: string
           {/* header */}
           <header className="max-w-2xl mb-16">
             <h1 className="text-2xl mb-6">{project.title}</h1>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">{project.description}</p>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
+              {project.description}
+            </p>
             <div className="flex gap-4 text-sm">
               <span>{project.year}</span>
               <span>•</span>
-              <a 
-                href={project.link} 
-                target="_blank" 
+              <a
+                href={project.link}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
               >
@@ -244,7 +255,11 @@ export default function ProjectPage({ params }: { params: Promise<{ slug: string
           </header>
 
           {/* main image */}
-          <div className={`relative ${isMobile ? 'h-[85vh]' : 'h-[80vh]'} mb-16 bg-neutral-100 dark:bg-neutral-800`}>
+          <div
+            className={`relative ${
+              isMobile ? "h-[85vh]" : "h-[80vh]"
+            } mb-16 bg-neutral-100 dark:bg-neutral-800`}
+          >
             <Image
               src={isMobile ? project.mobileImages[0] : project.images[0]}
               alt={`${project.title} main image`}
@@ -256,7 +271,7 @@ export default function ProjectPage({ params }: { params: Promise<{ slug: string
           {/* project details */}
           <div className="grid md:grid-cols-[2fr,1fr] gap-12 mb-16">
             <div className="space-y-6 text-sm">
-              {project.fullDescription.split('\n\n').map((paragraph, index) => (
+              {project.fullDescription.split("\n\n").map((paragraph, index) => (
                 <p key={index} className="whitespace-pre-line">
                   {paragraph}
                 </p>
@@ -264,7 +279,9 @@ export default function ProjectPage({ params }: { params: Promise<{ slug: string
             </div>
             <div className="space-y-6 text-sm">
               <div>
-                <h2 className="text-neutral-500 dark:text-neutral-400 mb-2">tech stack</h2>
+                <h2 className="text-neutral-500 dark:text-neutral-400 mb-2">
+                  tech stack
+                </h2>
                 <ul className="space-y-1">
                   {project.tech.map((item) => (
                     <li key={item}>• {item}</li>
@@ -276,23 +293,27 @@ export default function ProjectPage({ params }: { params: Promise<{ slug: string
 
           {/* additional images */}
           <div className="grid gap-12">
-            {(isMobile ? project.mobileImages : project.images).slice(1).map((image, index) => (
-              <motion.div
-                key={image}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.8 }}
-                viewport={{ once: true }}
-                className={`relative ${isMobile ? 'h-[85vh]' : 'h-[80vh]'} bg-neutral-100 dark:bg-neutral-800`}
-              >
-                <Image
-                  src={image}
-                  alt={`${project.title} detail ${index + 1}`}
-                  fill
-                  className="object-contain"
-                />
-              </motion.div>
-            ))}
+            {(isMobile ? project.mobileImages : project.images)
+              .slice(1)
+              .map((image, index) => (
+                <motion.div
+                  key={image}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.8 }}
+                  viewport={{ once: true }}
+                  className={`relative ${
+                    isMobile ? "h-[85vh]" : "h-[80vh]"
+                  } bg-neutral-100 dark:bg-neutral-800`}
+                >
+                  <Image
+                    src={image}
+                    alt={`${project.title} detail ${index + 1}`}
+                    fill
+                    className="object-contain"
+                  />
+                </motion.div>
+              ))}
           </div>
         </motion.div>
       </article>
@@ -307,20 +328,24 @@ export default function ProjectPage({ params }: { params: Promise<{ slug: string
       >
         <div className="max-w-2xl">
           <h2 className="text-sm mb-12">next project</h2>
-          <Link 
+          <Link
             href={`/work/${getNextProjectSlug(resolvedParams.slug)}`}
             className="text-2xl hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
           >
-            {projects[getNextProjectSlug(resolvedParams.slug) as keyof typeof projects].title} →
+            {
+              projects[
+                getNextProjectSlug(resolvedParams.slug) as keyof typeof projects
+              ].title
+            }{" "}
+            →
           </Link>
         </div>
       </motion.div>
     </main>
   );
 }
-
 function getNextProjectSlug(currentSlug: string): string {
   const slugs = Object.keys(projects);
   const currentIndex = slugs.indexOf(currentSlug);
   return slugs[(currentIndex + 1) % slugs.length];
-} 
+}

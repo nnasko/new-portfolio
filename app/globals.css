@@ -8,6 +8,33 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #404040;
+    border-radius: 3px;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background: #737373;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #525252;
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: #a3a3a3;
+  }
 }
 
 ::selection {
@@ -21,4 +48,22 @@ body.pdf-mode [data-nextjs-scroll-focus-boundary],
 body.pdf-mode #NextJSDevToolbar,
 body.pdf-mode button[aria-label="Toggle dark mode"] {
   display: none !important;
+}
+
+/* Hide cursor on interactive elements */
+a,
+button,
+[role="button"],
+select,
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  cursor: none;
+}
+
+/* Ensure cursor is hidden on hover states too */
+a:hover,
+button:hover,
+[role="button"]:hover {
+  cursor: none;
 }
