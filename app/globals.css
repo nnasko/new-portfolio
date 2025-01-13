@@ -14,3 +14,11 @@
   background: #171717;
   color: #fafafa;
 }
+
+/* Hide development elements in PDF mode */
+body.pdf-mode [data-nextjs-router-announcer],
+body.pdf-mode [data-nextjs-scroll-focus-boundary],
+body.pdf-mode #NextJSDevToolbar,
+body.pdf-mode button[aria-label="Toggle dark mode"] {
+  display: none !important;
+}
