@@ -11,7 +11,7 @@ interface RevealTextProps {
 
 export const RevealText = ({ children, className = "" }: RevealTextProps) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-10%" });
+  const isInView = useInView(ref, { once: true });
 
   return (
     <div ref={ref} className={`overflow-hidden ${className}`}>
