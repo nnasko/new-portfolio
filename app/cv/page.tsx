@@ -28,19 +28,23 @@ export default function CV() {
       {/* navigation - only show if not in PDF mode */}
       {!isPdfMode && (
         <nav className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50">
+        <RevealText direction="down">
           <Link
             href="/"
             className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
           >
             atanas kyurkchiev
           </Link>
+        </RevealText>
+        <RevealText direction="down">
           <a
             href="/cv.pdf"
             download
             className="text-sm border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
           >
-            download cv
-          </a>
+              download cv
+            </a>
+          </RevealText>
         </nav>
       )}
 

@@ -86,20 +86,22 @@ export default function Home() {
               applications
             </h1>
           </RevealText>
-          <div className="flex gap-6 text-sm">
-            <Link
-              href="/cv"
-              className="border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-            >
-              view cv
-            </Link>
-            <Link
-              href="#work"
-              className="border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-            >
-              see my work
-            </Link>
-          </div>
+          <RevealText>
+            <div className="flex gap-6 text-sm">
+              <Link
+                href="/cv"
+                className="border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+              >
+                view cv
+              </Link>
+              <Link
+                href="#work"
+                className="border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+              >
+                see my work
+              </Link>
+            </div>
+          </RevealText>
         </motion.div>
       </section>
 
@@ -126,21 +128,23 @@ export default function Home() {
               className="group"
             >
               <Link href={project.link} className="block">
-                <div
-                  className={`relative ${
-                    isMobile ? "h-[85vh]" : "h-[70vh]"
-                  } mb-4`}
-                >
-                  <Image
-                    src={isMobile ? project.mobileImage : project.image}
-                    alt={project.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 80vw"
-                    quality={90}
-                    className="object-contain grayscale hover:grayscale-0 transition-all"
-                    priority={index === 0}
-                  />
-                </div>
+                <RevealText>
+                  <div
+                    className={`relative ${
+                      isMobile ? "h-[85vh]" : "h-[70vh]"
+                    } mb-4`}
+                  >
+                    <Image
+                      src={isMobile ? project.mobileImage : project.image}
+                      alt={project.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 80vw"
+                      quality={90}
+                      className="object-contain grayscale hover:grayscale-0 transition-all"
+                      priority={index === 0}
+                    />
+                  </div>
+                </RevealText>
                 <RevealText>
                   <h3 className="text-sm mb-2">{project.title}</h3>
                 </RevealText>

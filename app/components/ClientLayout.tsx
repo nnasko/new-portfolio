@@ -15,13 +15,16 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
       <MouseEffect />
       <ThemeToggle />
       <ScrollProgress />
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={pathname}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.15 }}
+          transition={{ 
+            duration: 0.2,
+            ease: "easeInOut"
+          }}
         >
           {children}
         </motion.div>

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { use } from "react";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { RevealText } from "../../components/RevealText";
 
 const projects = {
   surplush: {
@@ -209,38 +210,67 @@ export default function ProjectPage({
     notFound();
   }
 
+  const images = isMobile ? project.mobileImages : project.images;
+
   return (
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900 pt-24">
       {/* navigation */}
       <nav className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50">
-        <Link
-          href="/"
-          className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-        >
-          atanas kyurkchiev
-        </Link>
-        <Link
-          href="/#work"
-          className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-        >
-          back to work
-        </Link>
+        <RevealText direction="down">
+          <Link
+            href="/"
+            className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+          >
+            atanas kyurkchiev
+          </Link>
+        </RevealText>
+        <RevealText direction="down">
+          <Link
+            href="/#work"
+            className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+          >
+            back to work
+          </Link>
+        </RevealText>
       </nav>
 
-      {/* project content */}
       <article className="px-6 md:px-12 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          {/* header */}
-          <header className="max-w-2xl mb-16">
+        {/* project images */}
+        <div className="grid gap-12 mb-24">
+          {images.map((image, index) => (
+            <RevealText key={image}>
+              <motion.div
+                initial={{ scale: 0.95 }}
+                whileInView={{ scale: 1 }}
+                transition={{ duration: 0.8 }}
+                className="relative aspect-[16/9]"
+              >
+                <Image
+                  src={image}
+                  alt={`${project.title} - image ${index + 1}`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 80vw"
+                  quality={90}
+                  className="object-contain grayscale hover:grayscale-0 transition-all"
+                  priority={index === 0}
+                />
+              </motion.div>
+            </RevealText>
+          ))}
+        </div>
+
+        {/* project content */}
+        <div className="max-w-2xl">
+          <RevealText>
             <h1 className="text-2xl mb-6">{project.title}</h1>
+          </RevealText>
+          <RevealText>
             <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
               {project.description}
             </p>
-            <div className="flex gap-4 text-sm">
+          </RevealText>
+          <RevealText>
+            <div className="flex gap-4 text-sm mb-12">
               <span>{project.year}</span>
               <span>•</span>
               <a
@@ -252,100 +282,32 @@ export default function ProjectPage({
                 view live site
               </a>
             </div>
-          </header>
-
-          {/* main image */}
-          <div
-            className={`relative ${
-              isMobile ? "h-[85vh]" : "h-[80vh]"
-            } mb-16 bg-neutral-100 dark:bg-neutral-800`}
-          >
-            <Image
-              src={isMobile ? project.mobileImages[0] : project.images[0]}
-              alt={`${project.title} main image`}
-              fill
-              className="object-contain"
-            />
-          </div>
-
-          {/* project details */}
-          <div className="grid md:grid-cols-[2fr,1fr] gap-12 mb-16">
-            <div className="space-y-6 text-sm">
-              {project.fullDescription.split("\n\n").map((paragraph, index) => (
-                <p key={index} className="whitespace-pre-line">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-            <div className="space-y-6 text-sm">
-              <div>
-                <h2 className="text-neutral-500 dark:text-neutral-400 mb-2">
-                  tech stack
-                </h2>
-                <ul className="space-y-1">
-                  {project.tech.map((item) => (
-                    <li key={item}>• {item}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          {/* additional images */}
-          <div className="grid gap-12">
-            {(isMobile ? project.mobileImages : project.images)
-              .slice(1)
-              .map((image, index) => (
-                <motion.div
-                  key={image}
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.8 }}
-                  viewport={{ once: true }}
-                  className={`relative ${
-                    isMobile ? "h-[85vh]" : "h-[80vh]"
-                  } bg-neutral-100 dark:bg-neutral-800`}
+          </RevealText>
+          
+          {/* tech stack */}
+          <RevealText>
+            <div className="flex flex-wrap gap-2 mb-12">
+              {project.tech?.map((tech) => (
+                <span
+                  key={tech}
+                  className="text-xs px-2 py-1 border border-neutral-300 dark:border-neutral-700"
                 >
-                  <Image
-                    src={image}
-                    alt={`${project.title} detail ${index + 1}`}
-                    fill
-                    className="object-contain"
-                  />
-                </motion.div>
+                  {tech}
+                </span>
               ))}
-          </div>
-        </motion.div>
-      </article>
+            </div>
+          </RevealText>
 
-      {/* next project */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-        className="px-6 md:px-12 py-24 bg-neutral-100 dark:bg-neutral-800"
-      >
-        <div className="max-w-2xl">
-          <h2 className="text-sm mb-12">next project</h2>
-          <Link
-            href={`/work/${getNextProjectSlug(resolvedParams.slug)}`}
-            className="text-2xl hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-          >
-            {
-              projects[
-                getNextProjectSlug(resolvedParams.slug) as keyof typeof projects
-              ].title
-            }{" "}
-            →
-          </Link>
+          {/* full description */}
+          <div className="space-y-6 text-sm whitespace-pre-line">
+            {project.fullDescription.split('\n\n').map((paragraph, index) => (
+              <RevealText key={index}>
+                <p>{paragraph}</p>
+              </RevealText>
+            ))}
+          </div>
         </div>
-      </motion.div>
+      </article>
     </main>
   );
-}
-function getNextProjectSlug(currentSlug: string): string {
-  const slugs = Object.keys(projects);
-  const currentIndex = slugs.indexOf(currentSlug);
-  return slugs[(currentIndex + 1) % slugs.length];
 }
