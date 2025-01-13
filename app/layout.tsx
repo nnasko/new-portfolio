@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: "atanas kyurkchiev",
   description: "software developer portfolio",
   icons: {
-    icon: "/favicon.ico"
+    icon: "/logo.svg"
   }
 };
 
