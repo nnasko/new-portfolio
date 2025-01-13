@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { useMediaQuery } from "./hooks/useMediaQuery";
+import { StyleExplanation } from "./components/StyleExplanation";
 
 const projects = [
   {
@@ -75,8 +76,12 @@ export default function Home() {
           className="max-w-2xl"
         >
           <h1 className="text-2xl mb-6">
-            hi, i&apos;m atanas — a software developer focused on creating
-            full-stack, user-friendly applications
+            hi, i&apos;m atanas{" "}
+            <span className="inline-flex items-center gap-2">
+              — <StyleExplanation />
+            </span>{" "}
+            a software developer focused on creating full-stack, user-friendly
+            applications
           </h1>
           <div className="flex gap-6 text-sm">
             <Link
