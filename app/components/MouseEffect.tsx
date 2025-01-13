@@ -58,7 +58,7 @@ export const MouseEffect = () => {
       animate={{ opacity: 1 }}
     >
       <motion.div
-        className="absolute h-4 w-4 rounded-full bg-neutral-900 dark:bg-neutral-100 mix-blend-difference"
+        className="absolute h-4 w-4 rounded-full bg-neutral-900 dark:bg-neutral-100 mix-blend-difference pointer-events-none"
         animate={{
           x: mousePos.x,
           y: mousePos.y,

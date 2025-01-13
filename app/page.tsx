@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useMediaQuery } from "./hooks/useMediaQuery";
 import { StyleExplanation } from "./components/StyleExplanation";
 import { RevealText } from "./components/RevealText";
-import { MinimalImage } from "./components/MinimalImage";
 
 const projects = [
   {
@@ -172,7 +171,15 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="relative aspect-[4/5]"
           >
-            <MinimalImage src="/me.jpg" alt="atanas kyurkchiev" priority />
+            <Image
+              src="/me.jpg"
+              alt="atanas kyurkchiev"
+              fill
+              sizes="(max-width: 768px) 100vw, 80vw"
+              quality={90}
+              className="object-cover grayscale hover:grayscale-0 transition-all"
+              priority
+            />
           </motion.div>
           <div>
             <RevealText>
