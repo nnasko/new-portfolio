@@ -53,7 +53,7 @@ export default function Home() {
           className="max-w-2xl"
         >
           <h1 className="text-2xl mb-6">
-            hi, i'm atanas — a software developer focused on creating full-stack, user-friendly applications
+            hi, i&apos;m atanas — a software developer focused on creating full-stack, user-friendly applications
           </h1>
           <div className="flex gap-6 text-sm">
             <Link 
@@ -137,7 +137,7 @@ export default function Home() {
             <h2 className="text-sm mb-12">about</h2>
             <div className="space-y-6 text-sm">
               <p>
-                i'm a software developer with a focus on creating intuitive and efficient applications. 
+                i&apos;m a software developer with a focus on creating intuitive and efficient applications. 
                 my approach combines technical expertise with a deep understanding of user needs.
               </p>
               <p>
@@ -149,7 +149,7 @@ export default function Home() {
                 <li>• founder @ kronos clothing</li>
               </ul>
               <p>
-                when i'm not coding, you can find me exploring nature, improving my health at the gym or enjoying the company of friends.
+                when i&apos;m not coding, you can find me exploring nature, improving my health at the gym or enjoying the company of friends.
               </p>
             </div>
           </div>
@@ -168,7 +168,7 @@ export default function Home() {
         <div className="max-w-2xl">
           <h2 className="text-sm mb-12">contact</h2>
           <p className="text-2xl mb-8">
-            interested in working together? let's have a conversation
+            interested in working together? let&apos;s have a conversation
           </p>
           <div className="space-y-4 text-sm">
             <p>
