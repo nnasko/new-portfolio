@@ -73,7 +73,10 @@ export default function Home() {
       </nav>
 
       {/* hero */}
-      <section id="top" className="min-h-screen flex items-center px-6 md:px-12">
+      <section
+        id="top"
+        className="min-h-screen flex items-center px-6 md:px-12"
+      >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -94,14 +97,14 @@ export default function Home() {
             <div className="flex gap-6 text-sm">
               <Link
                 href="/cv"
-                className="border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                className="border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 px-4 py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
                 onClick={playClick}
               >
                 view cv
               </Link>
               <Link
                 href="#work"
-                className="border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                className="border border-neutral-300 bg-neutral-100 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors"
                 onClick={playClick}
               >
                 see my work

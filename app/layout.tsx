@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { ClientLayout } from "./components/ClientLayout";
+import { SoundProvider } from "./components/SoundProvider";
+import { ToastProvider } from "./components/Toast";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -27,7 +29,11 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} font-sans text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-900 transition-colors md:cursor-none`}
       >
-        <ClientLayout>{children}</ClientLayout>
+        <ToastProvider>
+          <SoundProvider>
+            <ClientLayout>{children}</ClientLayout>
+          </SoundProvider>
+        </ToastProvider>
       </body>
     </html>
   );

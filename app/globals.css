@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Even softer, warmer colors */
+  --neutral-50: 252 251 248;
+  --neutral-100: 247 246 243;
+  --neutral-200: 235 233 230;
+  --neutral-300: 220 217 213;
+  --neutral-400: 175 170 165;
+  --neutral-500: 130 125 120;
+  --neutral-600: 95 90 85;
+  --neutral-700: 75 70 65;
+  --neutral-800: 45 40 38;
+  --neutral-900: 30 28 25;
+  --neutral-950: 15 13 10;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -9,32 +24,54 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Custom Scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+  body {
+    @apply antialiased;
   }
 
-  ::-webkit-scrollbar-track {
-    background: transparent;
+  /* Hide cursor on interactive elements */
+  a,
+  button,
+  [role="button"],
+  select,
+  input[type="submit"],
+  input[type="reset"],
+  input[type="button"] {
+    cursor: none;
   }
 
-  ::-webkit-scrollbar-thumb {
-    background: #404040;
-    border-radius: 3px;
+  /* Ensure cursor is hidden on hover states too */
+  a:hover,
+  button:hover,
+  [role="button"]:hover {
+    cursor: none;
   }
+}
 
-  .dark ::-webkit-scrollbar-thumb {
-    background: #737373;
-  }
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: #525252;
-  }
+::-webkit-scrollbar-track {
+  background: transparent;
+}
 
-  .dark ::-webkit-scrollbar-thumb:hover {
-    background: #a3a3a3;
-  }
+::-webkit-scrollbar-thumb {
+  background: #404040;
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #737373;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #525252;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #a3a3a3;
 }
 
 ::selection {
@@ -42,30 +79,9 @@
   color: #fafafa;
 }
 
-/* Hide development elements in PDF mode */
-body.pdf-mode [data-nextjs-router-announcer],
-body.pdf-mode [data-nextjs-scroll-focus-boundary],
-body.pdf-mode #NextJSDevToolbar,
-body.pdf-mode button[aria-label="Toggle dark mode"] {
-  display: none !important;
-}
-
-/* Hide cursor on interactive elements */
-a,
-button,
-[role="button"],
-select,
-input[type="submit"],
-input[type="reset"],
-input[type="button"] {
-  cursor: none;
-}
-
-/* Ensure cursor is hidden on hover states too */
-a:hover,
-button:hover,
-[role="button"]:hover {
-  cursor: none;
+.dark ::selection {
+  background: #fafafa;
+  color: #171717;
 }
 
 /* Rain Effect */
@@ -73,7 +89,8 @@ button:hover,
   position: absolute;
   width: 1.5px;
   height: 35px;
-  background: linear-gradient(180deg, 
+  background: linear-gradient(
+    180deg,
     transparent 0%,
     currentColor 20%,
     currentColor 80%,
@@ -96,7 +113,7 @@ button:hover,
 }
 
 .splash::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: -3px;
   border: 1px solid currentColor;
@@ -146,4 +163,12 @@ button:hover,
     transform: scale3d(2, 2, 1);
     opacity: 0;
   }
+}
+
+/* Hide development elements in PDF mode */
+body.pdf-mode [data-nextjs-router-announcer],
+body.pdf-mode [data-nextjs-scroll-focus-boundary],
+body.pdf-mode #NextJSDevToolbar,
+body.pdf-mode button[aria-label="Toggle dark mode"] {
+  display: none !important;
 }

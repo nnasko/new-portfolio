@@ -8,6 +8,8 @@ import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { RevealText } from "../../components/RevealText";
 import { MinimalLink } from "../../components/MinimalLink";
 import { useSound } from "../../components/SoundProvider";
+import { ReadingTime } from "../../components/ReadingTime";
+import { ViewCounter } from "../../components/ViewCounter";
 
 const projects = {
   surplush: {
@@ -203,8 +205,8 @@ export default function ProjectPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const resolvedParams = use(params);
-  const project = projects[resolvedParams.slug as keyof typeof projects];
+  const { slug } = use(params);
+  const project = projects[slug as keyof typeof projects];
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { playClick } = useSound();
 
@@ -267,6 +269,9 @@ export default function ProjectPage({
             <h1 className="text-2xl mb-6">{project.title}</h1>
           </RevealText>
           <RevealText>
+            <ReadingTime content={project.fullDescription} className="mb-6" />
+          </RevealText>
+          <RevealText>
             <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
               {project.description}
             </p>
@@ -274,6 +279,8 @@ export default function ProjectPage({
           <RevealText>
             <div className="flex gap-4 text-sm mb-12">
               <span>{project.year}</span>
+              <span>•</span>
+              <ViewCounter slug={slug} />
               <span>•</span>
               <a
                 href={project.link}
@@ -286,7 +293,7 @@ export default function ProjectPage({
               </a>
             </div>
           </RevealText>
-          
+
           {/* tech stack */}
           <RevealText>
             <div className="flex flex-wrap gap-2 mb-12">
@@ -303,7 +310,7 @@ export default function ProjectPage({
 
           {/* full description */}
           <div className="space-y-6 text-sm whitespace-pre-line">
-            {project.fullDescription.split('\n\n').map((paragraph, index) => (
+            {project.fullDescription.split("\n\n").map((paragraph, index) => (
               <RevealText key={index}>
                 <p>{paragraph}</p>
               </RevealText>
