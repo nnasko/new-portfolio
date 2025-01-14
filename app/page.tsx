@@ -97,14 +97,14 @@ export default function Home() {
             <div className="flex gap-6 text-sm">
               <Link
                 href="/cv"
-                className="border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 px-4 py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                className="border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
                 onClick={playClick}
               >
                 view cv
               </Link>
               <Link
                 href="#work"
-                className="border border-neutral-300 bg-neutral-100 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors"
+                className="border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
                 onClick={playClick}
               >
                 see my work
