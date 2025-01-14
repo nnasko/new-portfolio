@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import { RevealText } from "../components/RevealText";
+import { MinimalLink } from "../components/MinimalLink";
+import { useSound } from "../components/SoundProvider";
 
 export default function CV() {
   const [isPdfMode, setIsPdfMode] = useState(false);
+  const { playClick } = useSound();
 
   useEffect(() => {
     // Check if we're in PDF generation mode
@@ -28,31 +30,28 @@ export default function CV() {
       {/* navigation - only show if not in PDF mode */}
       {!isPdfMode && (
         <nav className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50">
-        <RevealText direction="down">
-          <Link
-            href="/"
-            className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-          >
-            atanas kyurkchiev
-          </Link>
-        </RevealText>
-        <RevealText direction="down">
-          <a
-            href="/cv.pdf"
-            download
-            className="text-sm border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-          >
+          <RevealText direction="down">
+            <MinimalLink
+              href="/"
+              className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+            >
+              atanas kyurkchiev
+            </MinimalLink>
+          </RevealText>
+          <RevealText direction="down">
+            <a
+              href="/cv.pdf"
+              download
+              className="text-sm border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+              onClick={playClick}
+            >
               download cv
             </a>
           </RevealText>
         </nav>
       )}
 
-      <div
-        className={`max-w-4xl mx-auto px-6 md:px-12 py-12 ${
-          isPdfMode ? "pt-0" : ""
-        }`}
-      >
+      <div className={`max-w-4xl mx-auto px-6 md:px-12 py-12 ${isPdfMode ? "pt-0" : ""}`}>
         <div className={isPdfMode ? "" : "space-y-12"}>
           {/* header */}
           <header className="space-y-4">
@@ -61,8 +60,7 @@ export default function CV() {
             </RevealText>
             <RevealText>
               <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                software developer focused on creating intuitive and efficient
-                applications
+                software developer focused on creating intuitive and efficient applications
               </p>
             </RevealText>
             <RevealText>
@@ -70,6 +68,7 @@ export default function CV() {
                 <a
                   href="mailto:me@atanaskyurkchiev.info"
                   className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+                  onClick={playClick}
                 >
                   me@atanaskyurkchiev.info
                 </a>
@@ -79,6 +78,7 @@ export default function CV() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+                  onClick={playClick}
                 >
                   github.com/nnasko
                 </a>

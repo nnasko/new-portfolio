@@ -6,6 +6,9 @@ import Link from "next/link";
 import { useMediaQuery } from "./hooks/useMediaQuery";
 import { StyleExplanation } from "./components/StyleExplanation";
 import { RevealText } from "./components/RevealText";
+import { ProjectCard } from "./components/ProjectCard";
+import { MinimalLink } from "./components/MinimalLink";
+import { useSound } from "./components/SoundProvider";
 
 const projects = [
   {
@@ -35,41 +38,42 @@ const projects = [
 
 export default function Home() {
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const { playClick } = useSound();
 
   return (
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
       {/* minimal navigation */}
       <nav className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50">
-        <Link
-          href="/"
+        <MinimalLink
+          href="#top"
           className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
         >
           atanas kyurkchiev
-        </Link>
+        </MinimalLink>
         <div className="space-x-6 text-sm">
-          <Link
+          <MinimalLink
             href="#work"
             className="hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
           >
             work
-          </Link>
-          <Link
+          </MinimalLink>
+          <MinimalLink
             href="#about"
             className="hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
           >
             about
-          </Link>
-          <Link
+          </MinimalLink>
+          <MinimalLink
             href="#contact"
             className="hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
           >
             contact
-          </Link>
+          </MinimalLink>
         </div>
       </nav>
 
       {/* hero */}
-      <section className="min-h-screen flex items-center px-6 md:px-12">
+      <section id="top" className="min-h-screen flex items-center px-6 md:px-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -91,12 +95,14 @@ export default function Home() {
               <Link
                 href="/cv"
                 className="border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                onClick={playClick}
               >
                 view cv
               </Link>
               <Link
                 href="#work"
                 className="border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                onClick={playClick}
               >
                 see my work
               </Link>
@@ -119,42 +125,14 @@ export default function Home() {
         </RevealText>
         <div className="grid gap-12">
           {projects.map((project, index) => (
-            <motion.div
+            <ProjectCard
               key={project.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="group"
-            >
-              <Link href={project.link} className="block">
-                <RevealText>
-                  <div
-                    className={`relative ${
-                      isMobile ? "h-[85vh]" : "h-[70vh]"
-                    } mb-4`}
-                  >
-                    <Image
-                      src={isMobile ? project.mobileImage : project.image}
-                      alt={project.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 80vw"
-                      quality={90}
-                      className="object-contain grayscale hover:grayscale-0 transition-all"
-                      priority={index === 0}
-                    />
-                  </div>
-                </RevealText>
-                <RevealText>
-                  <h3 className="text-sm mb-2">{project.title}</h3>
-                </RevealText>
-                <RevealText>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                    {project.description}
-                  </p>
-                </RevealText>
-              </Link>
-            </motion.div>
+              title={project.title}
+              description={project.description}
+              image={isMobile ? project.mobileImage : project.image}
+              link={project.link}
+              priority={index === 0}
+            />
           ))}
         </div>
       </motion.section>
@@ -166,7 +144,7 @@ export default function Home() {
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}
-        className="min-h-screen py-24 px-6 md:px-12 bg-neutral-100 dark:bg-neutral-800"
+        className="min-h-screen py-24 px-6 md:px-12"
       >
         <div className="max-w-4xl grid md:grid-cols-[1fr,1.5fr] gap-12 items-start">
           <motion.div

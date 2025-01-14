@@ -2,8 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { useRef } from "react";
 
 interface RevealTextProps {
   children: React.ReactNode;
@@ -17,19 +16,7 @@ export const RevealText = ({
   direction = "up" 
 }: RevealTextProps) => {
   const ref = useRef(null);
-  const pathname = usePathname();
   const isInView = useInView(ref, { once: true });
-  const [hasAnimated, setHasAnimated] = useState(false);
-
-  useEffect(() => {
-    setHasAnimated(false);
-  }, [pathname]);
-
-  useEffect(() => {
-    if (isInView) {
-      setHasAnimated(true);
-    }
-  }, [isInView]);
 
   const getInitialPosition = () => {
     switch (direction) {
@@ -51,7 +38,7 @@ export const RevealText = ({
         initial={{ ...getInitialPosition(), opacity: 0 }}
         animate={{ 
           ...getFinalPosition(),
-          opacity: isInView || hasAnimated ? 1 : 0 
+          opacity: isInView ? 1 : 0 
         }}
         transition={{ 
           duration: 0.8,

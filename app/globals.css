@@ -67,3 +67,83 @@ button:hover,
 [role="button"]:hover {
   cursor: none;
 }
+
+/* Rain Effect */
+.rain-drop {
+  position: absolute;
+  width: 1.5px;
+  height: 35px;
+  background: linear-gradient(180deg, 
+    transparent 0%,
+    currentColor 20%,
+    currentColor 80%,
+    transparent 100%
+  );
+  opacity: 0.6;
+  animation: rain-fall linear infinite;
+  will-change: transform, opacity;
+}
+
+.splash {
+  width: 12px;
+  height: 12px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0);
+  animation: splash ease-out infinite;
+  will-change: transform, opacity;
+}
+
+.splash::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: 0;
+  animation: splash-outer ease-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes rain-fall {
+  0% {
+    transform: translate3d(0, -40px, 0) rotate(2deg);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.6;
+  }
+  95% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate3d(0, 100vh, 0) rotate(2deg);
+    opacity: 0;
+  }
+}
+
+@keyframes splash {
+  0% {
+    transform: scale3d(0, 0, 1);
+    opacity: 0.7;
+  }
+  80% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale3d(1, 1, 1);
+    opacity: 0;
+  }
+}
+
+@keyframes splash-outer {
+  0% {
+    transform: scale3d(0.3, 0.3, 1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale3d(2, 2, 1);
+    opacity: 0;
+  }
+}

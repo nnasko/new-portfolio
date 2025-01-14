@@ -2,11 +2,12 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { use } from "react";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { RevealText } from "../../components/RevealText";
+import { MinimalLink } from "../../components/MinimalLink";
+import { useSound } from "../../components/SoundProvider";
 
 const projects = {
   surplush: {
@@ -205,6 +206,7 @@ export default function ProjectPage({
   const resolvedParams = use(params);
   const project = projects[resolvedParams.slug as keyof typeof projects];
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const { playClick } = useSound();
 
   if (!project) {
     notFound();
@@ -217,20 +219,20 @@ export default function ProjectPage({
       {/* navigation */}
       <nav className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50">
         <RevealText direction="down">
-          <Link
+          <MinimalLink
             href="/"
             className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
           >
             atanas kyurkchiev
-          </Link>
+          </MinimalLink>
         </RevealText>
         <RevealText direction="down">
-          <Link
+          <MinimalLink
             href="/#work"
             className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
           >
             back to work
-          </Link>
+          </MinimalLink>
         </RevealText>
       </nav>
 
@@ -278,6 +280,7 @@ export default function ProjectPage({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+                onClick={playClick}
               >
                 view live site
               </a>
