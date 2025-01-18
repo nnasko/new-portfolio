@@ -25,36 +25,6 @@ export const ProjectCard = ({
   const { playClick } = useSound();
   const { showToast } = useToast();
 
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const mouseXSpring = useSpring(x);
-  const mouseYSpring = useSpring(y);
-
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
-
-  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-
-    const width = rect.width;
-    const height = rect.height;
-
-    const mouseX = event.clientX - rect.left;
-    const mouseY = event.clientY - rect.top;
-
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
-
-    x.set(xPct);
-    y.set(yPct);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-
   const copyLink = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -65,48 +35,35 @@ export const ProjectCard = ({
 
   return (
     <div className="group relative">
-      <motion.div
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{
-          rotateX,
-          rotateY,
-          transformStyle: "preserve-3d",
-        }}
-        whileHover="hover"
-        className="relative"
-      >
-        <Link href={link} className="block">
-          <RevealText>
-            <motion.div
-              className="relative h-[70vh] mb-4 transform-gpu"
-              style={{
-                transformStyle: "preserve-3d",
-              }}
-            >
-              <Image
-                src={image}
-                alt={title}
-                fill
-                sizes="(max-width: 768px) 100vw, 80vw"
-                quality={90}
-                className="object-contain grayscale group-hover:grayscale-0 transition-all duration-500"
-                priority={priority}
-              />
-            </motion.div>
-          </RevealText>
-          <RevealText>
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="text-sm mb-2">{title}</h3>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                  {description}
-                </p>
-              </div>
+      <Link href={link} className="block">
+        <RevealText>
+          <motion.div
+            className="relative h-[70vh] mb-4 overflow-hidden"
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Image
+              src={image}
+              alt={title}
+              fill
+              sizes="(max-width: 768px) 100vw, 80vw"
+              quality={90}
+              className="object-contain grayscale group-hover:grayscale-0 transition-all duration-500"
+              priority={priority}
+            />
+          </motion.div>
+        </RevealText>
+        <RevealText>
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="text-sm mb-2">{title}</h3>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                {description}
+              </p>
             </div>
-          </RevealText>
-        </Link>
-      </motion.div>
+          </div>
+        </RevealText>
+      </Link>
       <motion.button
         onClick={copyLink}
         className="absolute top-4 right-4 p-3 opacity-0 group-hover:opacity-100 transition-opacity bg-neutral-50/80 dark:bg-neutral-800/80 backdrop-blur-sm rounded-full shadow-lg"

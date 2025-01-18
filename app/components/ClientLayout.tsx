@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { SoundProvider, useSound } from "./SoundProvider";
 import { useState, useEffect } from "react";
+import { PageLoadProgress } from "./PageLoadProgress";
+import { ScrollToTop } from "./ScrollToTop";
 
 const getTransitionDirection = (
   pathname: string,
@@ -55,6 +57,8 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
         <MouseEffect />
         <ThemeToggle />
         <ScrollProgress />
+        <PageLoadProgress />
+        <ScrollToTop />
         <div className="relative w-full">
           <AnimatePresence mode="wait" initial={false}>
             <motion.main

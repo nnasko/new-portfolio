@@ -217,71 +217,45 @@ export default function ProjectPage({
   const images = isMobile ? project.mobileImages : project.images;
 
   return (
-    <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900 pt-24">
+    <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
       {/* navigation */}
       <nav className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50">
-        <RevealText direction="down">
-          <MinimalLink
-            href="/"
-            className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-          >
-            atanas kyurkchiev
-          </MinimalLink>
-        </RevealText>
-        <RevealText direction="down">
-          <MinimalLink
-            href="/#work"
-            className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-          >
-            back to work
-          </MinimalLink>
-        </RevealText>
+        <MinimalLink href="/" className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors">
+          atanas kyurkchiev
+        </MinimalLink>
+        <MinimalLink
+          href="/#work"
+          className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+        >
+          back to work
+        </MinimalLink>
       </nav>
 
-      <article className="px-6 md:px-12 py-12">
-        {/* project images */}
-        <div className="grid gap-12 mb-24">
-          {images.map((image, index) => (
-            <RevealText key={image}>
-              <motion.div
-                initial={{ scale: 0.95 }}
-                whileInView={{ scale: 1 }}
-                transition={{ duration: 0.8 }}
-                className="relative aspect-[16/9]"
-              >
-                <Image
-                  src={image}
-                  alt={`${project.title} - image ${index + 1}`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 80vw"
-                  quality={90}
-                  className="object-contain grayscale hover:grayscale-0 transition-all"
-                  priority={index === 0}
-                />
-              </motion.div>
-            </RevealText>
-          ))}
-        </div>
-
-        {/* project content */}
-        <div className="max-w-2xl">
+      <div className="pt-24 px-6 md:px-12 max-w-7xl mx-auto">
+        {/* project header */}
+        <div className="max-w-3xl mb-16">
           <RevealText>
-            <h1 className="text-2xl mb-6">{project.title}</h1>
+            <h1 className="text-3xl mb-4">{project.title}</h1>
           </RevealText>
           <RevealText>
-            <ReadingTime content={project.fullDescription} className="mb-6" />
-          </RevealText>
-          <RevealText>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
+            <p className="text-lg text-neutral-600 dark:text-neutral-400 mb-6">
               {project.description}
             </p>
           </RevealText>
-          <RevealText>
-            <div className="flex gap-4 text-sm mb-12">
+          <div className="flex flex-wrap gap-4 items-center text-sm">
+            <RevealText>
               <span>{project.year}</span>
-              <span>•</span>
+            </RevealText>
+            <span>•</span>
+            <RevealText>
               <ViewCounter slug={slug} />
-              <span>•</span>
+            </RevealText>
+            <span>•</span>
+            <RevealText>
+              <ReadingTime content={project.fullDescription} />
+            </RevealText>
+            <span>•</span>
+            <RevealText>
               <a
                 href={project.link}
                 target="_blank"
@@ -291,33 +265,88 @@ export default function ProjectPage({
               >
                 view live site
               </a>
-            </div>
-          </RevealText>
+            </RevealText>
+          </div>
+        </div>
 
-          {/* tech stack */}
+        {/* project images */}
+        <div className="grid md:grid-cols-[1.5fr,1fr] gap-6 mb-24">
+          {/* Main large image */}
           <RevealText>
-            <div className="flex flex-wrap gap-2 mb-12">
-              {project.tech?.map((tech) => (
-                <span
-                  key={tech}
-                  className="text-xs px-2 py-1 border border-neutral-300 dark:border-neutral-700"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
+            <motion.div
+              initial={{ scale: 0.95 }}
+              whileInView={{ scale: 1 }}
+              transition={{ duration: 0.8 }}
+              className="relative h-[75vh] w-full"
+            >
+              <Image
+                src={images[0]}
+                alt={`${project.title} - main image`}
+                fill
+                sizes="(max-width: 768px) 100vw, 60vw"
+                quality={90}
+                className="object-contain grayscale hover:grayscale-0 transition-all"
+                priority
+              />
+            </motion.div>
           </RevealText>
 
-          {/* full description */}
-          <div className="space-y-6 text-sm whitespace-pre-line">
-            {project.fullDescription.split("\n\n").map((paragraph, index) => (
-              <RevealText key={index}>
-                <p>{paragraph}</p>
+          {/* Two smaller stacked images */}
+          <div className="grid grid-rows-2 gap-6">
+            {images.slice(1, 3).map((image, index) => (
+              <RevealText key={image}>
+                <motion.div
+                  initial={{ scale: 0.95 }}
+                  whileInView={{ scale: 1 }}
+                  transition={{ duration: 0.8 }}
+                  className="relative h-[35vh] w-full"
+                >
+                  <Image
+                    src={image}
+                    alt={`${project.title} - detail ${index + 1}`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 35vw"
+                    quality={90}
+                    className="object-contain grayscale hover:grayscale-0 transition-all"
+                    priority={index === 0}
+                  />
+                </motion.div>
               </RevealText>
             ))}
           </div>
         </div>
-      </article>
+
+        {/* project content */}
+        <div className="grid md:grid-cols-[2fr,1fr] gap-12 max-w-6xl">
+          {/* main content */}
+          <div className="space-y-8 text-sm">
+            {project.fullDescription.split("\n\n").map((paragraph, index) => (
+              <RevealText key={index}>
+                <p className="leading-relaxed">{paragraph}</p>
+              </RevealText>
+            ))}
+          </div>
+
+          {/* tech stack sidebar */}
+          <div className="space-y-8">
+            <RevealText>
+              <div className="sticky top-24">
+                <h3 className="text-sm font-medium mb-4">Technologies Used</h3>
+                <div className="flex flex-wrap gap-2">
+                  {project.tech?.map((tech) => (
+                    <span
+                      key={tech}
+                      className="text-xs px-3 py-1.5 border border-neutral-200 dark:border-neutral-700 rounded-full"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </RevealText>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }
