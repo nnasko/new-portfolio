@@ -248,11 +248,11 @@ export default function ProjectPage({
             </RevealText>
             <span>•</span>
             <RevealText>
-              <ViewCounter slug={slug} />
+              <ReadingTime content={project.fullDescription} />
             </RevealText>
             <span>•</span>
             <RevealText>
-              <ReadingTime content={project.fullDescription} />
+              <ViewCounter slug={slug} />
             </RevealText>
             <span>•</span>
             <RevealText>
@@ -343,6 +343,30 @@ export default function ProjectPage({
                   ))}
                 </div>
               </div>
+            </RevealText>
+          </div>
+        </div>
+
+        {/* Call to action section */}
+        <div className="w-full border-t border-neutral-200 dark:border-neutral-800 mt-32 pt-32">
+          <div className="max-w-3xl mx-auto px-6 md:px-12">
+            <RevealText>
+              <p className="text-sm mb-12 text-center">
+                like what you see? check out more of my{" "}
+                <MinimalLink
+                  href="/#work"
+                  className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+                >
+                  work
+                </MinimalLink>{" "}
+                or{" "}
+                <MinimalLink
+                  href="/#contact"
+                  className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+                >
+                  get in touch
+                </MinimalLink>
+              </p>
             </RevealText>
           </div>
         </div>

@@ -50,6 +50,12 @@ export default function Home() {
   });
 
   const xTransform = useTransform(scrollYProgress, [0, 1], ["5%", "-85%"]);
+  
+  // Calculate which project is in view based on scroll progress
+  const currentProjectIndex = useTransform(scrollYProgress, 
+    [0, 0.33, 0.66, 1], 
+    [0, 1, 2, 2]
+  );
 
   return (
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
@@ -154,6 +160,8 @@ export default function Home() {
                     image={isMobile ? project.mobileImage : project.image}
                     link={project.link}
                     priority={index === 0}
+                    isActive={currentProjectIndex}
+                    index={index}
                   />
                 </motion.div>
               ))}
