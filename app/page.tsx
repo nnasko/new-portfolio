@@ -11,7 +11,7 @@ import { MinimalLink } from "./components/MinimalLink";
 import { useSound } from "./components/SoundProvider";
 import { SectionTransition } from "./components/SectionTransition";
 import { ScrollProgress } from "./components/ScrollProgress";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useTransform, useScroll } from "framer-motion";
 
 const projects = [
@@ -44,6 +44,22 @@ export default function Home() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { playClick } = useSound();
   const workRef = useRef<HTMLElement>(null);
+  const [nameClicks, setNameClicks] = useState(0);
+  const [showNameEasterEgg, setShowNameEasterEgg] = useState(false);
+
+  const handleNameClick = () => {
+    setNameClicks(prev => {
+      if (prev === 4) {
+        setShowNameEasterEgg(true);
+        setTimeout(() => {
+          setShowNameEasterEgg(false);
+          return 0;
+        }, 3000);
+        return 0;
+      }
+      return prev + 1;
+    });
+  };
 
   return (
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
@@ -52,9 +68,20 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50">
         <MinimalLink
           href="#top"
-          className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+          className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors relative"
+          onClick={handleNameClick}
         >
           atanas kyurkchiev
+          {showNameEasterEgg && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="absolute top-full left-0 mt-2 bg-neutral-900 dark:bg-neutral-100 text-neutral-100 dark:text-neutral-900 px-3 py-1.5 text-xs rounded-lg whitespace-nowrap"
+            >
+              psst... try typing "matrix" anywhere
+            </motion.div>
+          )}
         </MinimalLink>
         <div className="space-x-6 text-sm">
           <MinimalLink
