@@ -66,6 +66,17 @@ export const MouseEffect = () => {
     };
   }, [isMobile, cursorX, cursorY]);
 
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const { clientX, clientY } = e;
+      cursorX.set(clientX - 8);
+      cursorY.set(clientY - 8);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [scaleMotion]);
+
   if (isMobile) return null;
 
   return (

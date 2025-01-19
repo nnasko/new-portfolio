@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useMediaQuery } from "./hooks/useMediaQuery";
@@ -11,8 +11,7 @@ import { MinimalLink } from "./components/MinimalLink";
 import { useSound } from "./components/SoundProvider";
 import { SectionTransition } from "./components/SectionTransition";
 import { ScrollProgress } from "./components/ScrollProgress";
-import { useRef, useState } from "react";
-import { useTransform, useScroll } from "framer-motion";
+import { useRef } from "react";
 
 const projects = [
   {
@@ -44,22 +43,13 @@ export default function Home() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { playClick } = useSound();
   const workRef = useRef<HTMLElement>(null);
-  const [nameClicks, setNameClicks] = useState(0);
-  const [showNameEasterEgg, setShowNameEasterEgg] = useState(false);
+  
+  const { scrollYProgress } = useScroll({
+    target: workRef,
+    offset: ["start start", "end end"]
+  });
 
-  const handleNameClick = () => {
-    setNameClicks(prev => {
-      if (prev === 4) {
-        setShowNameEasterEgg(true);
-        setTimeout(() => {
-          setShowNameEasterEgg(false);
-          return 0;
-        }, 3000);
-        return 0;
-      }
-      return prev + 1;
-    });
-  };
+  const xTransform = useTransform(scrollYProgress, [0, 1], ["5%", "-85%"]);
 
   return (
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
@@ -69,19 +59,8 @@ export default function Home() {
         <MinimalLink
           href="#top"
           className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors relative"
-          onClick={handleNameClick}
         >
           atanas kyurkchiev
-          {showNameEasterEgg && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="absolute top-full left-0 mt-2 bg-neutral-900 dark:bg-neutral-100 text-neutral-100 dark:text-neutral-900 px-3 py-1.5 text-xs rounded-lg whitespace-nowrap"
-            >
-              psst... try typing "matrix" anywhere
-            </motion.div>
-          )}
         </MinimalLink>
         <div className="space-x-6 text-sm">
           <MinimalLink
@@ -162,39 +141,12 @@ export default function Home() {
             </RevealText>
             <motion.div 
               className="flex gap-12 px-6 md:px-12"
-              style={{
-                x: useTransform(
-                  useScroll({
-                    target: workRef,
-                    offset: ["start start", "end end"]
-                  }).scrollYProgress,
-                  [0, 1],
-                  ["5%", "-85%"]
-                )
-              }}
+              style={{ x: xTransform }}
             >
               {projects.map((project, index) => (
                 <motion.div 
                   key={project.title}
                   className="relative flex-shrink-0 w-[85vw] md:w-[60vw]"
-                  style={{
-                    opacity: useTransform(
-                      useScroll({
-                        target: workRef,
-                        offset: [`${index * 0.25} 0.5`, `${index * 0.25 + 0.15} 0.5`]
-                      }).scrollYProgress,
-                      [0, 1],
-                      [0.3, 1]
-                    ),
-                    scale: useTransform(
-                      useScroll({
-                        target: workRef,
-                        offset: [`${index * 0.25} 0.5`, `${index * 0.25 + 0.15} 0.5`]
-                      }).scrollYProgress,
-                      [0, 1],
-                      [0.98, 1]
-                    )
-                  }}
                 >
                   <ProjectCard
                     title={project.title}
