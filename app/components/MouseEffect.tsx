@@ -42,7 +42,11 @@ export const MouseEffect = () => {
     const handleMouseLeave = (e: MouseEvent) => {
       if (!e.target) return;
       const target = e.target as Element;
-      if (isInteractive(target) || isInteractive(target.parentElement)) {
+      const relatedTarget = e.relatedTarget as Element | null;
+      
+      // Check if we're moving from an interactive element to a non-interactive element
+      if ((isInteractive(target) || isInteractive(target.parentElement)) &&
+          (!relatedTarget || (!isInteractive(relatedTarget) && !isInteractive(relatedTarget.parentElement)))) {
         setIsHovering(false);
         animate(scaleMotion, 1, {
           duration: 0.2,
@@ -53,7 +57,7 @@ export const MouseEffect = () => {
 
     window.addEventListener("mousemove", updateMousePosition, { passive: true });
     document.addEventListener("mouseenter", handleMouseEnter, true);
-    document.addEventListener("mouseleave", handleMouseLeave, true);
+    document.addEventListener("mouseout", handleMouseLeave, true);
 
     // Set initial position to prevent cursor jump on page load
     cursorX.set(window.innerWidth / 2);
@@ -62,7 +66,7 @@ export const MouseEffect = () => {
     return () => {
       window.removeEventListener("mousemove", updateMousePosition);
       document.removeEventListener("mouseenter", handleMouseEnter, true);
-      document.removeEventListener("mouseleave", handleMouseLeave, true);
+      document.removeEventListener("mouseout", handleMouseLeave, true);
     };
   }, [isMobile, cursorX, cursorY]);
 

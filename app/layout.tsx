@@ -1,10 +1,8 @@
 import "./globals.css";
 import { Space_Grotesk } from "next/font/google";
-import { ClientLayout } from "./components/ClientLayout";
 import { siteConfig } from "./metadata";
 import { Metadata } from "next";
-import { SoundProvider } from "./components/SoundProvider";
-import { ToastProvider } from "./components/Toast";
+import { ClientLayout } from "./components/ClientLayout";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -61,7 +59,7 @@ export const metadata: Metadata = {
     shortcut: "/favicon-16x16.png",
     apple: "/apple-touch-icon.png",
   },
-  manifest: "/site.webmanifest",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -74,13 +72,10 @@ export default function RootLayout({
       <head>
         <link rel="canonical" href={siteConfig.url} />
         <meta name="theme-color" content="#171717" />
+        <link rel="manifest" href="/manifest.json" />
       </head>
       <body className={`${spaceGrotesk.variable} font-sans text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-900 transition-colors md:cursor-none`}>
-        <ToastProvider>
-          <SoundProvider>
-            <ClientLayout>{children}</ClientLayout>
-          </SoundProvider>
-        </ToastProvider>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

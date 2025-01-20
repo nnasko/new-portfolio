@@ -6,10 +6,10 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function POST(request: Request) {
   try {
     const data = await request.json();
-    const { name, email, company, project_type, timeline, budget, message } = data;
+    const { name, email, company, projectType, timeline, budget, message, otherProjectType } = data;
 
     // Validate required fields
-    if (!name || !email || !project_type || !timeline || !budget || !message) {
+    if (!name || !email || !projectType || !timeline || !budget || !message) {
       return NextResponse.json(
         { error: "Please fill in all required fields" },
         { status: 400 }
@@ -26,7 +26,10 @@ export async function POST(request: Request) {
     }
 
     // Format project type for display
-    const formatProjectType = (type: string) => {
+    const formatProjectType = (type: string, otherType?: string) => {
+      if (type === 'other' && otherType) {
+        return otherType;
+      }
       return type.split('_').map(word => word.charAt(0).toLowerCase() + word.slice(1)).join(' ');
     };
 
@@ -73,7 +76,7 @@ export async function POST(request: Request) {
           <div style="margin-bottom: 32px;">
             <h3 style="font-size: 14px; font-weight: 400; margin-bottom: 16px; color: #a3a3a3;">project details</h3>
             <div style="background: #262626; padding: 24px; border-radius: 4px; border: 1px solid #404040;">
-              <p style="margin: 0 0 8px 0;"><span style="color: #a3a3a3;">project type:</span> ${formatProjectType(project_type)}</p>
+              <p style="margin: 0 0 8px 0;"><span style="color: #a3a3a3;">project type:</span> ${formatProjectType(projectType, otherProjectType)}</p>
               <p style="margin: 0 0 8px 0;"><span style="color: #a3a3a3;">timeline:</span> ${formatTimeline(timeline)}</p>
               <p style="margin: 0;"><span style="color: #a3a3a3;">budget range:</span> ${formatBudget(budget)}</p>
             </div>
