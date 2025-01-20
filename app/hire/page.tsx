@@ -6,6 +6,7 @@ import { MinimalLink } from "../components/MinimalLink";
 import { RevealText } from "../components/RevealText";
 import { SectionTransition } from "../components/SectionTransition";
 import { useSound } from "../components/SoundProvider";
+import { useToast } from "../components/Toast";
 
 const steps = [
   {
@@ -101,8 +102,40 @@ const steps = [
 
 export default function HirePage() {
   const { playClick } = useSound();
+  const { showToast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const processRef = useRef<HTMLDivElement>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        showToast(result.error || 'Failed to send message. Please try again.');
+        return;
+      }
+
+      showToast(result.message);
+      form.reset();
+    } catch (error) {
+      console.error(error);
+      showToast('Failed to send message. Please try again.');
+    }
+  };
 
   return (
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
@@ -176,7 +209,7 @@ export default function HirePage() {
 
             <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
               {steps.map((step, index) => (
-                <RevealText key={step.title}>
+                <RevealText key={`step-${step.title}-${index}`}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -217,146 +250,129 @@ export default function HirePage() {
               <h2 className="text-xl sm:text-2xl mb-12">ready to start your project?</h2>
             </RevealText>
             <form
-              action="/api/contact"
-              method="POST"
+              onSubmit={handleSubmit}
               className="space-y-6 sm:space-y-8"
             >
               <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
-                <RevealText>
-                  <div>
-                    <label htmlFor="name" className="block text-sm mb-2">
-                      name
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      required
-                      className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors md:cursor-none"
-                    />
-                  </div>
-                </RevealText>
-
-                <RevealText>
-                  <div>
-                    <label htmlFor="email" className="block text-sm mb-2">
-                      email
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      required
-                      className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors md:cursor-none"
-                    />
-                  </div>
-                </RevealText>
-              </div>
-
-              <RevealText>
                 <div>
-                  <label htmlFor="company" className="block text-sm mb-2">
-                    company / organization (optional)
+                  <label htmlFor="name" className="block text-sm mb-2">
+                    name
                   </label>
                   <input
                     type="text"
-                    id="company"
-                    name="company"
+                    id="name"
+                    name="name"
+                    required
                     className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors md:cursor-none"
                   />
                 </div>
-              </RevealText>
 
-              <RevealText>
                 <div>
-                  <label htmlFor="project_type" className="block text-sm mb-2">
-                    what type of project are you looking to build?
+                  <label htmlFor="email" className="block text-sm mb-2">
+                    email
                   </label>
-                  <select
-                    id="project_type"
-                    name="project_type"
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
                     required
-                    className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors appearance-none md:cursor-none"
-                  >
-                    <option value="">select a project type</option>
-                    <option value="fullstack_app">full-stack web application</option>
-                    <option value="ecommerce_custom">custom e-commerce platform</option>
-                    <option value="saas">saas / subscription platform</option>
-                    <option value="admin_dashboard">admin dashboard / cms</option>
-                    <option value="api_development">api development / integration</option>
-                    <option value="portfolio">portfolio / personal website</option>
-                    <option value="business_website">business website / landing page</option>
-                    <option value="web_app_mvp">web app mvp / prototype</option>
-                    <option value="performance_optimization">performance optimization</option>
-                    <option value="custom_development">custom development</option>
-                  </select>
+                    className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors md:cursor-none"
+                  />
                 </div>
-              </RevealText>
+              </div>
 
-              <RevealText>
-                <div>
-                  <label htmlFor="timeline" className="block text-sm mb-2">
-                    what&apos;s your ideal timeline?
-                  </label>
-                  <select
-                    id="timeline"
-                    name="timeline"
-                    required
-                    className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors appearance-none md:cursor-none"
-                  >
-                    <option value="">select a timeline</option>
-                    <option value="1_month">within 1 month</option>
-                    <option value="3_months">1-3 months</option>
-                    <option value="6_months">3-6 months</option>
-                    <option value="flexible">flexible</option>
-                  </select>
-                </div>
-              </RevealText>
+              <div>
+                <label htmlFor="company" className="block text-sm mb-2">
+                  company / organization (optional)
+                </label>
+                <input
+                  type="text"
+                  id="company"
+                  name="company"
+                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors md:cursor-none"
+                />
+              </div>
 
-              <RevealText>
-                <div>
-                  <label htmlFor="budget" className="block text-sm mb-2">
-                    what&apos;s your budget range?
-                  </label>
-                  <select
-                    id="budget"
-                    name="budget"
-                    required
-                    className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors appearance-none md:cursor-none"
-                  >
-                    <option value="">select a budget range</option>
-                    <option value="5k_10k">£500 - £1000</option>
-                    <option value="1k_2k">£1000 - £2000</option>
-                    <option value="2k_5k">£2000 - £5000</option>
-                    <option value="5k_plus">£5000+</option>
-                  </select>
-                </div>
-              </RevealText>
-
-              <RevealText>
-                <div>
-                  <label htmlFor="message" className="block text-sm mb-2">
-                    tell me about your project vision and goals
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    required
-                    rows={6}
-                    placeholder="What problem are you trying to solve? What features are most important to you? Any specific technologies or requirements?"
-                    className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors resize-none md:cursor-none"
-                  ></textarea>
-                </div>
-              </RevealText>
-
-              <RevealText>
-                <button
-                  type="submit"
-                  className="w-full p-3 border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-sm"
+              <div>
+                <label htmlFor="project_type" className="block text-sm mb-2">
+                  what type of project are you looking to build?
+                </label>
+                <select
+                  id="project_type"
+                  name="project_type"
+                  required
+                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors appearance-none md:cursor-none"
                 >
-                  send message
-                </button>
-              </RevealText>
+                  <option value="">select a project type</option>
+                  <option value="fullstack_app">full-stack web application</option>
+                  <option value="ecommerce_custom">custom e-commerce platform</option>
+                  <option value="saas">saas / subscription platform</option>
+                  <option value="admin_dashboard">admin dashboard / cms</option>
+                  <option value="api_development">api development / integration</option>
+                  <option value="portfolio">portfolio / personal website</option>
+                  <option value="business_website">business website / landing page</option>
+                  <option value="web_app_mvp">web app mvp / prototype</option>
+                  <option value="performance_optimization">performance optimization</option>
+                  <option value="custom_development">custom development</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="timeline" className="block text-sm mb-2">
+                  what&apos;s your ideal timeline?
+                </label>
+                <select
+                  id="timeline"
+                  name="timeline"
+                  required
+                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors appearance-none md:cursor-none"
+                >
+                  <option value="">select a timeline</option>
+                  <option value="1_month">within 1 month</option>
+                  <option value="3_months">1-3 months</option>
+                  <option value="6_months">3-6 months</option>
+                  <option value="flexible">flexible</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="budget" className="block text-sm mb-2">
+                  what&apos;s your budget range?
+                </label>
+                <select
+                  id="budget"
+                  name="budget"
+                  required
+                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors appearance-none md:cursor-none"
+                >
+                  <option value="">select a budget range</option>
+                  <option value="5k_10k">£500 - £1000</option>
+                  <option value="1k_2k">£1000 - £2000</option>
+                  <option value="2k_5k">£2000 - £5000</option>
+                  <option value="5k_plus">£5000+</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="message" className="block text-sm mb-2">
+                  tell me about your project vision and goals
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  required
+                  rows={6}
+                  placeholder="What problem are you trying to solve? What features are most important to you? Any specific technologies or requirements?"
+                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors resize-none md:cursor-none"
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full p-3 border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-sm"
+              >
+                send message
+              </button>
             </form>
           </div>
         </section>
