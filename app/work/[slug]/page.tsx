@@ -348,25 +348,28 @@ export default function ProjectPage({
         </div>
 
         {/* Call to action section */}
-        <div className="w-full border-t border-neutral-200 dark:border-neutral-800 mt-32 pt-32">
-          <div className="max-w-3xl mx-auto px-6 md:px-12">
+        <div className="relative w-full border-t border-neutral-200 dark:border-neutral-800 mt-32">
+          <div className="max-w-3xl mx-auto py-32">
             <RevealText>
-              <p className="text-sm mb-12 text-center">
-                like what you see? check out more of my{" "}
-                <MinimalLink
-                  href="/#work"
-                  className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-                >
-                  work
-                </MinimalLink>{" "}
-                or{" "}
-                <MinimalLink
-                  href="/#contact"
-                  className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-                >
-                  get in touch
-                </MinimalLink>
-              </p>
+              <div className="text-center px-6 md:px-12">
+                <p className="text-2xl sm:text-3xl mb-12">
+                  ready to build your next digital experience?
+                </p>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                  <MinimalLink
+                    href="/hire"
+                    className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-8 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                  >
+                    start a project
+                  </MinimalLink>
+                  <MinimalLink
+                    href="/#work"
+                    className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-8 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                  >
+                    view more work
+                  </MinimalLink>
+                </div>
+              </div>
             </RevealText>
           </div>
         </div>

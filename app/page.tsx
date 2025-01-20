@@ -295,48 +295,79 @@ export default function Home() {
             </RevealText>
             <RevealText>
               <p className="text-2xl mb-8">
-                interested in working together? let&apos;s have a conversation
+                have a project in mind? let's create something amazing together
               </p>
             </RevealText>
-            <div className="space-y-4 text-sm">
-              <RevealText>
-                <p>
-                  email:{" "}
-                  <a
-                    href="mailto:me@atanaskyurkchiev.info"
-                    className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+            <RevealText>
+              <div className="flex flex-col gap-8">
+                <Link
+                  href="/hire"
+                  className="inline-flex items-center gap-2 text-sm group"
+                >
+                  <span className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors">
+                    start a project together
+                  </span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-4 h-4 group-hover:translate-x-1 transition-transform"
                   >
-                    me@atanaskyurkchiev.info
-                  </a>
-                </p>
-              </RevealText>
-              <RevealText>
-                <p>
-                  github:{" "}
-                  <a
-                    href="https://github.com/nnasko"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-                  >
-                    github.com/nnasko
-                  </a>
-                </p>
-              </RevealText>
-              <RevealText>
-                <p>
-                  linkedin:{" "}
-                  <a
-                    href="https://www.linkedin.com/in/atanas-kyurkchiev-36a609291/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-                  >
-                    linkedin.com/in/atanas-kyurkchiev
-                  </a>
-                </p>
-              </RevealText>
-            </div>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                    />
+                  </svg>
+                </Link>
+                <div className="space-y-4 text-sm">
+                  <RevealText>
+                    <p>
+                      or reach out directly:
+                    </p>
+                  </RevealText>
+                  <RevealText>
+                    <p>
+                      email:{" "}
+                      <a
+                        href="mailto:me@atanaskyurkchiev.info"
+                        className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+                      >
+                        me@atanaskyurkchiev.info
+                      </a>
+                    </p>
+                  </RevealText>
+                  <RevealText>
+                    <p>
+                      github:{" "}
+                      <a
+                        href="https://github.com/nnasko"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+                      >
+                        github.com/nnasko
+                      </a>
+                    </p>
+                  </RevealText>
+                  <RevealText>
+                    <p>
+                      linkedin:{" "}
+                      <a
+                        href="https://www.linkedin.com/in/atanas-kyurkchiev-36a609291/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+                      >
+                        linkedin.com/in/atanas-kyurkchiev
+                      </a>
+                    </p>
+                  </RevealText>
+                </div>
+              </div>
+            </RevealText>
           </div>
         </motion.section>
       </SectionTransition>
