@@ -8,67 +8,6 @@ import { useSound } from "../components/SoundProvider";
 import { useToast } from "../components/Toast";
 import { motion, AnimatePresence } from "framer-motion";
 
-// sheeeesh these features be bussin fr fr
-const features = [
-  {
-    name: 'basic design',
-    basePrice: 150,
-    complexity: 1.0,
-    description: 'clean and minimal design from existing templates',
-    excludes: ['custom design']
-  },
-  {
-    name: 'custom design',
-    basePrice: 300,
-    complexity: 1.1,
-    description: 'unique design made just for you',
-    excludes: ['basic design']
-  },
-  {
-    name: 'mobile friendly',
-    basePrice: 100,
-    complexity: 1.0,
-    description: 'works perfectly on phones and tablets',
-  },
-  {
-    name: 'simple blog',
-    basePrice: 150,
-    complexity: 1.1,
-    description: 'write and publish blog posts easily',
-  },
-  {
-    name: 'basic store',
-    basePrice: 250,
-    complexity: 1.2,
-    description: 'sell up to 10 products with stripe checkout',
-  },
-  {
-    name: 'advanced store',
-    basePrice: 400,
-    complexity: 1.3,
-    description: 'unlimited products, categories, and filters',
-    excludes: ['basic store']
-  },
-  {
-    name: 'user login',
-    basePrice: 200,
-    complexity: 1.1,
-    description: 'let users create accounts and log in',
-  },
-  {
-    name: 'google analytics',
-    basePrice: 50,
-    complexity: 1.0,
-    description: 'track visitors and page views',
-  },
-  {
-    name: 'contact form',
-    basePrice: 50,
-    complexity: 1.0,
-    description: 'simple form for visitors to reach you',
-  }
-];
-
 // no cap, these steps be fire
 const steps = [
   {
@@ -335,7 +274,7 @@ export default function HirePage() {
           <div className="space-y-6">
             <div>
               <label className="block text-sm mb-2">
-                what's your ideal timeline?
+                what&apos;s your ideal timeline?
               </label>
               <select
                 value={formData.timeline}
@@ -353,7 +292,7 @@ export default function HirePage() {
 
             <div>
               <label className="block text-sm mb-2">
-                what's your budget range?
+                what&apos;s your budget range?
               </label>
               <select
                 value={formData.budget}
