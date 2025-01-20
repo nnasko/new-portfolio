@@ -1,0 +1,6 @@
+# https://atanaskyurkchiev.info robots.txt
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://atanaskyurkchiev.info/sitemap.xml 

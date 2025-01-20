@@ -1,0 +1,22 @@
+{
+  "name": "Atanas Kyurkchiev | Software Developer",
+  "short_name": "Atanas K.",
+  "description": "Full-stack software developer focused on creating intuitive and efficient applications.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#171717",
+  "theme_color": "#171717",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+} 

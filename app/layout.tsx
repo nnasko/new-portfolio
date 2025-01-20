@@ -1,22 +1,58 @@
-import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { ClientLayout } from "./components/ClientLayout";
-import { SoundProvider } from "./components/SoundProvider";
-import { ToastProvider } from "./components/Toast";
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-space-grotesk",
-});
+import { siteConfig } from "./metadata";
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "atanas kyurkchiev",
-  description: "software developer portfolio",
-  icons: {
-    icon: "/logo.svg",
+  metadataBase: new URL(siteConfig.url),
+  title: {
+    default: siteConfig.title,
+    template: `%s | ${siteConfig.title}`,
   },
+  description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  authors: [{ name: siteConfig.author }],
+  creator: siteConfig.author,
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteConfig.url,
+    title: siteConfig.title,
+    description: siteConfig.description,
+    siteName: siteConfig.title,
+    images: [
+      {
+        url: siteConfig.ogImage,
+        width: 1200,
+        height: 630,
+        alt: siteConfig.title,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
+    creator: "@atanaskyurkchiev",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon-16x16.png",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({
@@ -26,14 +62,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body
-        className={`${spaceGrotesk.variable} font-sans text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-900 transition-colors md:cursor-none`}
-      >
-        <ToastProvider>
-          <SoundProvider>
-            <ClientLayout>{children}</ClientLayout>
-          </SoundProvider>
-        </ToastProvider>
+      <head>
+        <link rel="canonical" href={siteConfig.url} />
+        <meta name="theme-color" content="#171717" />
+      </head>
+      <body>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
