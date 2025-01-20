@@ -39,6 +39,46 @@ const projects = [
   },
 ];
 
+const ScrollIndicator = () => {
+  const { scrollY } = useScroll();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const opacity = useTransform(scrollY, [0, isMobile ? 50 : 100], [1, 0]);
+
+  return (
+    <motion.div 
+      className="absolute left-0 right-0 bottom-12 flex flex-col items-center gap-2 pointer-events-none"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 2 }}
+      style={{ opacity }}
+    >
+      <motion.p 
+        className="text-xs md:text-sm text-neutral-500 dark:text-neutral-400 whitespace-nowrap"
+        animate={{ y: [0, 5, 0] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      >
+        scroll down
+      </motion.p>
+      <motion.svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        className="w-3 h-3 md:w-4 md:h-4 text-neutral-500 dark:text-neutral-400"
+        animate={{ y: [0, 5, 0] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+        />
+      </motion.svg>
+    </motion.div>
+  );
+};
+
 export default function Home() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { playClick } = useSound();
@@ -94,7 +134,7 @@ export default function Home() {
       <SectionTransition>
         <section
           id="top"
-          className="min-h-screen flex items-center px-6 md:px-12"
+          className="relative min-h-screen flex items-center px-6 md:px-12"
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -131,6 +171,7 @@ export default function Home() {
               </div>
             </RevealText>
           </motion.div>
+          <ScrollIndicator />
         </section>
       </SectionTransition>
 

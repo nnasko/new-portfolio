@@ -157,7 +157,12 @@ export const SoundProvider = ({ children }: { children: React.ReactNode }) => {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15zM4.5 19.5h15m-1.5-3l-3-3m0 0l-3 3m3-3v12"
+                d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 7L19 19"
               />
             </svg>
           ) : (
