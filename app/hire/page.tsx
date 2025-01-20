@@ -128,7 +128,7 @@ export default function HirePage() {
           <div className="max-w-3xl">
             <RevealText>
               <h1 className="text-2xl sm:text-3xl mb-6">
-                let's work together to bring your vision to life
+                let&apos;s work together to bring your vision to life
               </h1>
             </RevealText>
             <RevealText>
@@ -155,7 +155,7 @@ export default function HirePage() {
                   }}
                   className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-6 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
                 >
-                  what's the process?
+                  what&apos;s the process?
                 </button>
               </div>
             </RevealText>
@@ -296,7 +296,7 @@ export default function HirePage() {
               <RevealText>
                 <div>
                   <label htmlFor="timeline" className="block text-sm mb-2">
-                    what's your ideal timeline?
+                    what&apos;s your ideal timeline?
                   </label>
                   <select
                     id="timeline"
@@ -316,7 +316,7 @@ export default function HirePage() {
               <RevealText>
                 <div>
                   <label htmlFor="budget" className="block text-sm mb-2">
-                    what's your budget range?
+                    what&apos;s your budget range?
                   </label>
                   <select
                     id="budget"

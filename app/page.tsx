@@ -295,7 +295,7 @@ export default function Home() {
             </RevealText>
             <RevealText>
               <p className="text-2xl mb-8">
-                have a project in mind? let's create something amazing together
+                have a project in mind? let&apos;s create something amazing together
               </p>
             </RevealText>
             <RevealText>
