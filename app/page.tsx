@@ -45,14 +45,14 @@ const ScrollIndicator = () => {
   const opacity = useTransform(scrollY, [0, isMobile ? 50 : 100], [1, 0]);
 
   return (
-    <motion.div 
+    <motion.div
       className="absolute left-0 right-0 bottom-12 flex flex-col items-center gap-2 pointer-events-none"
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 2 }}
       style={{ opacity }}
     >
-      <motion.p 
+      <motion.p
         className="text-xs md:text-sm text-neutral-500 dark:text-neutral-400 whitespace-nowrap"
         animate={{ y: [0, 5, 0] }}
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -83,17 +83,18 @@ export default function Home() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { playClick } = useSound();
   const workRef = useRef<HTMLElement>(null);
-  
+
   const { scrollYProgress } = useScroll({
     target: workRef,
-    offset: ["start start", "end end"]
+    offset: ["start start", "end end"],
   });
 
   const xTransform = useTransform(scrollYProgress, [0, 1], ["5%", "-85%"]);
-  
+
   // Calculate which project is in view based on scroll progress
-  const currentProjectIndex = useTransform(scrollYProgress, 
-    [0, 0.33, 0.66, 1], 
+  const currentProjectIndex = useTransform(
+    scrollYProgress,
+    [0, 0.33, 0.66, 1],
     [0, 1, 2, 2]
   );
 
@@ -148,8 +149,8 @@ export default function Home() {
                 <span className="relative inline-flex items-center gap-2">
                   — <StyleExplanation />
                 </span>{" "}
-                a software developer focused on creating full-stack, user-friendly
-                applications
+                a software developer focused on creating full-stack,
+                user-friendly applications
               </h1>
             </RevealText>
             <RevealText>
@@ -177,21 +178,19 @@ export default function Home() {
 
       {/* work */}
       <SectionTransition delay={0.1}>
-        <motion.section
-          ref={workRef}
-          id="work"
-          className="relative h-[400vh]"
-        >
-          <div className="sticky top-0 h-screen flex items-center overflow-hidden">
+        <motion.section ref={workRef} id="work" className="relative h-[400vh]">
+          <div className="sticky top-0 h-screen flex items-center overflow-auto touch-pan-x touch-pan-y">
             <RevealText>
-              <h2 className="absolute top-24 left-6 md:left-12 text-sm">selected work</h2>
+              <h2 className="absolute top-24 left-6 md:left-12 text-sm">
+                selected work
+              </h2>
             </RevealText>
-            <motion.div 
+            <motion.div
               className="flex gap-12 px-6 md:px-12"
               style={{ x: xTransform }}
             >
               {projects.map((project, index) => (
-                <motion.div 
+                <motion.div
                   key={project.title}
                   className="relative flex-shrink-0 w-[85vw] md:w-[60vw]"
                 >
@@ -256,7 +255,8 @@ export default function Home() {
                 <ul className="space-y-4 text-neutral-600 dark:text-neutral-400">
                   <RevealText>
                     <li>
-                      • software development @ access creative college, 2023-2025
+                      • software development @ access creative college,
+                      2023-2025
                     </li>
                   </RevealText>
                   <RevealText>
@@ -295,7 +295,8 @@ export default function Home() {
             </RevealText>
             <RevealText>
               <p className="text-2xl mb-8">
-                have a project in mind? let&apos;s create something amazing together
+                have a project in mind? let&apos;s create something amazing
+                together
               </p>
             </RevealText>
             <RevealText>
@@ -324,9 +325,7 @@ export default function Home() {
                 </Link>
                 <div className="space-y-4 text-sm">
                   <RevealText>
-                    <p>
-                      or reach out directly:
-                    </p>
+                    <p>or reach out directly:</p>
                   </RevealText>
                   <RevealText>
                     <p>
