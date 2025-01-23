@@ -1,12 +1,12 @@
 "use client";
 
-import { motion, MotionValue, useTransform, useAnimate } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { RevealText } from "./RevealText";
 import { useSound } from "./SoundProvider";
 import { useToast } from "./Toast";
-import { useEffect } from "react";
+import { motion, useInView } from "framer-motion";
+import { useRef, useEffect } from "react";
 
 interface ProjectCardProps {
   title: string;
@@ -14,8 +14,8 @@ interface ProjectCardProps {
   image: string;
   link: string;
   priority?: boolean;
-  isActive: MotionValue<number>;
   index: number;
+  onVisibilityChange?: (index: number, isVisible: boolean) => void;
 }
 
 export const ProjectCard = ({
@@ -24,38 +24,24 @@ export const ProjectCard = ({
   image,
   link,
   priority = false,
-  isActive,
   index,
+  onVisibilityChange,
 }: ProjectCardProps) => {
   const { playClick } = useSound();
   const { showToast } = useToast();
-  const [scope, animate] = useAnimate();
-
-  // Transform the current project index into a boolean for this card
-  const isCurrentlyActive = useTransform(isActive, (value) => {
-    const distance = Math.abs(value - index);
-    return distance < 0.5;
+  const ref = useRef(null);
+  const isInView = useInView(ref, { 
+    amount: 0.6,
+    margin: "-10% 0px -10% 0px" // Add some margin to reduce updates near edges
   });
-  
-  // Update animation when active state changes
+
+  // Report visibility changes to parent with debounce
   useEffect(() => {
-    return isCurrentlyActive.on("change", (latest) => {
-      animate(scope.current, latest ? {
-        scale: 1.05,
-        y: 0,
-        opacity: 1,
-        filter: "grayscale(0)",
-      } : {
-        scale: 0.95,
-        y: 0,
-        opacity: 0.5,
-        filter: "grayscale(1)",
-      }, {
-        duration: 0.8,
-        ease: [0.25, 0.1, 0, 1]
-      });
-    });
-  }, [isCurrentlyActive, animate, scope]);
+    const timer = setTimeout(() => {
+      onVisibilityChange?.(index, isInView);
+    }, 100); // Add small delay to reduce update frequency
+    return () => clearTimeout(timer);
+  }, [isInView, index, onVisibilityChange]);
 
   const copyLink = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -66,19 +52,22 @@ export const ProjectCard = ({
   };
 
   return (
-    <div className="group relative">
+    <motion.div 
+      ref={ref}
+      className="group relative"
+      layout // Use layout animations for better performance
+      animate={{
+        scale: isInView ? 1.03 : 0.97, // Reduce scale difference for smoother animation
+        opacity: isInView ? 1 : 0.8
+      }}
+      transition={{ 
+        duration: 0.3, // Reduce duration for snappier response
+        layout: { duration: 0.3 } // Add layout transition
+      }}
+    >
       <Link href={link} className="block">
         <RevealText>
-          <motion.div
-            ref={scope}
-            className="relative h-[50vh] md:h-[70vh] mb-8 overflow-hidden"
-            initial={{
-              scale: 0.95,
-              y: 0,
-              opacity: 0.5,
-              filter: "grayscale(1)",
-            }}
-          >
+          <div className="relative h-[50vh] md:h-[70vh] mb-8 overflow-hidden">
             <div className="absolute inset-0">
               <Image
                 src={image}
@@ -90,13 +79,10 @@ export const ProjectCard = ({
                 priority={priority}
               />
             </div>
-          </motion.div>
+          </div>
         </RevealText>
         <RevealText>
-          <motion.div 
-            className="flex justify-between items-start"
-            style={{ opacity: useTransform(isCurrentlyActive, (active) => active ? 1 : 0.5) }}
-          >
+          <div className="flex justify-between items-start">
             <div className="w-full">
               <div className="flex items-center gap-2 mb-3">
                 <h3 className="text-sm">{title}</h3>
@@ -127,9 +113,9 @@ export const ProjectCard = ({
                 {description}
               </p>
             </div>
-          </motion.div>
+          </div>
         </RevealText>
       </Link>
-    </div>
+    </motion.div>
   );
 };

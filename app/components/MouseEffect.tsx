@@ -30,11 +30,13 @@ export const MouseEffect = () => {
     const handleMouseEnter = (e: MouseEvent) => {
       if (!e.target) return;
       const target = e.target as Element;
+      
+      // Check if we're entering an interactive element
       if (isInteractive(target) || isInteractive(target.parentElement)) {
         setIsHovering(true);
         animate(scaleMotion, 2, {
           duration: 0.2,
-          ease: [0.4, 0, 0.2, 1], // Custom easing for a snappy but smooth scale
+          ease: [0.4, 0, 0.2, 1],
         });
       }
     };
@@ -44,7 +46,7 @@ export const MouseEffect = () => {
       const target = e.target as Element;
       const relatedTarget = e.relatedTarget as Element | null;
       
-      // Check if we're moving from an interactive element to a non-interactive element
+      // Only reset if we're not moving to another interactive element
       if ((isInteractive(target) || isInteractive(target.parentElement)) &&
           (!relatedTarget || (!isInteractive(relatedTarget) && !isInteractive(relatedTarget.parentElement)))) {
         setIsHovering(false);
@@ -55,9 +57,22 @@ export const MouseEffect = () => {
       }
     };
 
+    // Handle scroll events to reset cursor state
+    const handleScroll = () => {
+      if (isHovering) {
+        setIsHovering(false);
+        animate(scaleMotion, 1, {
+          duration: 0.2,
+          ease: [0.4, 0, 0.2, 1],
+        });
+      }
+    };
+
     window.addEventListener("mousemove", updateMousePosition, { passive: true });
-    document.addEventListener("mouseenter", handleMouseEnter, true);
+    document.addEventListener("mouseover", handleMouseEnter, true);
     document.addEventListener("mouseout", handleMouseLeave, true);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    document.addEventListener("wheel", handleScroll, { passive: true });
 
     // Set initial position to prevent cursor jump on page load
     cursorX.set(window.innerWidth / 2);
@@ -65,21 +80,12 @@ export const MouseEffect = () => {
 
     return () => {
       window.removeEventListener("mousemove", updateMousePosition);
-      document.removeEventListener("mouseenter", handleMouseEnter, true);
+      document.removeEventListener("mouseover", handleMouseEnter, true);
       document.removeEventListener("mouseout", handleMouseLeave, true);
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("wheel", handleScroll);
     };
-  }, [isMobile, cursorX, cursorY]);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-      cursorX.set(clientX - 8);
-      cursorY.set(clientY - 8);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [scaleMotion]);
+  }, [isMobile, cursorX, cursorY, scaleMotion, isHovering]);
 
   if (isMobile) return null;
 

@@ -11,7 +11,6 @@ import { MinimalLink } from "./components/MinimalLink";
 import { useSound } from "./components/SoundProvider";
 import { SectionTransition } from "./components/SectionTransition";
 import { ScrollProgress } from "./components/ScrollProgress";
-import { useRef } from "react";
 
 const projects = [
   {
@@ -82,21 +81,10 @@ const ScrollIndicator = () => {
 export default function Home() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { playClick } = useSound();
-  const workRef = useRef<HTMLElement>(null);
 
-  const { scrollYProgress } = useScroll({
-    target: workRef,
-    offset: ["start start", "end end"],
-  });
-
-  const xTransform = useTransform(scrollYProgress, [0, 1], ["5%", "-85%"]);
-
-  // Calculate which project is in view based on scroll progress
-  const currentProjectIndex = useTransform(
-    scrollYProgress,
-    [0, 0.33, 0.66, 1],
-    [0, 1, 2, 2]
-  );
+  const handleProjectVisibility = () => {
+    // Empty function to satisfy the ProjectCard prop requirement
+  };
 
   return (
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
@@ -178,19 +166,16 @@ export default function Home() {
 
       {/* work */}
       <SectionTransition delay={0.1}>
-        <motion.section ref={workRef} id="work" className="relative h-[400vh]">
-          <div className="sticky top-0 h-screen flex items-center overflow-auto touch-pan-x touch-pan-y">
-            <RevealText>
-              <h2 className="absolute top-24 left-6 md:left-12 text-sm">
-                selected work
-              </h2>
-            </RevealText>
-            <motion.div
-              className="flex gap-12 px-6 md:px-12"
-              style={{ x: xTransform }}
-            >
+        <section id="work" className="relative py-24">
+          <RevealText>
+            <h2 className="mb-12 px-6 md:px-12 text-sm">
+              selected work
+            </h2>
+          </RevealText>
+          <div className="overflow-x-auto touch-pan-x pb-6">
+            <div className="flex gap-16 px-6 md:px-12 min-w-fit">
               {projects.map((project, index) => (
-                <motion.div
+                <div
                   key={project.title}
                   className="relative flex-shrink-0 w-[85vw] md:w-[60vw]"
                 >
@@ -200,14 +185,16 @@ export default function Home() {
                     image={isMobile ? project.mobileImage : project.image}
                     link={project.link}
                     priority={index === 0}
-                    isActive={currentProjectIndex}
                     index={index}
+                    onVisibilityChange={handleProjectVisibility}
                   />
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+              {/* Spacer div for end padding */}
+              <div className="w-[6vw] md:w-[20vw] flex-shrink-0" aria-hidden="true" />
+            </div>
           </div>
-        </motion.section>
+        </section>
       </SectionTransition>
 
       {/* about */}
