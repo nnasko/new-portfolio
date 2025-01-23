@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { use } from "react";
+import { use, Suspense } from "react";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { RevealText } from "../../components/RevealText";
 import { MinimalLink } from "../../components/MinimalLink";
@@ -200,12 +200,7 @@ const projects = {
   },
 };
 
-export default function ProjectPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = use(params);
+function ProjectContent({ slug }: { slug: string }) {
   const project = projects[slug as keyof typeof projects];
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { playClick } = useSound();
@@ -375,5 +370,23 @@ export default function ProjectPage({
         </div>
       </div>
     </main>
+  );
+}
+
+export default function ProjectPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = use(params);
+  
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center">
+        <p className="text-sm">Loading...</p>
+      </div>
+    }>
+      <ProjectContent slug={slug} />
+    </Suspense>
   );
 }

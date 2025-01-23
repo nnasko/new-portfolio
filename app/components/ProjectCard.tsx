@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { RevealText } from "./RevealText";
 import { useSound } from "./SoundProvider";
 import { useToast } from "./Toast";
@@ -27,19 +27,19 @@ export const ProjectCard = ({
   index,
   onVisibilityChange,
 }: ProjectCardProps) => {
+  const router = useRouter();
   const { playClick } = useSound();
   const { showToast } = useToast();
   const ref = useRef(null);
   const isInView = useInView(ref, { 
     amount: 0.6,
-    margin: "-10% 0px -10% 0px" // Add some margin to reduce updates near edges
+    margin: "-10% 0px -10% 0px"
   });
 
-  // Report visibility changes to parent with debounce
   useEffect(() => {
     const timer = setTimeout(() => {
       onVisibilityChange?.(index, isInView);
-    }, 100); // Add small delay to reduce update frequency
+    }, 100);
     return () => clearTimeout(timer);
   }, [isInView, index, onVisibilityChange]);
 
@@ -51,21 +51,27 @@ export const ProjectCard = ({
     playClick();
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    playClick();
+    router.push(link);
+  };
+
   return (
     <motion.div 
       ref={ref}
       className="group relative"
-      layout // Use layout animations for better performance
+      layout
       animate={{
-        scale: isInView ? 1.03 : 0.97, // Reduce scale difference for smoother animation
+        scale: isInView ? 1.03 : 0.97,
         opacity: isInView ? 1 : 0.8
       }}
       transition={{ 
-        duration: 0.3, // Reduce duration for snappier response
-        layout: { duration: 0.3 } // Add layout transition
+        duration: 0.3,
+        layout: { duration: 0.3 }
       }}
     >
-      <Link href={link} className="block">
+      <div onClick={handleClick} className="block cursor-pointer">
         <RevealText>
           <div className="relative h-[50vh] md:h-[70vh] mb-8 overflow-hidden">
             <div className="absolute inset-0">
@@ -115,7 +121,7 @@ export const ProjectCard = ({
             </div>
           </div>
         </RevealText>
-      </Link>
+      </div>
     </motion.div>
   );
 };
