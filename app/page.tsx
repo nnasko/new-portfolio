@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useTransform, useMotionValue } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useMediaQuery } from "./hooks/useMediaQuery";
@@ -11,6 +11,7 @@ import { MinimalLink } from "./components/MinimalLink";
 import { useSound } from "./components/SoundProvider";
 import { SectionTransition } from "./components/SectionTransition";
 import { ScrollProgress } from "./components/ScrollProgress";
+import { useRef, useState, useEffect } from "react";
 
 const projects = [
   {
@@ -39,9 +40,18 @@ const projects = [
 ];
 
 const ScrollIndicator = () => {
-  const { scrollY } = useScroll();
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const scrollY = useMotionValue(0);
   const opacity = useTransform(scrollY, [0, isMobile ? 50 : 100], [1, 0]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      scrollY.set(window.scrollY || 0);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [scrollY]);
 
   return (
     <motion.div
@@ -81,10 +91,26 @@ const ScrollIndicator = () => {
 export default function Home() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { playClick } = useSound();
+  const workRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
 
-  const handleProjectVisibility = () => {
-    // Empty function to satisfy the ProjectCard prop requirement
-  };
+  useEffect(() => {
+    const updateConstraints = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.scrollWidth;
+        const windowWidth = window.innerWidth;
+        setDragConstraints({
+          right: 0,
+          left: -(containerWidth - windowWidth + 48) // Adding some padding
+        });
+      }
+    };
+
+    updateConstraints();
+    window.addEventListener('resize', updateConstraints);
+    return () => window.removeEventListener('resize', updateConstraints);
+  }, []);
 
   return (
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
@@ -166,18 +192,32 @@ export default function Home() {
 
       {/* work */}
       <SectionTransition delay={0.1}>
-        <section id="work" className="relative py-24">
+        <motion.section ref={workRef} id="work" className="relative py-24">
           <RevealText>
             <h2 className="mb-12 px-6 md:px-12 text-sm">
               selected work
             </h2>
           </RevealText>
-          <div className="overflow-x-auto touch-pan-x pb-6">
-            <div className="flex gap-16 px-6 md:px-12 min-w-fit">
+          <motion.div
+            ref={containerRef}
+            className="overflow-hidden"
+          >
+            <motion.div
+              className="flex gap-12 px-6 md:px-12"
+              drag="x"
+              dragConstraints={dragConstraints}
+              dragElastic={0.05}
+              dragTransition={{ 
+                bounceStiffness: 200,
+                bounceDamping: 40
+              }}
+              whileTap={{ cursor: "none" }}
+              style={{ cursor: "none" }}
+            >
               {projects.map((project, index) => (
-                <div
+                <motion.div
                   key={project.title}
-                  className="relative flex-shrink-0 w-[85vw] md:w-[60vw]"
+                  className="relative flex-shrink-0 w-[85vw] md:w-[60vw] select-none pb-12"
                 >
                   <ProjectCard
                     title={project.title}
@@ -186,15 +226,14 @@ export default function Home() {
                     link={project.link}
                     priority={index === 0}
                     index={index}
-                    onVisibilityChange={handleProjectVisibility}
                   />
-                </div>
+                </motion.div>
               ))}
               {/* Spacer div for end padding */}
               <div className="w-[6vw] md:w-[20vw] flex-shrink-0" aria-hidden="true" />
-            </div>
-          </div>
-        </section>
+            </motion.div>
+          </motion.div>
+        </motion.section>
       </SectionTransition>
 
       {/* about */}

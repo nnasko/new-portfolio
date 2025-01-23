@@ -31,6 +31,7 @@ export const ProjectCard = ({
   const { playClick } = useSound();
   const { showToast } = useToast();
   const ref = useRef(null);
+  const mouseDownTime = useRef<number>(0);
   const isInView = useInView(ref, { 
     amount: 0.6,
     margin: "-10% 0px -10% 0px"
@@ -51,16 +52,23 @@ export const ProjectCard = ({
     playClick();
   };
 
+  const handleMouseDown = () => {
+    mouseDownTime.current = Date.now();
+  };
+
   const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    playClick();
-    router.push(link);
+    const clickDuration = Date.now() - mouseDownTime.current;
+    if (clickDuration < 50) {
+      e.preventDefault();
+      playClick();
+      router.push(link);
+    }
   };
 
   return (
     <motion.div 
       ref={ref}
-      className="group relative"
+      className="group relative select-none"
       layout
       animate={{
         scale: isInView ? 1.03 : 0.97,
@@ -71,7 +79,11 @@ export const ProjectCard = ({
         layout: { duration: 0.3 }
       }}
     >
-      <div onClick={handleClick} className="block cursor-pointer">
+      <div 
+        onMouseDown={handleMouseDown}
+        onClick={handleClick} 
+        className="block cursor-none"
+      >
         <RevealText>
           <div className="relative h-[50vh] md:h-[70vh] mb-8 overflow-hidden">
             <div className="absolute inset-0">
@@ -81,17 +93,18 @@ export const ProjectCard = ({
                 fill
                 sizes="(max-width: 768px) 100vw, 80vw"
                 quality={90}
-                className="object-contain"
+                className="object-contain pointer-events-none"
                 priority={priority}
+                draggable={false}
               />
             </div>
           </div>
         </RevealText>
         <RevealText>
-          <div className="flex justify-between items-start">
+          <div className="flex justify-between items-start select-none">
             <div className="w-full">
               <div className="flex items-center gap-2 mb-3">
-                <h3 className="text-sm">{title}</h3>
+                <h3 className="text-sm select-none">{title}</h3>
                 <motion.button
                   onClick={copyLink}
                   className="opacity-0 group-hover:opacity-100 transition-opacity"
@@ -115,7 +128,7 @@ export const ProjectCard = ({
                   </svg>
                 </motion.button>
               </div>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">
+              <p className="text-sm text-neutral-500 dark:text-neutral-400 select-none">
                 {description}
               </p>
             </div>
