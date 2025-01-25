@@ -231,10 +231,17 @@ function ImageGalleryWheel({ images, title }: { images: string[], title: string 
     setIsDragging(true);
   };
 
-  const handleDragEnd = (event: any, info: any) => {
-    if (isAnimating) return;
-    setIsDragging(false);
+  const handleDragEnd = (
+    event: MouseEvent | TouchEvent | PointerEvent,
+    info: { offset: { x: number }; velocity: { x: number } }
+  ) => {
+    if (isAnimating) {
+      dragX.set(0);
+      setIsAnimating(false);
+      return;
+    }
     
+    setIsDragging(false);
     const offset = info.offset.x;
     const velocity = info.velocity.x;
     const threshold = dimensions.width * 0.15;
@@ -242,20 +249,16 @@ function ImageGalleryWheel({ images, title }: { images: string[], title: string 
     if (Math.abs(offset) > threshold || Math.abs(velocity) > 300) {
       const direction = offset > 0 || velocity > 300 ? -1 : 1;
       const newIndex = (currentIndex + direction + images.length) % images.length;
-      
-      setIsAnimating(true);
-      dragX.set(0);
       setCurrentIndex(newIndex);
     }
 
+    setIsAnimating(true);
     animate(dragX, 0, {
       type: "spring",
       stiffness: 200,
       damping: 25,
       velocity: info.velocity.x * 0.5,
-      onComplete: () => {
-        setIsAnimating(false);
-      }
+      onComplete: () => setIsAnimating(false)
     });
   };
 
