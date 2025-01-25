@@ -58,7 +58,7 @@ export const ProjectCard = ({
 
   const handleClick = (e: React.MouseEvent) => {
     const clickDuration = Date.now() - mouseDownTime.current;
-    if (clickDuration < 50) {
+    if (clickDuration < 200) {
       e.preventDefault();
       playClick();
       router.push(link);
@@ -82,7 +82,7 @@ export const ProjectCard = ({
       <div 
         onMouseDown={handleMouseDown}
         onClick={handleClick} 
-        className="block cursor-none"
+        className="block cursor-pointer"
       >
         <RevealText>
           <div className="relative h-[50vh] md:h-[70vh] mb-8 overflow-hidden">
@@ -107,7 +107,7 @@ export const ProjectCard = ({
                 <h3 className="text-sm select-none">{title}</h3>
                 <motion.button
                   onClick={copyLink}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   aria-label="Copy project link"

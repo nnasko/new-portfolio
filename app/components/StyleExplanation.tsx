@@ -14,7 +14,7 @@ export const StyleExplanation = () => {
   return (
     <div className="relative inline-flex items-center">
       <div
-        className="w-5 h-5 rounded-full border border-neutral-300 dark:border-neutral-700 text-xs flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors md:cursor-none"
+        className="w-5 h-5 rounded-full border border-neutral-300 dark:border-neutral-700 text-xs flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={() => setIsVisible(false)}
         role="button"

@@ -74,7 +74,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#171717" />
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body className={`${spaceGrotesk.variable} font-sans text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-900 transition-colors md:cursor-none`}>
+      <body className={`${spaceGrotesk.variable} font-sans text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-900 transition-colors`}>
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

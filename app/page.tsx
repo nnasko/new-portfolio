@@ -94,6 +94,7 @@ export default function Home() {
   const workRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     const updateConstraints = () => {
@@ -102,7 +103,7 @@ export default function Home() {
         const windowWidth = window.innerWidth;
         setDragConstraints({
           right: 0,
-          left: -(containerWidth - windowWidth + 48) // Adding some padding
+          left: -(containerWidth - windowWidth + 48)
         });
       }
     };
@@ -111,6 +112,21 @@ export default function Home() {
     window.addEventListener('resize', updateConstraints);
     return () => window.removeEventListener('resize', updateConstraints);
   }, []);
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (containerRef.current) {
+      // If shift key is pressed or this is a horizontal scroll event
+      if (e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+        e.preventDefault();
+        containerRef.current.scrollLeft += e.deltaX || e.deltaY;
+      }
+      // For trackpad horizontal scrolling
+      else if (e.deltaX !== 0) {
+        e.preventDefault();
+        containerRef.current.scrollLeft += e.deltaX;
+      }
+    }
+  };
 
   return (
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
@@ -200,19 +216,22 @@ export default function Home() {
           </RevealText>
           <motion.div
             ref={containerRef}
-            className="overflow-hidden"
+            className="overflow-x-auto overflow-y-hidden scrollbar-hide"
+            onWheel={handleWheel}
           >
             <motion.div
               className="flex gap-12 px-6 md:px-12"
               drag="x"
               dragConstraints={dragConstraints}
-              dragElastic={0.05}
+              dragElastic={0.1}
               dragTransition={{ 
-                bounceStiffness: 200,
-                bounceDamping: 40
+                bounceStiffness: 100,
+                bounceDamping: 20
               }}
-              whileTap={{ cursor: "none" }}
-              style={{ cursor: "none" }}
+              onDragStart={() => setIsDragging(true)}
+              onDragEnd={() => setIsDragging(false)}
+              whileTap={{ cursor: isDragging ? "grabbing" : "grab" }}
+              style={{ cursor: isDragging ? "grabbing" : "grab" }}
             >
               {projects.map((project, index) => (
                 <motion.div

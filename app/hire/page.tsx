@@ -240,7 +240,7 @@ export default function HirePage() {
               value={formData.projectType}
               onChange={(e) => setFormData(prev => ({ ...prev, projectType: e.target.value }))}
               required
-              className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors appearance-none md:cursor-none cursor-none"
+              className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors appearance-none"
             >
               <option value="">select a project type</option>
               <option value="personal">personal website / portfolio</option>
@@ -263,7 +263,7 @@ export default function HirePage() {
                   onChange={(e) => setFormData(prev => ({ ...prev, otherProjectType: e.target.value }))}
                   required
                   placeholder="describe your project type"
-                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors md:cursor-none cursor-none"
+                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors"
                 />
               </div>
             )}
@@ -280,7 +280,7 @@ export default function HirePage() {
                 value={formData.timeline}
                 onChange={(e) => setFormData(prev => ({ ...prev, timeline: e.target.value }))}
                 required
-                className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors appearance-none md:cursor-none cursor-none"
+                className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors appearance-none"
               >
                 <option value="">select a timeline</option>
                 <option value="1_month">within 1 month</option>
@@ -298,7 +298,7 @@ export default function HirePage() {
                 value={formData.budget}
                 onChange={(e) => setFormData(prev => ({ ...prev, budget: e.target.value }))}
                 required
-                className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors appearance-none md:cursor-none cursor-none"
+                className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors appearance-none"
               >
                 <option value="">select a budget range</option>
                 <option value="500_1k">£500 - £1,000</option>
@@ -318,7 +318,7 @@ export default function HirePage() {
                 required
                 rows={4}
                 placeholder="What features do you need? Any specific requirements or ideas?"
-                className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors resize-none md:cursor-none cursor-none"
+                className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors resize-none"
               ></textarea>
             </div>
           </div>
@@ -337,7 +337,7 @@ export default function HirePage() {
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                   required
-                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors md:cursor-none cursor-none"
+                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors"
                 />
               </div>
 
@@ -351,7 +351,7 @@ export default function HirePage() {
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   required
-                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors md:cursor-none cursor-none"
+                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors"
                 />
               </div>
             </div>
@@ -365,7 +365,7 @@ export default function HirePage() {
                 id="company"
                 value={formData.company}
                 onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
-                className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors md:cursor-none cursor-none"
+                className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors"
               />
             </div>
           </div>
@@ -381,13 +381,13 @@ export default function HirePage() {
       <nav className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50">
         <MinimalLink
           href="/"
-          className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors cursor-none"
+          className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors cursor-pointer"
         >
           atanas kyurkchiev
         </MinimalLink>
         <MinimalLink
           href="/#work"
-          className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors cursor-none"
+          className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors cursor-pointer"
         >
           back to work
         </MinimalLink>
@@ -415,7 +415,7 @@ export default function HirePage() {
                     formRef.current?.scrollIntoView({ behavior: "smooth" });
                     playClick();
                   }}
-                  className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-6 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors cursor-none"
+                  className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-6 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
                 >
                   start a project
                 </button>
@@ -424,7 +424,7 @@ export default function HirePage() {
                     processRef.current?.scrollIntoView({ behavior: "smooth" });
                     playClick();
                   }}
-                  className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-6 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors cursor-none"
+                  className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-6 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
                 >
                   what&apos;s the process?
                 </button>
@@ -449,7 +449,7 @@ export default function HirePage() {
               {steps.map((step, index) => (
                 <RevealText key={`step-${step.title}-${index}`}>
                   <div
-                    className="group relative p-2 border border-neutral-200 dark:border-neutral-800 bg-neutral-100/50 dark:bg-neutral-800/50 backdrop-blur-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-none"
+                    className="group relative p-2 border border-neutral-200 dark:border-neutral-800 bg-neutral-100/50 dark:bg-neutral-800/50 backdrop-blur-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
                   >
                     <div className="w-8 h-8 bg-neutral-50 dark:bg-neutral-900 rounded-full border border-neutral-200 dark:border-neutral-800 flex items-center justify-center text-sm mb-2">
                       {index + 1}
@@ -556,7 +556,7 @@ export default function HirePage() {
                   <button
                     type="button"
                     onClick={prevStep}
-                    className={`px-6 py-2 border border-neutral-300 dark:border-neutral-700 rounded cursor-none ${
+                    className={`px-6 py-2 border border-neutral-300 dark:border-neutral-700 rounded cursor-pointer ${
                       currentStep === 0
                         ? 'opacity-50 cursor-not-allowed'
                         : 'hover:bg-neutral-100 dark:hover:bg-neutral-800'
@@ -570,7 +570,7 @@ export default function HirePage() {
                     <button
                       type="button"
                       onClick={handleFormSubmit}
-                      className="px-6 py-2 bg-neutral-900 dark:bg-neutral-100 text-neutral-100 dark:text-neutral-900 rounded hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors cursor-none"
+                      className="px-6 py-2 bg-neutral-900 dark:bg-neutral-100 text-neutral-100 dark:text-neutral-900 rounded hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors cursor-pointer"
                     >
                       submit
                     </button>
@@ -578,7 +578,7 @@ export default function HirePage() {
                     <button
                       type="button"
                       onClick={nextStep}
-                      className="px-6 py-2 bg-neutral-900 dark:bg-neutral-100 text-neutral-100 dark:text-neutral-900 rounded hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors cursor-none"
+                      className="px-6 py-2 bg-neutral-900 dark:bg-neutral-100 text-neutral-100 dark:text-neutral-900 rounded hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors cursor-pointer"
                     >
                       next
                     </button>

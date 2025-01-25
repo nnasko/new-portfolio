@@ -5,7 +5,6 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { SoundProvider } from './SoundProvider';
 import { ToastProvider } from './Toast';
-import { MouseEffect } from './MouseEffect';
 import { PageLoadProgress } from './PageLoadProgress';
 import { ScrollToTop } from './ScrollToTop';
 import { ThemeProvider } from '../context/ThemeContext';
@@ -34,7 +33,7 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setPrevPathname(pathname);
-    setIsProjectPage(pathname.includes('/work/'));
+    setIsProjectPage(pathname.includes('/work/') || pathname === '/hire' || pathname === '/cv');
   }, [pathname]);
 
   const { enter, exit } = getTransitionDirection(pathname, prevPathname);
@@ -59,7 +58,6 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
     <ThemeProvider>
       <ToastProvider>
         <SoundProvider>
-          <MouseEffect />
           <ThemeToggle />
           <ScrollProgress />
           <PageLoadProgress />

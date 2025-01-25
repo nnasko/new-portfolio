@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useMotionValue, animate } from "framer-motion";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { use, Suspense } from "react";
@@ -10,6 +10,7 @@ import { MinimalLink } from "../../components/MinimalLink";
 import { useSound } from "../../components/SoundProvider";
 import { ReadingTime } from "../../components/ReadingTime";
 import { ViewCounter } from "../../components/ViewCounter";
+import { useState, useEffect, useRef } from "react";
 
 const projects = {
   surplush: {
@@ -200,6 +201,235 @@ const projects = {
   },
 };
 
+function ImageGalleryWheel({ images, title }: { images: string[], title: string }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dragX = useMotionValue(0);
+  
+  useEffect(() => {
+    const updateDimensions = () => {
+      const width = window.innerWidth;
+      const imageWidth = width > 768 ? Math.min(800, width * 0.5) : width - 48;
+      const imageHeight = (imageWidth * 9) / 16;
+      
+      setDimensions({
+        width: imageWidth,
+        height: imageHeight
+      });
+    };
+
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+
+  const handleDragStart = () => {
+    if (isAnimating) return false;
+    setIsDragging(true);
+  };
+
+  const handleDragEnd = (event: any, info: any) => {
+    if (isAnimating) return;
+    setIsDragging(false);
+    
+    const offset = info.offset.x;
+    const velocity = info.velocity.x;
+    const threshold = dimensions.width * 0.15;
+    
+    if (Math.abs(offset) > threshold || Math.abs(velocity) > 300) {
+      const direction = offset > 0 || velocity > 300 ? -1 : 1;
+      const newIndex = (currentIndex + direction + images.length) % images.length;
+      
+      setIsAnimating(true);
+      dragX.set(0);
+      setCurrentIndex(newIndex);
+    }
+
+    animate(dragX, 0, {
+      type: "spring",
+      stiffness: 200,
+      damping: 25,
+      velocity: info.velocity.x * 0.5,
+      onComplete: () => {
+        setIsAnimating(false);
+      }
+    });
+  };
+
+  const animateToIndex = (index: number, instant = false) => {
+    if (isAnimating || isDragging) return;
+    
+    setIsAnimating(true);
+    setCurrentIndex(index);
+
+    if (instant) {
+      dragX.set(0);
+      setIsAnimating(false);
+    } else {
+      // Single smooth animation
+      animate(dragX, 0, {
+        type: "spring",
+        stiffness: 150,
+        damping: 22,
+        onComplete: () => {
+          setIsAnimating(false);
+        }
+      });
+    }
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (isAnimating || isDragging) return;
+    
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+      e.preventDefault();
+      const direction = e.deltaX > 0 ? 1 : -1;
+      const newIndex = (currentIndex + direction + images.length) % images.length;
+      animateToIndex(newIndex);
+    }
+  };
+
+  if (dimensions.width === 0) return null;
+
+  const getStackStyles = (index: number) => {
+    const totalImages = images.length;
+    const position = (index - currentIndex + totalImages) % totalImages;
+    
+    let zIndex = totalImages - Math.abs(position);
+    if (position === 0) zIndex = totalImages;
+
+    let translateX = 0;
+    let translateZ = 0;
+    let rotateY = 0;
+    let opacity = 1;
+    let scale = 1;
+    
+    const currentDrag = dragX.get();
+    
+    if (position === 0) {
+      // Current image
+      translateZ = 50;
+      translateX = currentDrag;
+      scale = 1.04;
+    } else if (position === 1 || position === -totalImages + 1) {
+      // Next image
+      translateX = dimensions.width * 0.75;
+      translateZ = -50;
+      rotateY = -15;
+      opacity = 0.7;
+      scale = 0.96;
+      if (currentDrag < 0) {
+        const progress = Math.min(Math.abs(currentDrag) / dimensions.width, 1);
+        translateX += currentDrag * 0.5;
+        rotateY += progress * 15;
+        opacity = 0.7 + progress * 0.3;
+        scale = 0.96 + progress * 0.08;
+      }
+    } else if (position === totalImages - 1 || position === -1) {
+      // Previous image
+      translateX = -dimensions.width * 0.75;
+      translateZ = -50;
+      rotateY = 15;
+      opacity = 0.7;
+      scale = 0.96;
+      if (currentDrag > 0) {
+        const progress = Math.min(currentDrag / dimensions.width, 1);
+        translateX += currentDrag * 0.5;
+        rotateY -= progress * 15;
+        opacity = 0.7 + progress * 0.3;
+        scale = 0.96 + progress * 0.08;
+      }
+    } else if (position > 1) {
+      // Stack to the right
+      translateX = dimensions.width * (0.75 + position * 0.1);
+      translateZ = -100 - position * 25;
+      rotateY = -15;
+      opacity = 0.5;
+      scale = 0.92;
+    } else {
+      // Stack to the left
+      translateX = -dimensions.width * (0.75 + Math.abs(position) * 0.1);
+      translateZ = -100 - Math.abs(position) * 25;
+      rotateY = 15;
+      opacity = 0.5;
+      scale = 0.92;
+    }
+
+    return {
+      zIndex,
+      transform: `translate3d(${translateX}px, 0, ${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
+      opacity,
+      transition: isAnimating ? 'all 0.3s cubic-bezier(0.2, 0, 0.2, 1)' : 'none',
+    };
+  };
+
+  return (
+    <div className="w-full mb-24 relative">
+      <motion.div 
+        ref={containerRef}
+        className="relative h-[500px] md:h-[600px] flex items-center cursor-grab active:cursor-grabbing"
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.1}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onWheel={handleWheel}
+        style={{ x: dragX }}
+      >
+        <div className="absolute inset-0 flex items-center justify-center perspective-[2000px]">
+          <div className="relative preserve-3d w-full h-full flex items-center justify-center">
+            {images.map((image, index) => (
+              <motion.div
+                key={image}
+                className="absolute origin-center preserve-3d"
+                style={{
+                  width: dimensions.width,
+                  height: dimensions.height,
+                  ...getStackStyles(index),
+                }}
+              >
+                <div className="relative w-full h-full">
+                  <Image
+                    src={image}
+                    alt={`${title} - image ${index + 1}`}
+                    fill
+                    sizes={`(max-width: 768px) 100vw, 800px`}
+                    quality={90}
+                    className="object-contain"
+                    priority={index === 0}
+                    draggable={false}
+                  />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+      
+      {/* Navigation dots */}
+      <div className="flex justify-center gap-3 mt-8">
+        {images.map((_, index) => (
+          <motion.button
+            key={index}
+            onClick={() => !isAnimating && animateToIndex(index)}
+            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+              index === currentIndex 
+                ? 'bg-neutral-800 dark:bg-neutral-200 scale-125' 
+                : 'bg-neutral-300 dark:bg-neutral-700 hover:bg-neutral-400 dark:hover:bg-neutral-600'
+            }`}
+            whileHover={{ scale: 1.2 }}
+            whileTap={{ scale: 0.9 }}
+            disabled={isAnimating}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ProjectContent({ slug }: { slug: string }) {
   const project = projects[slug as keyof typeof projects];
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -264,52 +494,10 @@ function ProjectContent({ slug }: { slug: string }) {
           </div>
         </div>
 
-        {/* project images */}
-        <div className="grid md:grid-cols-[1.5fr,1fr] gap-6 mb-24">
-          {/* Main large image */}
-          <RevealText>
-            <motion.div
-              initial={{ scale: 0.95 }}
-              whileInView={{ scale: 1 }}
-              transition={{ duration: 0.8 }}
-              className="relative h-[75vh] w-full"
-            >
-              <Image
-                src={images[0]}
-                alt={`${project.title} - main image`}
-                fill
-                sizes="(max-width: 768px) 100vw, 60vw"
-                quality={90}
-                className="object-contain grayscale hover:grayscale-0 transition-all"
-                priority
-              />
-            </motion.div>
-          </RevealText>
-
-          {/* Two smaller stacked images */}
-          <div className="grid grid-rows-2 gap-6">
-            {images.slice(1, 3).map((image, index) => (
-              <RevealText key={image}>
-                <motion.div
-                  initial={{ scale: 0.95 }}
-                  whileInView={{ scale: 1 }}
-                  transition={{ duration: 0.8 }}
-                  className="relative h-[35vh] w-full"
-                >
-                  <Image
-                    src={image}
-                    alt={`${project.title} - detail ${index + 1}`}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 35vw"
-                    quality={90}
-                    className="object-contain grayscale hover:grayscale-0 transition-all"
-                    priority={index === 0}
-                  />
-                </motion.div>
-              </RevealText>
-            ))}
-          </div>
-        </div>
+        {/* project images - replaced with gallery wheel */}
+        <RevealText>
+          <ImageGalleryWheel images={images} title={project.title} />
+        </RevealText>
 
         {/* project content */}
         <div className="grid md:grid-cols-[2fr,1fr] gap-12 max-w-6xl">

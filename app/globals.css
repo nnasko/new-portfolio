@@ -38,24 +38,6 @@
   body {
     @apply antialiased;
   }
-
-  /* Hide cursor on interactive elements */
-  a,
-  button,
-  [role="button"],
-  select,
-  input[type="submit"],
-  input[type="reset"],
-  input[type="button"] {
-    cursor: none;
-  }
-
-  /* Ensure cursor is hidden on hover states too */
-  a:hover,
-  button:hover,
-  [role="button"]:hover {
-    cursor: none;
-  }
 }
 
 /* Custom Scrollbar */
