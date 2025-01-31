@@ -81,7 +81,7 @@ const projects = {
       "prisma",
       "mysql",
     ],
-    link: "https://dev.surplush.co.uk",
+    link: "https://surplush.co.uk",
     year: "2024 - 2025",
   },
   kronos: {
