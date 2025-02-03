@@ -13,6 +13,38 @@ import { ViewCounter } from "../../components/ViewCounter";
 import { useState, useEffect, useRef } from "react";
 import { siteConfig } from "../../metadata";
 
+interface Project {
+  title: string;
+  description: string;
+  fullDescription: string;
+  images: string[];
+  mobileImages: string[];
+  tech?: string[];
+  link: string;
+  year: string;
+}
+
+interface ProjectSchema {
+  "@context": "https://schema.org";
+  "@type": "SoftwareApplication";
+  name: string;
+  description: string;
+  applicationCategory: "WebApplication";
+  operatingSystem: "Any";
+  author: {
+    "@type": "Person";
+    name: string;
+    url: string;
+  };
+  datePublished?: string;
+  offers: {
+    "@type": "Offer";
+    availability: "https://schema.org/InStock";
+    price: string;
+    priceCurrency: string;
+  };
+}
+
 const projects = {
   surplush: {
     title: "surplush",
@@ -434,7 +466,7 @@ function ImageGalleryWheel({ images, title }: { images: string[], title: string 
   );
 }
 
-const getProjectSchema = (project: any) => ({
+const getProjectSchema = (project: Project): ProjectSchema => ({
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   name: project.title,
@@ -451,7 +483,7 @@ const getProjectSchema = (project: any) => ({
     "@type": "Offer",
     availability: "https://schema.org/InStock",
     price: "0",
-    priceCurrency: "USD"
+    priceCurrency: "GBP"
   }
 });
 
