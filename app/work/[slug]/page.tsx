@@ -11,6 +11,7 @@ import { useSound } from "../../components/SoundProvider";
 import { ReadingTime } from "../../components/ReadingTime";
 import { ViewCounter } from "../../components/ViewCounter";
 import { useState, useEffect, useRef } from "react";
+import { siteConfig } from "../../metadata";
 
 const projects = {
   surplush: {
@@ -433,6 +434,27 @@ function ImageGalleryWheel({ images, title }: { images: string[], title: string 
   );
 }
 
+const getProjectSchema = (project: any) => ({
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: project.title,
+  description: project.description,
+  applicationCategory: "WebApplication",
+  operatingSystem: "Any",
+  author: {
+    "@type": "Person",
+    name: siteConfig.author,
+    url: siteConfig.url
+  },
+  datePublished: project.year?.split(" - ")[0],
+  offers: {
+    "@type": "Offer",
+    availability: "https://schema.org/InStock",
+    price: "0",
+    priceCurrency: "USD"
+  }
+});
+
 function ProjectContent({ slug }: { slug: string }) {
   const project = projects[slug as keyof typeof projects];
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -445,122 +467,130 @@ function ProjectContent({ slug }: { slug: string }) {
   const images = isMobile ? project.mobileImages : project.images;
 
   return (
-    <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
-      {/* navigation */}
-      <nav className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50">
-        <MinimalLink href="/" className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors">
-          atanas kyurkchiev
-        </MinimalLink>
-        <MinimalLink
-          href="/#work"
-          className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-        >
-          back to work
-        </MinimalLink>
-      </nav>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(getProjectSchema(project))
+        }}
+      />
+      <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
+        {/* navigation */}
+        <nav className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50">
+          <MinimalLink href="/" className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors">
+            atanas kyurkchiev
+          </MinimalLink>
+          <MinimalLink
+            href="/#work"
+            className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+          >
+            back to work
+          </MinimalLink>
+        </nav>
 
-      <div className="pt-24 px-6 md:px-12 max-w-7xl mx-auto">
-        {/* project header */}
-        <div className="max-w-3xl mb-16">
-          <RevealText>
-            <h1 className="text-3xl mb-4">{project.title}</h1>
-          </RevealText>
-          <RevealText>
-            <p className="text-lg text-neutral-600 dark:text-neutral-400 mb-6">
-              {project.description}
-            </p>
-          </RevealText>
-          <div className="flex flex-wrap gap-4 items-center text-sm">
+        <div className="pt-24 px-6 md:px-12 max-w-7xl mx-auto">
+          {/* project header */}
+          <div className="max-w-3xl mb-16">
             <RevealText>
-              <span>{project.year}</span>
+              <h1 className="text-3xl mb-4">{project.title}</h1>
             </RevealText>
-            <span>•</span>
             <RevealText>
-              <ReadingTime content={project.fullDescription} />
+              <p className="text-lg text-neutral-600 dark:text-neutral-400 mb-6">
+                {project.description}
+              </p>
             </RevealText>
-            <span>•</span>
-            <RevealText>
-              <ViewCounter slug={slug} />
-            </RevealText>
-            <span>•</span>
-            <RevealText>
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-                onClick={playClick}
-              >
-                view live site
-              </a>
-            </RevealText>
-          </div>
-        </div>
-
-        {/* project images - replaced with gallery wheel */}
-        <RevealText>
-          <ImageGalleryWheel images={images} title={project.title} />
-        </RevealText>
-
-        {/* project content */}
-        <div className="grid md:grid-cols-[2fr,1fr] gap-12 max-w-6xl">
-          {/* main content */}
-          <div className="space-y-8 text-sm">
-            {project.fullDescription.split("\n\n").map((paragraph, index) => (
-              <RevealText key={index}>
-                <p className="leading-relaxed">{paragraph}</p>
+            <div className="flex flex-wrap gap-4 items-center text-sm">
+              <RevealText>
+                <span>{project.year}</span>
               </RevealText>
-            ))}
+              <span>•</span>
+              <RevealText>
+                <ReadingTime content={project.fullDescription} />
+              </RevealText>
+              <span>•</span>
+              <RevealText>
+                <ViewCounter slug={slug} />
+              </RevealText>
+              <span>•</span>
+              <RevealText>
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+                  onClick={playClick}
+                >
+                  view live site
+                </a>
+              </RevealText>
+            </div>
           </div>
 
-          {/* tech stack sidebar */}
-          <div className="space-y-8">
-            <RevealText>
-              <div className="sticky top-24">
-                <h3 className="text-sm font-medium mb-4">Technologies Used</h3>
-                <div className="flex flex-wrap gap-2">
-                  {project.tech?.map((tech) => (
-                    <span
-                      key={tech}
-                      className="text-xs px-3 py-1.5 border border-neutral-200 dark:border-neutral-700 rounded-full"
+          {/* project images - replaced with gallery wheel */}
+          <RevealText>
+            <ImageGalleryWheel images={images} title={project.title} />
+          </RevealText>
+
+          {/* project content */}
+          <div className="grid md:grid-cols-[2fr,1fr] gap-12 max-w-6xl">
+            {/* main content */}
+            <div className="space-y-8 text-sm">
+              {project.fullDescription.split("\n\n").map((paragraph, index) => (
+                <RevealText key={index}>
+                  <p className="leading-relaxed">{paragraph}</p>
+                </RevealText>
+              ))}
+            </div>
+
+            {/* tech stack sidebar */}
+            <div className="space-y-8">
+              <RevealText>
+                <div className="sticky top-24">
+                  <h3 className="text-sm font-medium mb-4">Technologies Used</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {project.tech?.map((tech) => (
+                      <span
+                        key={tech}
+                        className="text-xs px-3 py-1.5 border border-neutral-200 dark:border-neutral-700 rounded-full"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </RevealText>
+            </div>
+          </div>
+
+          {/* Call to action section */}
+          <div className="relative w-full border-t border-neutral-200 dark:border-neutral-800 mt-32">
+            <div className="max-w-3xl mx-auto py-32">
+              <RevealText>
+                <div className="text-center px-6 md:px-12">
+                  <p className="text-2xl sm:text-3xl mb-12">
+                    ready to build your next digital experience?
+                  </p>
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                    <MinimalLink
+                      href="/hire"
+                      className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-8 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
                     >
-                      {tech}
-                    </span>
-                  ))}
+                      start a project
+                    </MinimalLink>
+                    <MinimalLink
+                      href="/#work"
+                      className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-8 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                    >
+                      view more work
+                    </MinimalLink>
+                  </div>
                 </div>
-              </div>
-            </RevealText>
+              </RevealText>
+            </div>
           </div>
         </div>
-
-        {/* Call to action section */}
-        <div className="relative w-full border-t border-neutral-200 dark:border-neutral-800 mt-32">
-          <div className="max-w-3xl mx-auto py-32">
-            <RevealText>
-              <div className="text-center px-6 md:px-12">
-                <p className="text-2xl sm:text-3xl mb-12">
-                  ready to build your next digital experience?
-                </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                  <MinimalLink
-                    href="/hire"
-                    className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-8 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-                  >
-                    start a project
-                  </MinimalLink>
-                  <MinimalLink
-                    href="/#work"
-                    className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-8 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-                  >
-                    view more work
-                  </MinimalLink>
-                </div>
-              </div>
-            </RevealText>
-          </div>
-        </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }
 

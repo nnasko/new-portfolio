@@ -10,6 +10,26 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
 });
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: siteConfig.author,
+  url: siteConfig.url,
+  jobTitle: "Software Developer",
+  description: siteConfig.description,
+  sameAs: [
+    "https://github.com/nnasko",
+    "https://www.linkedin.com/in/atanas-kyurkchiev-36a609291/",
+  ],
+  knowsAbout: [
+    "Web Development",
+    "Full Stack Development",
+    "Next.js",
+    "TypeScript",
+    "React",
+  ],
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
@@ -73,6 +93,10 @@ export default function RootLayout({
         <link rel="canonical" href={siteConfig.url} />
         <meta name="theme-color" content="#171717" />
         <link rel="manifest" href="/manifest.json" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body className={`${spaceGrotesk.variable} font-sans text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-900 transition-colors`}>
         <ClientLayout>{children}</ClientLayout>
