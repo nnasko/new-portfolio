@@ -19,3 +19,36 @@ model ProjectViews {
   views     Int      @default(0)
   updatedAt DateTime @updatedAt
 }
+
+model Invoice {
+  id            String        @id @default(cuid())
+  invoiceNumber String        @unique
+  date          DateTime
+  dueDate       DateTime
+  clientName    String
+  clientEmail   String
+  clientAddress String
+  items         InvoiceItem[]
+  notes         String?
+  status        InvoiceStatus @default(UNPAID)
+  total         Float
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  lastReminder  DateTime?
+  reminderCount Int          @default(0)
+}
+
+model InvoiceItem {
+  id          String  @id @default(cuid())
+  description String
+  quantity    Int
+  price       Float
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  invoiceId   String
+}
+
+enum InvoiceStatus {
+  PAID
+  UNPAID
+  OVERDUE
+}
