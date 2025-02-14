@@ -1,9 +1,13 @@
-import puppeteer from 'puppeteer';
+import chromium from '@sparticuz/chromium';
+import puppeteer from 'puppeteer-core';
 import { generateInvoiceHTML } from '@/app/api/invoice/generate/route';
 import { Invoice, InvoiceItem } from '@prisma/client';
 
 export async function generateInvoicePDF(invoice: Invoice & { items: InvoiceItem[] }): Promise<Buffer> {
   const browser = await puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(),
     headless: true,
   });
 
