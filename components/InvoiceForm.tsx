@@ -88,20 +88,19 @@ export function InvoiceForm() {
         body: JSON.stringify(invoiceData),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to generate invoice');
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to generate invoice');
       }
 
-      const result = await response.json();
-      console.log('Invoice generated:', result);
-      
       // Reset form and show success dialog
       setInvoiceData(defaultInvoiceData);
-      setSuccessMessage(`Invoice ${result.invoice.invoiceNumber} has been generated and sent to ${invoiceData.clientEmail}. a copy has been sent to your email as well.`);
+      setSuccessMessage(`Invoice ${result.data.invoice.invoiceNumber} has been generated and sent to ${invoiceData.clientEmail}. a copy has been sent to your email as well.`);
       setSuccessDialog(true);
     } catch (error) {
       console.error('Error:', error);
-      alert('Failed to generate invoice. Please try again.');
+      alert(error instanceof Error ? error.message : 'Failed to generate invoice. Please try again.');
     }
   };
 

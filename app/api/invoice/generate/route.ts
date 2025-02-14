@@ -253,6 +253,9 @@ export function generateInvoiceHTML(data: InvoiceData) {
 }
 
 export async function POST(request: Request) {
+  let generatedInvoiceNumber: string | null = null;
+  let emailResponse: any = null;
+
   try {
     // Check authentication
     const cookieStore = await cookies();
@@ -273,8 +276,8 @@ export async function POST(request: Request) {
     const data: InvoiceData = await request.json();
     
     // Generate unique invoice number
-    const invoiceNumber = await generateUniqueInvoiceNumber();
-    data.invoiceNumber = invoiceNumber;
+    generatedInvoiceNumber = await generateUniqueInvoiceNumber();
+    data.invoiceNumber = generatedInvoiceNumber;
 
     // Calculate total
     const total = data.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
@@ -317,6 +320,7 @@ export async function POST(request: Request) {
       from: process.env.CONTACT_EMAIL!,
       to: data.clientEmail,
       subject: `invoice ${data.invoiceNumber}`,
+      cc: process.env.CONTACT_EMAIL!,
       html: emailHtml,
       attachments: [
         {
@@ -330,6 +334,8 @@ export async function POST(request: Request) {
       console.error('Error sending email:', emailError);
       throw new Error(`Failed to send email: ${emailError.message}`);
     }
+
+    emailResponse = emailData;
 
     // Save to database
     const invoice = await prisma.invoice.create({
@@ -351,19 +357,50 @@ export async function POST(request: Request) {
             price: item.price
           }))
         }
-      }
+      },
+      include: { items: true }
     });
+
+    console.log('Invoice created successfully:', invoice);
 
     return NextResponse.json({ 
       success: true,
       data: {
         invoice,
-        emailData
+        emailData: emailResponse
       }
     });
 
   } catch (error) {
-    console.error('Error generating invoice:', error);
+    // Log the full error for debugging
+    console.error('Full error details:', error);
+    
+    // Check if the operation was actually successful despite the error
+    if (generatedInvoiceNumber) {
+      try {
+        const createdInvoice = await prisma.invoice.findUnique({
+          where: { 
+            invoiceNumber: generatedInvoiceNumber
+          },
+          include: { items: true }
+        });
+
+        if (createdInvoice) {
+          console.log('Invoice exists despite error:', createdInvoice);
+          return NextResponse.json({ 
+            success: true,
+            data: {
+              invoice: createdInvoice,
+              emailData: emailResponse
+            },
+            warning: 'Operation succeeded but encountered a non-critical error'
+          });
+        }
+      } catch (findError) {
+        console.error('Error checking invoice existence:', findError);
+      }
+    }
+
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return NextResponse.json({ 
       success: false,
