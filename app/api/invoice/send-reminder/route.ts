@@ -120,6 +120,11 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error('Error sending reminder:', error);
-    return new NextResponse('Error sending reminder', { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    return NextResponse.json({ 
+      success: false,
+      error: errorMessage,
+      details: process.env.NODE_ENV === 'development' ? error : undefined
+    }, { status: 500 });
   }
 } 

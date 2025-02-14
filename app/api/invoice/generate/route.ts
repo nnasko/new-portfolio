@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { Resend } from 'resend';
 import { prisma } from '@/lib/prisma';
 import { generateInvoicePDF } from '@/lib/pdf';
+import { InvoiceStatus } from '@prisma/client';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -261,16 +262,79 @@ export async function POST(request: Request) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const data = await request.json();
-    const total = data.items.reduce((sum: number, item: InvoiceItemData) => sum + (item.quantity * item.price), 0);
+    // Validate environment variables
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY is not configured');
+    }
+    if (!process.env.CONTACT_EMAIL) {
+      throw new Error('CONTACT_EMAIL is not configured');
+    }
 
+    const data: InvoiceData = await request.json();
+    
     // Generate unique invoice number
     const invoiceNumber = await generateUniqueInvoiceNumber();
+    data.invoiceNumber = invoiceNumber;
 
-    // Save invoice to database
+    // Calculate total
+    const total = data.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+
+    // Create invoice object for PDF generation
+    const invoiceForPdf = {
+      id: 'temp',
+      invoiceNumber: data.invoiceNumber,
+      date: new Date(data.date),
+      dueDate: new Date(data.dueDate),
+      clientName: data.clientName,
+      clientEmail: data.clientEmail,
+      clientAddress: data.clientAddress,
+      notes: data.notes || null,
+      total,
+      status: 'PENDING' as InvoiceStatus,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      lastReminder: null,
+      reminderCount: 0,
+      items: data.items.map(item => ({
+        id: 'temp',
+        invoiceId: 'temp',
+        description: item.description,
+        quantity: item.quantity,
+        price: item.price,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }))
+    };
+
+    // Generate PDF
+    const pdfBuffer = await generateInvoicePDF(invoiceForPdf);
+
+    // Generate email HTML
+    const emailHtml = generateInvoiceHTML(data);
+
+    // Send email with Resend
+    const { data: emailData, error: emailError } = await resend.emails.send({
+      from: process.env.CONTACT_EMAIL!,
+      to: data.clientEmail,
+      subject: `invoice ${data.invoiceNumber}`,
+      html: emailHtml,
+      attachments: [
+        {
+          filename: `invoice-${data.invoiceNumber.toLowerCase()}.pdf`,
+          content: Buffer.from(pdfBuffer).toString('base64'),
+        },
+      ],
+    });
+
+    if (emailError) {
+      console.error('Error sending email:', emailError);
+      throw new Error(`Failed to send email: ${emailError.message}`);
+    }
+
+    // Save to database
     const invoice = await prisma.invoice.create({
       data: {
-        invoiceNumber,
+        invoiceNumber: data.invoiceNumber,
         date: new Date(data.date),
         dueDate: new Date(data.dueDate),
         clientName: data.clientName,
@@ -278,103 +342,33 @@ export async function POST(request: Request) {
         clientAddress: data.clientAddress,
         notes: data.notes,
         total,
+        status: 'PENDING' as InvoiceStatus,
+        reminderCount: 0,
         items: {
-          create: data.items.map((item: InvoiceItemData) => ({
+          create: data.items.map(item => ({
             description: item.description,
             quantity: item.quantity,
-            price: item.price,
-          })),
-        },
-      },
-      include: {
-        items: true,
-      },
+            price: item.price
+          }))
+        }
+      }
     });
-
-    // Generate PDF
-    const pdfBuffer = await generateInvoicePDF(invoice);
-
-    // Send email with PDF attachment
-    const { data: emailData, error } = await resend.emails.send({
-      from: process.env.CONTACT_EMAIL!,
-      to: data.clientEmail,
-      subject: `invoice ${invoiceNumber} from ${process.env.NEXT_PUBLIC_ACCOUNT_NAME}`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <style>
-              body {
-                font-family: system-ui, -apple-system, sans-serif;
-                color: #1a1a1a;
-                line-height: 1.5;
-                margin: 0;
-                padding: 0;
-                background-color: #f9f9f9;
-              }
-              .container {
-                max-width: 600px;
-                margin: 40px auto;
-                padding: 40px;
-                background-color: #ffffff;
-                border: 1px solid #eaeaea;
-              }
-              p {
-                margin: 0;
-                padding: 0;
-                margin-bottom: 16px;
-                color: #666666;
-              }
-              .highlight {
-                color: #1a1a1a;
-              }
-              .signature {
-                margin-top: 32px;
-                padding-top: 16px;
-                border-top: 1px solid #eaeaea;
-                color: #666666;
-                font-size: 14px;
-              }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <p>hello ${data.clientName.toLowerCase()},</p>
-              <p>please find attached invoice <span class="highlight">${invoiceNumber.toLowerCase()}</span>.</p>
-              <p>payment is due by <span class="highlight">${new Date(data.dueDate).toLocaleDateString('en-GB')}</span>.</p>
-              <p>thank you for your business.</p>
-              <div class="signature">
-                best regards,<br>
-                ${process.env.NEXT_PUBLIC_ACCOUNT_NAME}
-              </div>
-            </div>
-          </body>
-        </html>
-      `,
-      attachments: [
-        {
-          filename: `invoice-${invoiceNumber.toLowerCase()}.pdf`,
-          content: Buffer.from(pdfBuffer).toString('base64'),
-        },
-      ],
-      cc: process.env.CONTACT_EMAIL,
-    });
-
-    if (error) {
-      console.error('Error sending email:', error);
-      return new NextResponse('Error sending invoice email', { status: 500 });
-    }
 
     return NextResponse.json({ 
-      success: true, 
-      message: 'Invoice generated and sent successfully',
-      data: emailData,
-      invoice,
+      success: true,
+      data: {
+        invoice,
+        emailData
+      }
     });
 
   } catch (error) {
     console.error('Error generating invoice:', error);
-    return new NextResponse('Error generating invoice', { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    return NextResponse.json({ 
+      success: false,
+      error: errorMessage,
+      details: process.env.NODE_ENV === 'development' ? error : undefined
+    }, { status: 500 });
   }
 }
