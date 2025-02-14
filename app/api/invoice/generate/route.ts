@@ -24,6 +24,10 @@ interface InvoiceData {
   notes?: string | null;
 }
 
+interface ResendEmailResponse {
+  id: string;
+}
+
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-GB', {
     style: 'currency',
@@ -254,7 +258,7 @@ export function generateInvoiceHTML(data: InvoiceData) {
 
 export async function POST(request: Request) {
   let generatedInvoiceNumber: string | null = null;
-  let emailResponse: any = null;
+  let emailResponse: ResendEmailResponse | null = null;
 
   try {
     // Check authentication

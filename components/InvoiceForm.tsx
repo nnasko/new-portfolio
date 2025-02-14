@@ -22,6 +22,21 @@ interface InvoiceData {
   notes: string | null;
 }
 
+interface ApiResponse {
+  success: boolean;
+  data?: {
+    invoice: {
+      invoiceNumber: string;
+      clientEmail: string;
+    };
+    emailData: {
+      id: string;
+    };
+  };
+  error?: string;
+  warning?: string;
+}
+
 const webDesignServices = [
   'website design & development',
   'ui/ux design',
@@ -88,7 +103,7 @@ export function InvoiceForm() {
         body: JSON.stringify(invoiceData),
       });
 
-      const result = await response.json();
+      const result: ApiResponse = await response.json();
 
       if (!result.success) {
         throw new Error(result.error || 'Failed to generate invoice');
@@ -96,7 +111,7 @@ export function InvoiceForm() {
 
       // Reset form and show success dialog
       setInvoiceData(defaultInvoiceData);
-      setSuccessMessage(`Invoice ${result.data.invoice.invoiceNumber} has been generated and sent to ${invoiceData.clientEmail}. a copy has been sent to your email as well.`);
+      setSuccessMessage(`Invoice ${result.data!.invoice.invoiceNumber} has been generated and sent to ${invoiceData.clientEmail}. a copy has been sent to your email as well.`);
       setSuccessDialog(true);
     } catch (error) {
       console.error('Error:', error);
