@@ -290,7 +290,7 @@ export async function POST(request: Request) {
       clientAddress: data.clientAddress,
       notes: data.notes || null,
       total,
-      status: 'PENDING' as InvoiceStatus,
+      status: 'UNPAID' as InvoiceStatus,
       createdAt: new Date(),
       updatedAt: new Date(),
       lastReminder: null,
@@ -342,7 +342,7 @@ export async function POST(request: Request) {
         clientAddress: data.clientAddress,
         notes: data.notes,
         total,
-        status: 'PENDING' as InvoiceStatus,
+        status: 'UNPAID' as InvoiceStatus,
         reminderCount: 0,
         items: {
           create: data.items.map(item => ({
