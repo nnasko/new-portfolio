@@ -451,11 +451,11 @@ export default function HirePage() {
                   <div
                     className="group relative p-2 border border-neutral-200 dark:border-neutral-800 bg-neutral-100/50 dark:bg-neutral-800/50 backdrop-blur-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
                   >
-                    <div className="w-8 h-8 bg-neutral-50 dark:bg-neutral-900 rounded-full border border-neutral-200 dark:border-neutral-800 flex items-center justify-center text-sm mb-2">
+                    <div className="w-8 h-8 bg-neutral-50 dark:bg-neutral-900 rounded-none border border-neutral-200 dark:border-neutral-800 flex items-center justify-center text-sm mb-2">
                       {index + 1}
                     </div>
                     <div className="flex items-center gap-4 mb-4">
-                      <div className="p-2 bg-neutral-50 dark:bg-neutral-900 rounded-full">
+                      <div className="p-2 bg-neutral-50 dark:bg-neutral-900 rounded-none">
                         {step.icon}
                       </div>
                       <h3 className="text-base sm:text-lg font-light">
@@ -497,7 +497,7 @@ export default function HirePage() {
                   >
                     <div className="relative">
                       <div
-                        className={`w-8 h-8 mx-auto rounded-full border-2 flex items-center justify-center mb-2 ${
+                        className={`w-8 h-8 mx-auto rounded-none border-2 flex items-center justify-center mb-2 ${
                           index === currentStep
                             ? 'border-neutral-900 dark:border-neutral-100'
                             : index < currentStep

@@ -451,7 +451,7 @@ function ImageGalleryWheel({ images, title }: { images: string[], title: string 
           <motion.button
             key={index}
             onClick={() => !isAnimating && animateToIndex(index)}
-            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+            className={`w-2.5 h-2.5 rounded-none transition-all duration-300 ${
               index === currentIndex 
                 ? 'bg-neutral-800 dark:bg-neutral-200 scale-125' 
                 : 'bg-neutral-300 dark:bg-neutral-700 hover:bg-neutral-400 dark:hover:bg-neutral-600'
@@ -583,7 +583,7 @@ function ProjectContent({ slug }: { slug: string }) {
                     {project.tech?.map((tech) => (
                       <span
                         key={tech}
-                        className="text-xs px-3 py-1.5 border border-neutral-200 dark:border-neutral-700 rounded-full"
+                        className="text-xs px-3 py-1.5 border border-neutral-200 dark:border-neutral-700 rounded-none"
                       >
                         {tech}
                       </span>

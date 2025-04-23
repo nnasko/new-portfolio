@@ -18,6 +18,9 @@ export async function GET() {
       orderBy: {
         date: 'desc',
       },
+      include: {
+        Client: true,
+      }
     });
 
     // Update overdue invoices

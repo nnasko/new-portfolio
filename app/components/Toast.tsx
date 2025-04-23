@@ -44,7 +44,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.9 }}
               transition={{ duration: 0.2 }}
-              className="bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 px-4 py-2 rounded-sm text-sm shadow-lg"
+              className="bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 px-4 py-2 rounded-none text-sm shadow-lg"
             >
               {toast.message}
             </motion.div>

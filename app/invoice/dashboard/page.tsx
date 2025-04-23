@@ -109,7 +109,7 @@ export default function InvoiceDashboard() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-neutral-100 dark:bg-neutral-800 p-6 rounded-lg"
+          className="bg-neutral-100 dark:bg-neutral-800 p-6 rounded-none"
         >
           <h3 className="text-sm text-neutral-500 mb-2">total invoiced</h3>
           <p className="text-2xl font-light">{formatCurrency(stats.totalInvoiced)}</p>
@@ -120,7 +120,7 @@ export default function InvoiceDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-neutral-100 dark:bg-neutral-800 p-6 rounded-lg"
+          className="bg-neutral-100 dark:bg-neutral-800 p-6 rounded-none"
         >
           <h3 className="text-sm text-neutral-500 mb-2">total paid</h3>
           <p className="text-2xl font-light">{formatCurrency(stats.totalPaid)}</p>
@@ -131,7 +131,7 @@ export default function InvoiceDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-neutral-100 dark:bg-neutral-800 p-6 rounded-lg"
+          className="bg-neutral-100 dark:bg-neutral-800 p-6 rounded-none"
         >
           <h3 className="text-sm text-neutral-500 mb-2">total unpaid</h3>
           <p className="text-2xl font-light">{formatCurrency(stats.totalUnpaid)}</p>
@@ -142,7 +142,7 @@ export default function InvoiceDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-neutral-100 dark:bg-neutral-800 p-6 rounded-lg"
+          className="bg-neutral-100 dark:bg-neutral-800 p-6 rounded-none"
         >
           <h3 className="text-sm text-neutral-500 mb-2">total overdue</h3>
           <p className="text-2xl font-light">{formatCurrency(stats.totalOverdue)}</p>
@@ -151,7 +151,7 @@ export default function InvoiceDashboard() {
       </div>
 
       {/* Invoice List */}
-      <div className="bg-neutral-100 dark:bg-neutral-800 rounded-lg overflow-hidden">
+      <div className="bg-neutral-100 dark:bg-neutral-800 rounded-none overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>

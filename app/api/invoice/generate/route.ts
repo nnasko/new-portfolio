@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { Resend } from 'resend';
 import { prisma } from '@/lib/prisma';
 import { generateInvoicePDF } from '@/lib/pdf';
-import { InvoiceStatus } from '@prisma/client';
+import { InvoiceStatus, Client } from '@prisma/client';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -13,13 +13,19 @@ interface InvoiceItemData {
   price: number;
 }
 
-interface InvoiceData {
+interface InvoiceRequestData {
+  date: string;
+  dueDate: string;
+  clientId: string;
+  items: InvoiceItemData[];
+  notes?: string | null;
+}
+
+interface InvoiceGenerationData {
   invoiceNumber: string;
   date: string;
   dueDate: string;
-  clientName: string;
-  clientEmail: string;
-  clientAddress: string;
+  client: Client;
   items: InvoiceItemData[];
   notes?: string | null;
 }
@@ -61,7 +67,7 @@ async function generateUniqueInvoiceNumber(): Promise<string> {
   return `inv-${year}${month}-${sequence.toString().padStart(3, '0')}`;
 }
 
-export function generateInvoiceHTML(data: InvoiceData) {
+export function generateInvoiceHTML(data: InvoiceGenerationData) {
   const total = data.items.reduce((sum: number, item: InvoiceItemData) => sum + (item.quantity * item.price), 0);
   const dueDate = new Date(data.dueDate).toLocaleDateString('en-GB');
   const invoiceDate = new Date(data.date).toLocaleDateString('en-GB');
@@ -198,9 +204,9 @@ export function generateInvoiceHTML(data: InvoiceData) {
 
           <div class="section">
             <div class="section-title">client information</div>
-            <p class="highlight">${data.clientName}</p>
-            <p>${data.clientEmail}</p>
-            <p style="white-space: pre-line">${data.clientAddress}</p>
+            <p class="highlight">${data.client.name}</p>
+            <p>${data.client.email}</p>
+            <p style="white-space: pre-line">${data.client.address}</p>
           </div>
 
           <div class="section">
@@ -259,6 +265,7 @@ export function generateInvoiceHTML(data: InvoiceData) {
 export async function POST(request: Request) {
   let generatedInvoiceNumber: string | null = null;
   let emailResponse: ResendEmailResponse | null = null;
+  let fetchedClient: Client | null = null;
 
   try {
     // Check authentication
@@ -277,32 +284,55 @@ export async function POST(request: Request) {
       throw new Error('CONTACT_EMAIL is not configured');
     }
 
-    const data: InvoiceData = await request.json();
+    // Use updated interface for request body
+    const requestData: InvoiceRequestData = await request.json();
+    
+    // --- Fetch Client Data --- 
+    if (!requestData.clientId) {
+        throw new Error('Client ID is missing from the request');
+    }
+    fetchedClient = await prisma.client.findUnique({
+        where: { id: requestData.clientId },
+    });
+    if (!fetchedClient) {
+        throw new Error(`Client with ID ${requestData.clientId} not found`);
+    }
+    // --- End Fetch Client Data --- 
     
     // Generate unique invoice number
     generatedInvoiceNumber = await generateUniqueInvoiceNumber();
-    data.invoiceNumber = generatedInvoiceNumber;
 
     // Calculate total
-    const total = data.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+    const total = requestData.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
 
-    // Create invoice object for PDF generation
+    // Prepare data for PDF/HTML generation, including the fetched client
+    const generationData: InvoiceGenerationData = {
+        invoiceNumber: generatedInvoiceNumber,
+        date: requestData.date,
+        dueDate: requestData.dueDate,
+        client: fetchedClient,
+        items: requestData.items,
+        notes: requestData.notes
+    };
+
+    // Create invoice object for PDF generation (use fetched client)
     const invoiceForPdf = {
       id: 'temp',
-      invoiceNumber: data.invoiceNumber,
-      date: new Date(data.date),
-      dueDate: new Date(data.dueDate),
-      clientName: data.clientName,
-      clientEmail: data.clientEmail,
-      clientAddress: data.clientAddress,
-      notes: data.notes || null,
+      invoiceNumber: generationData.invoiceNumber,
+      date: new Date(generationData.date),
+      dueDate: new Date(generationData.dueDate),
+      clientName: generationData.client.name,
+      clientEmail: generationData.client.email,
+      clientAddress: generationData.client.address,
+      clientId: generationData.client.id,
+      notes: generationData.notes || null,
       total,
       status: 'UNPAID' as InvoiceStatus,
       createdAt: new Date(),
       updatedAt: new Date(),
       lastReminder: null,
       reminderCount: 0,
-      items: data.items.map(item => ({
+      items: generationData.items.map(item => ({
         id: 'temp',
         invoiceId: 'temp',
         description: item.description,
@@ -316,19 +346,19 @@ export async function POST(request: Request) {
     // Generate PDF
     const pdfBuffer = await generateInvoicePDF(invoiceForPdf);
 
-    // Generate email HTML
-    const emailHtml = generateInvoiceHTML(data);
+    // Generate email HTML using generationData
+    const emailHtml = generateInvoiceHTML(generationData);
 
-    // Send email with Resend
+    // Send email with Resend (use fetched client email)
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: process.env.CONTACT_EMAIL!,
-      to: data.clientEmail,
-      subject: `invoice ${data.invoiceNumber}`,
+      to: fetchedClient.email,
+      subject: `invoice ${generationData.invoiceNumber}`,
       cc: process.env.CONTACT_EMAIL!,
       html: emailHtml,
       attachments: [
         {
-          filename: `invoice-${data.invoiceNumber.toLowerCase()}.pdf`,
+          filename: `invoice-${generationData.invoiceNumber.toLowerCase()}.pdf`,
           content: Buffer.from(pdfBuffer).toString('base64'),
         },
       ],
@@ -341,32 +371,31 @@ export async function POST(request: Request) {
 
     emailResponse = emailData;
 
-    // Save to database
+    // Save to database - link to client using clientId
     const invoice = await prisma.invoice.create({
       data: {
-        invoiceNumber: data.invoiceNumber,
-        date: new Date(data.date),
-        dueDate: new Date(data.dueDate),
-        clientName: data.clientName,
-        clientEmail: data.clientEmail,
-        clientAddress: data.clientAddress,
-        notes: data.notes,
+        invoiceNumber: generationData.invoiceNumber,
+        date: new Date(generationData.date),
+        dueDate: new Date(generationData.dueDate),
+        clientId: fetchedClient.id,
+        notes: generationData.notes,
         total,
         status: 'UNPAID' as InvoiceStatus,
         reminderCount: 0,
         items: {
-          create: data.items.map(item => ({
+          create: generationData.items.map(item => ({
             description: item.description,
             quantity: item.quantity,
             price: item.price
           }))
         }
       },
-      include: { items: true }
+      include: { items: true, Client: true }
     });
 
     console.log('Invoice created successfully:', invoice);
 
+    // Return invoice data including the associated client
     return NextResponse.json({ 
       success: true,
       data: {
@@ -380,13 +409,13 @@ export async function POST(request: Request) {
     console.error('Full error details:', error);
     
     // Check if the operation was actually successful despite the error
-    if (generatedInvoiceNumber) {
+    if (generatedInvoiceNumber && fetchedClient) {
       try {
         const createdInvoice = await prisma.invoice.findUnique({
           where: { 
             invoiceNumber: generatedInvoiceNumber
           },
-          include: { items: true }
+          include: { items: true, Client: true }
         });
 
         if (createdInvoice) {

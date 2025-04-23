@@ -18,24 +18,53 @@ export async function POST(request: Request) {
 
     const { invoiceId } = await request.json();
 
-    // Get invoice details with items
+    // Get invoice details, including Client and items
     const invoice = await prisma.invoice.findUnique({
       where: { id: invoiceId },
-      include: { items: true }
+      include: { 
+        items: true, 
+        Client: true // Include client data
+      }
     });
 
     if (!invoice) {
-      return new NextResponse('Invoice not found', { status: 404 });
+      return NextResponse.json({ success: false, error: 'Invoice not found' }, { status: 404 });
     }
 
-    // Generate PDF
-    const pdfBuffer = await generateInvoicePDF(invoice);
+    // Ensure client data is present
+    if (!invoice.Client) {
+       console.error(`Invoice ${invoiceId} is missing client data. Cannot send reminder.`);
+       return NextResponse.json({ success: false, error: 'Invoice is missing client data' }, { status: 400 });
+    }
 
-    // Send reminder email
+    // --- Prepare data for PDF generation --- 
+    // (Similar to generate/route.ts, create the object generateInvoicePDF expects)
+    const invoiceForPdf = {
+        // Fields directly from invoice record
+        ...invoice, 
+        // Add direct client fields expected by the current pdf function input type
+        clientName: invoice.Client.name,
+        clientEmail: invoice.Client.email,
+        clientAddress: invoice.Client.address,
+        clientId: invoice.Client.id,
+        // Ensure date types match if needed (assuming they are already Date objects here)
+        date: invoice.date, 
+        dueDate: invoice.dueDate, 
+        createdAt: invoice.createdAt,
+        updatedAt: invoice.updatedAt,
+        // items are already included
+    };
+    // --- End Prepare data for PDF --- 
+
+    // Generate PDF using the adapted data structure
+    const pdfBuffer = await generateInvoicePDF(invoiceForPdf);
+
+    // Send reminder email using fetched client details
     const { data: emailData, error } = await resend.emails.send({
       from: process.env.CONTACT_EMAIL!,
-      to: invoice.clientEmail,
+      to: invoice.Client.email, // Use fetched client email
       subject: `reminder: invoice ${invoice.invoiceNumber} payment due`,
+      cc: process.env.CONTACT_EMAIL!, // Add CC back to self
       html: `
         <!DOCTYPE html>
         <html>
@@ -77,7 +106,7 @@ export async function POST(request: Request) {
           </head>
           <body>
             <div class="container">
-              <p>hello ${invoice.clientName.toLowerCase()},</p>
+              <p>hello ${invoice.Client.name.toLowerCase()},</p>
               <p>this is a friendly reminder regarding invoice <span class="highlight">${invoice.invoiceNumber.toLowerCase()}</span> which is currently pending payment.</p>
               <p>i have attached a copy of the invoice for your reference.</p>
               <p>if you have already processed the payment, please disregard this message.</p>
@@ -99,8 +128,9 @@ export async function POST(request: Request) {
     });
 
     if (error) {
-      console.error('Error sending reminder:', error);
-      return new NextResponse('Error sending reminder', { status: 500 });
+      console.error('Error sending reminder email:', error);
+      // Provide more context in the error response
+      return NextResponse.json({ success: false, error: `Failed to send reminder email: ${error.message}` }, { status: 500 });
     }
 
     // Update reminder count and last reminder date
@@ -119,7 +149,7 @@ export async function POST(request: Request) {
     });
 
   } catch (error) {
-    console.error('Error sending reminder:', error);
+    console.error('Error in send-reminder route:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return NextResponse.json({ 
       success: false,

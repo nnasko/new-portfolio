@@ -14,7 +14,7 @@ export const StyleExplanation = () => {
   return (
     <div className="relative inline-flex items-center">
       <div
-        className="w-5 h-5 rounded-full border border-neutral-300 dark:border-neutral-700 text-xs flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
+        className="w-5 h-5 rounded-none border border-neutral-300 dark:border-neutral-700 text-xs flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={() => setIsVisible(false)}
         role="button"
@@ -36,7 +36,7 @@ export const StyleExplanation = () => {
               left: buttonRect.left + (buttonRect.width / 2) - 120, // Center the 240px (w-60) wide popover
             }}
           >
-            <div className="relative w-60 p-3 bg-white dark:bg-neutral-900 text-sm text-neutral-600 dark:text-neutral-400 shadow-lg rounded-lg border border-neutral-200 dark:border-neutral-800">
+            <div className="relative w-60 p-3 bg-white dark:bg-neutral-900 text-sm text-neutral-600 dark:text-neutral-400 shadow-lg rounded-none border border-neutral-200 dark:border-neutral-800">
               <p>
                 this portfolio embraces minimalism through consistent lowercase
                 styling

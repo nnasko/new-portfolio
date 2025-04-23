@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -25,17 +19,16 @@ model Invoice {
   invoiceNumber String        @unique
   date          DateTime
   dueDate       DateTime
-  clientName    String
-  clientEmail   String
-  clientAddress String
-  items         InvoiceItem[]
   notes         String?
   status        InvoiceStatus @default(UNPAID)
   total         Float
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   lastReminder  DateTime?
-  reminderCount Int          @default(0)
+  reminderCount Int           @default(0)
+  clientId      String?
+  Client        Client?       @relation(fields: [clientId], references: [id])
+  items         InvoiceItem[]
 }
 
 model InvoiceItem {
@@ -43,8 +36,18 @@ model InvoiceItem {
   description String
   quantity    Int
   price       Float
-  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   invoiceId   String
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+}
+
+model Client {
+  id        String    @id
+  name      String
+  email     String    @unique
+  address   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  Invoice   Invoice[]
 }
 
 enum InvoiceStatus {
