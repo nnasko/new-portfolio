@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState, FormEvent, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { format } from 'date-fns';
+import { format, subDays, isAfter } from 'date-fns';
 import Link from 'next/link';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { X, Bell, Pencil } from 'lucide-react';
+import { X, Bell, Pencil, Clock, CheckCircle, AlertTriangle, Calendar } from 'lucide-react';
 
 interface Client {
   id: string;
@@ -24,6 +24,10 @@ interface Invoice {
   status: 'PAID' | 'UNPAID' | 'OVERDUE';
   clientId: string | null;
   Client: Client | null;
+  createdAt?: string;
+  updatedAt?: string;
+  lastReminder?: string | null;
+  reminderCount?: number;
 }
 
 interface DashboardStats {
@@ -228,6 +232,50 @@ export default function InvoiceDashboard() {
   };
   // --- End Delete Invoice Handlers ---
 
+  // --- Calculate Advanced Analytics ---
+  const advancedAnalytics = useMemo(() => {
+    if (!invoices.length) {
+      return {
+        recentActivity: [],
+        paymentRate: 0,
+        avgDaysToPayment: 0,
+        upcomingDue: [],
+        statusCounts: { paid: 0, unpaid: 0, overdue: 0 }
+      };
+    }
+
+    // Sort invoices by updatedAt (assuming this field exists) or date for recent activity
+    const sortedByRecent = [...invoices].sort((a, b) => 
+      new Date(b.updatedAt || b.date).getTime() - new Date(a.updatedAt || a.date).getTime()
+    ).slice(0, 5); // Get 5 most recent
+
+    // Calculate payment rate
+    const paymentRate = stats.paidCount / stats.invoiceCount * 100;
+
+    // Find upcoming due invoices (due in the next 7 days)
+    const today = new Date();
+    const nextWeek = subDays(today, -7); // Add 7 days
+    const upcomingDue = invoices.filter(invoice => 
+      invoice.status !== 'PAID' &&
+      isAfter(new Date(invoice.dueDate), today) && 
+      !isAfter(new Date(invoice.dueDate), nextWeek)
+    ).sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+
+    // Status counts for chart
+    const statusCounts = {
+      paid: stats.paidCount,
+      unpaid: stats.invoiceCount - stats.paidCount - stats.overdueCount,
+      overdue: stats.overdueCount
+    };
+
+    return {
+      recentActivity: sortedByRecent,
+      paymentRate,
+      upcomingDue: upcomingDue.slice(0, 3), // Show top 3
+      statusCounts
+    };
+  }, [invoices, stats]);
+
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen lowercase">loading...</div>;
   }
@@ -254,50 +302,173 @@ export default function InvoiceDashboard() {
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-neutral-100 dark:bg-neutral-800 p-6"
-          >
-            <h3 className="text-sm text-neutral-500 mb-2 lowercase">total invoiced</h3>
-            <p className="text-2xl font-light">{formatCurrency(stats.totalInvoiced)}</p>
-            <p className="text-sm text-neutral-500 mt-2 lowercase">{stats.invoiceCount} invoices</p>
-          </motion.div>
+        {/* Main Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          {/* Key Metrics Column */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Payment Stats Section */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-neutral-100 dark:bg-neutral-800 p-6 flex items-center"
+              >
+                <div className="mr-4 p-3 bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 rounded-full">
+                  <CheckCircle size={24} />
+                </div>
+                <div>
+                  <h3 className="text-sm text-neutral-500 mb-1 lowercase">paid invoices</h3>
+                  <p className="text-2xl font-light">{formatCurrency(stats.totalPaid)}</p>
+                  <p className="text-sm text-neutral-500 lowercase">{stats.paidCount} invoices</p>
+                </div>
+              </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-neutral-100 dark:bg-neutral-800 p-6"
-          >
-            <h3 className="text-sm text-neutral-500 mb-2 lowercase">total paid</h3>
-            <p className="text-2xl font-light">{formatCurrency(stats.totalPaid)}</p>
-            <p className="text-sm text-neutral-500 mt-2 lowercase">{stats.paidCount} invoices</p>
-          </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="bg-neutral-100 dark:bg-neutral-800 p-6 flex items-center"
+              >
+                <div className="mr-4 p-3 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full">
+                  <Clock size={24} />
+                </div>
+                <div>
+                  <h3 className="text-sm text-neutral-500 mb-1 lowercase">awaiting payment</h3>
+                  <p className="text-2xl font-light">{formatCurrency(stats.totalUnpaid)}</p>
+                  <p className="text-sm text-neutral-500 lowercase">{stats.invoiceCount - stats.paidCount - stats.overdueCount} invoices</p>
+                </div>
+              </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-neutral-100 dark:bg-neutral-800 p-6"
-          >
-            <h3 className="text-sm text-neutral-500 mb-2 lowercase">total unpaid</h3>
-            <p className="text-2xl font-light">{formatCurrency(stats.totalUnpaid)}</p>
-            <p className="text-sm text-neutral-500 mt-2 lowercase">{stats.invoiceCount - stats.paidCount - stats.overdueCount} invoices</p>
-          </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="bg-neutral-100 dark:bg-neutral-800 p-6 flex items-center"
+              >
+                <div className="mr-4 p-3 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 rounded-full">
+                  <AlertTriangle size={24} />
+                </div>
+                <div>
+                  <h3 className="text-sm text-neutral-500 mb-1 lowercase">overdue</h3>
+                  <p className="text-2xl font-light">{formatCurrency(stats.totalOverdue)}</p>
+                  <p className="text-sm text-neutral-500 lowercase">{stats.overdueCount} invoices</p>
+                </div>
+              </motion.div>
+            </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-neutral-100 dark:bg-neutral-800 p-6"
-          >
-            <h3 className="text-sm text-neutral-500 mb-2 lowercase">total overdue</h3>
-            <p className="text-2xl font-light">{formatCurrency(stats.totalOverdue)}</p>
-            <p className="text-sm text-neutral-500 mt-2 lowercase">{stats.overdueCount} invoices</p>
-          </motion.div>
+            {/* Status Visualization */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-neutral-100 dark:bg-neutral-800 p-6"
+            >
+              <h3 className="text-lg font-light mb-4 lowercase border-b pb-2 border-neutral-200 dark:border-neutral-700">payment status</h3>
+              
+              <div className="h-8 w-full flex rounded-sm overflow-hidden">
+                {/* Payment Status bar chart - simple visualization */}
+                {stats.invoiceCount > 0 && (
+                  <>
+                    <div 
+                      className="bg-green-500 h-full" 
+                      style={{ width: `${(stats.paidCount / stats.invoiceCount) * 100}%` }}
+                      title={`Paid: ${stats.paidCount} invoices`}
+                    />
+                    <div 
+                      className="bg-blue-500 h-full" 
+                      style={{ width: `${((stats.invoiceCount - stats.paidCount - stats.overdueCount) / stats.invoiceCount) * 100}%` }}
+                      title={`Unpaid: ${stats.invoiceCount - stats.paidCount - stats.overdueCount} invoices`}
+                    />
+                    <div 
+                      className="bg-red-500 h-full" 
+                      style={{ width: `${(stats.overdueCount / stats.invoiceCount) * 100}%` }}
+                      title={`Overdue: ${stats.overdueCount} invoices`}
+                    />
+                  </>
+                )}
+              </div>
+              
+              <div className="flex justify-between mt-2 text-sm">
+                <div className="flex items-center">
+                  <span className="inline-block w-3 h-3 bg-green-500 mr-2"></span>
+                  <span className="text-neutral-500 lowercase">paid ({stats.paidCount})</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="inline-block w-3 h-3 bg-blue-500 mr-2"></span>
+                  <span className="text-neutral-500 lowercase">unpaid ({stats.invoiceCount - stats.paidCount - stats.overdueCount})</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="inline-block w-3 h-3 bg-red-500 mr-2"></span>
+                  <span className="text-neutral-500 lowercase">overdue ({stats.overdueCount})</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-8">
+            {/* Overview Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-neutral-100 dark:bg-neutral-800 p-6"
+            >
+              <h3 className="text-lg font-light mb-4 lowercase border-b pb-2 border-neutral-200 dark:border-neutral-700">overview</h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-neutral-500 lowercase">total invoiced</p>
+                  <p className="text-xl font-light">{formatCurrency(stats.totalInvoiced)}</p>
+                </div>
+                
+                <div>
+                  <p className="text-sm text-neutral-500 lowercase">collection rate</p>
+                  <p className="text-xl font-light">{(stats.totalPaid / stats.totalInvoiced * 100 || 0).toFixed(1)}%</p>
+                </div>
+                
+                <div>
+                  <p className="text-sm text-neutral-500 lowercase">invoices</p>
+                  <p className="text-xl font-light">{stats.invoiceCount} total</p>
+                </div>
+              </div>
+            </motion.div>
+            
+            {/* Upcoming Payments */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-neutral-100 dark:bg-neutral-800 p-6"
+            >
+              <h3 className="text-lg font-light mb-4 lowercase border-b pb-2 border-neutral-200 dark:border-neutral-700">
+                upcoming due
+              </h3>
+              
+              {advancedAnalytics.upcomingDue.length > 0 ? (
+                <ul className="space-y-4">
+                  {advancedAnalytics.upcomingDue.map(invoice => (
+                    <li key={invoice.id} className="flex items-start text-sm">
+                      <Calendar size={16} className="mt-0.5 mr-2 text-neutral-400" />
+                      <div>
+                        <p className="font-medium lowercase">
+                          {invoice.invoiceNumber}
+                          {invoice.Client && ` - ${invoice.Client.name}`}
+                        </p>
+                        <div className="flex items-center">
+                          <p className="text-neutral-500 lowercase">
+                            {formatCurrency(invoice.total)} due {format(new Date(invoice.dueDate), 'PP').toLowerCase()}
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-neutral-500 lowercase">no upcoming payments due</p>
+              )}
+            </motion.div>
+          </div>
         </div>
 
         {/* Invoice List */}
