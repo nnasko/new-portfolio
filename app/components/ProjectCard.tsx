@@ -35,7 +35,6 @@ export const ProjectCard = ({
   const [isHolding, setIsHolding] = useState(false);
   const [holdProgress, setHoldProgress] = useState(0);
   const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const progressControls = useAnimation();
   
   const isInView = useInView(ref, { 
     amount: 0.6,
@@ -66,7 +65,7 @@ export const ProjectCard = ({
     setHoldProgress(0);
     
     // Start the timer to update hold progress
-    let startTime = Date.now();
+    const startTime = Date.now();
     holdTimerRef.current = setInterval(() => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / navigationThreshold, 1);
