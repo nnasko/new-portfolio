@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { RevealText } from "./RevealText";
 import { useSound } from "./SoundProvider";
 import { useToast } from "./Toast";
-import { motion, useInView, useAnimation } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 
 interface ProjectCardProps {
