@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { RevealText } from "./RevealText";
 import { useSound } from "./SoundProvider";
 import { useToast } from "./Toast";
-import { motion, useInView } from "framer-motion";
-import { useRef, useEffect } from "react";
+import { motion, useInView, useAnimation } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
 
 interface ProjectCardProps {
   title: string;
@@ -32,6 +32,11 @@ export const ProjectCard = ({
   const { showToast } = useToast();
   const ref = useRef(null);
   const mouseDownTime = useRef<number>(0);
+  const [isHolding, setIsHolding] = useState(false);
+  const [holdProgress, setHoldProgress] = useState(0);
+  const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const progressControls = useAnimation();
+  
   const isInView = useInView(ref, { 
     amount: 0.6,
     margin: "-10% 0px -10% 0px"
@@ -52,13 +57,48 @@ export const ProjectCard = ({
     playClick();
   };
 
+  // Navigation threshold in milliseconds (500ms = 0.5 seconds)
+  const navigationThreshold = 500;
+
   const handleMouseDown = () => {
     mouseDownTime.current = Date.now();
+    setIsHolding(true);
+    setHoldProgress(0);
+    
+    // Start the timer to update hold progress
+    let startTime = Date.now();
+    holdTimerRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / navigationThreshold, 1);
+      setHoldProgress(progress);
+      
+      if (progress >= 1) {
+        clearInterval(holdTimerRef.current as NodeJS.Timeout);
+      }
+    }, 10);
   };
+
+  const handleMouseUp = () => {
+    if (holdTimerRef.current) {
+      clearInterval(holdTimerRef.current);
+    }
+    setIsHolding(false);
+    setHoldProgress(0);
+  };
+
+  useEffect(() => {
+    // Clean up interval on unmount
+    return () => {
+      if (holdTimerRef.current) {
+        clearInterval(holdTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleClick = (e: React.MouseEvent) => {
     const clickDuration = Date.now() - mouseDownTime.current;
-    if (clickDuration < 200) {
+    
+    if (clickDuration > navigationThreshold) {
       e.preventDefault();
       playClick();
       router.push(link);
@@ -81,9 +121,24 @@ export const ProjectCard = ({
     >
       <div 
         onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
         onClick={handleClick} 
-        className="block cursor-pointer"
+        className="block cursor-pointer relative"
       >
+        {/* Hold to navigate indicator */}
+        {isHolding && (
+          <div className="absolute top-4 right-4 z-10 border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200 px-4 py-2 text-xs flex items-center gap-3">
+            <span>hold to view project</span>
+            <div className="w-16 h-1 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
+              <motion.div 
+                className="h-full bg-neutral-500 dark:bg-neutral-400 rounded-full" 
+                style={{ width: `${holdProgress * 100}%` }}
+              />
+            </div>
+          </div>
+        )}
+        
         <RevealText>
           <div className="relative h-[50vh] md:h-[70vh] mb-8 overflow-hidden">
             <div className="absolute inset-0">

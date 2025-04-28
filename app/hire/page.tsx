@@ -8,7 +8,7 @@ import { useSound } from "../components/SoundProvider";
 import { useToast } from "../components/Toast";
 import { motion, AnimatePresence } from "framer-motion";
 
-// no cap, these steps be fire
+// Project process steps
 const steps = [
   {
     title: "discovery",
@@ -101,7 +101,7 @@ const steps = [
   },
 ];
 
-// fr fr these form steps be lit
+// Form steps
 const formSteps = [
   {
     title: "project type",
@@ -109,11 +109,11 @@ const formSteps = [
   },
   {
     title: "timeline & budget",
-    description: "when do you need this to be bussin?",
+    description: "when do you need this to be ready?",
   },
   {
     title: "contact info",
-    description: "how can we reach you fam?",
+    description: "how can we reach you?",
   },
 ];
 
@@ -415,7 +415,7 @@ export default function HirePage() {
                     formRef.current?.scrollIntoView({ behavior: "smooth" });
                     playClick();
                   }}
-                  className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-6 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
+                  className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-6 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
                 >
                   start a project
                 </button>
@@ -424,7 +424,7 @@ export default function HirePage() {
                     processRef.current?.scrollIntoView({ behavior: "smooth" });
                     playClick();
                   }}
-                  className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-6 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
+                  className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-6 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
                 >
                   what&apos;s the process?
                 </button>
@@ -442,27 +442,27 @@ export default function HirePage() {
         >
           <div className="max-w-5xl mx-auto w-full">
             <RevealText>
-              <h2 className="text-2xl sm:text-3xl mb-16 text-center">the process</h2>
+              <h2 className="text-2xl sm:text-3xl mb-16">the process</h2>
             </RevealText>
 
             <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
               {steps.map((step, index) => (
                 <RevealText key={`step-${step.title}-${index}`}>
                   <div
-                    className="group relative p-2 border border-neutral-200 dark:border-neutral-800 bg-neutral-100/50 dark:bg-neutral-800/50 backdrop-blur-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                    className="group p-6 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
                   >
-                    <div className="w-8 h-8 bg-neutral-50 dark:bg-neutral-900 rounded-none border border-neutral-200 dark:border-neutral-800 flex items-center justify-center text-sm mb-2">
-                      {index + 1}
-                    </div>
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="p-2 bg-neutral-50 dark:bg-neutral-900 rounded-none">
-                        {step.icon}
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-8 h-8 flex items-center justify-center text-sm border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900">
+                        {index + 1}
                       </div>
-                      <h3 className="text-base sm:text-lg font-light">
+                      <h3 className="text-base sm:text-lg">
                         {step.title}
                       </h3>
                     </div>
-                    <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                    <div className="mb-4">
+                      {step.icon}
+                    </div>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
                       {step.description}
                     </p>
                   </div>
@@ -484,7 +484,7 @@ export default function HirePage() {
               <h2 className="text-xl sm:text-2xl mb-12">ready to start your project?</h2>
             </RevealText>
 
-            <div className="mb-8">
+            <form onSubmit={handleSubmit} className="space-y-8 border border-neutral-300 dark:border-neutral-700 p-6 bg-neutral-100/50 dark:bg-neutral-800/50 backdrop-blur-sm">
               <div className="flex justify-between mb-8">
                 {formSteps.map((step, index) => (
                   <div
@@ -497,7 +497,7 @@ export default function HirePage() {
                   >
                     <div className="relative">
                       <div
-                        className={`w-8 h-8 mx-auto rounded-none border-2 flex items-center justify-center mb-2 ${
+                        className={`w-8 h-8 mx-auto flex items-center justify-center mb-2 border ${
                           index === currentStep
                             ? 'border-neutral-900 dark:border-neutral-100'
                             : index < currentStep
@@ -508,7 +508,7 @@ export default function HirePage() {
                         {index < currentStep ? (
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4 text-neutral-900 dark:text-neutral-900"
+                            className="h-4 w-4 text-neutral-50 dark:text-neutral-900"
                             viewBox="0 0 20 20"
                             fill="currentColor"
                           >
@@ -519,7 +519,7 @@ export default function HirePage() {
                             />
                           </svg>
                         ) : (
-                          <span className={index < currentStep ? 'text-neutral-900 dark:text-neutral-900' : ''}>
+                          <span className={index < currentStep ? 'text-neutral-50 dark:text-neutral-900' : ''}>
                             {index + 1}
                           </span>
                         )}
@@ -539,53 +539,51 @@ export default function HirePage() {
                 ))}
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-8">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentStep}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {renderFormStep()}
-                  </motion.div>
-                </AnimatePresence>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentStep}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {renderFormStep()}
+                </motion.div>
+              </AnimatePresence>
 
-                <div className="flex justify-between pt-4">
+              <div className="flex justify-between pt-4">
+                <button
+                  type="button"
+                  onClick={prevStep}
+                  className={`text-sm border border-neutral-300 dark:border-neutral-700 px-4 py-2 transition-colors ${
+                    currentStep === 0
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                  }`}
+                  disabled={currentStep === 0}
+                >
+                  previous
+                </button>
+                
+                {currentStep === formSteps.length - 1 ? (
                   <button
                     type="button"
-                    onClick={prevStep}
-                    className={`px-6 py-2 border border-neutral-300 dark:border-neutral-700 rounded cursor-pointer ${
-                      currentStep === 0
-                        ? 'opacity-50 cursor-not-allowed'
-                        : 'hover:bg-neutral-100 dark:hover:bg-neutral-800'
-                    }`}
-                    disabled={currentStep === 0}
+                    onClick={handleFormSubmit}
+                    className="text-sm border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 px-4 py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
                   >
-                    previous
+                    submit
                   </button>
-                  
-                  {currentStep === formSteps.length - 1 ? (
-                    <button
-                      type="button"
-                      onClick={handleFormSubmit}
-                      className="px-6 py-2 bg-neutral-900 dark:bg-neutral-100 text-neutral-100 dark:text-neutral-900 rounded hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors cursor-pointer"
-                    >
-                      submit
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={nextStep}
-                      className="px-6 py-2 bg-neutral-900 dark:bg-neutral-100 text-neutral-100 dark:text-neutral-900 rounded hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors cursor-pointer"
-                    >
-                      next
-                    </button>
-                  )}
-                </div>
-              </form>
-            </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={nextStep}
+                    className="text-sm border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 px-4 py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                  >
+                    next
+                  </button>
+                )}
+              </div>
+            </form>
           </div>
         </section>
       </SectionTransition>
