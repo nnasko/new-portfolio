@@ -1,19 +1,204 @@
 'use client';
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { MinimalLink } from "../components/MinimalLink";
 import { RevealText } from "../components/RevealText";
 import { SectionTransition } from "../components/SectionTransition";
+import { AnimatedText } from "../components/AnimatedText";
 import { useSound } from "../components/SoundProvider";
 import { useToast } from "../components/Toast";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useTransform, useSpring } from "framer-motion";
+import { staggerContainer, staggerItem, useScrollTracker, useMousePosition, useViewportIntersection } from "../../lib/animation-utils";
+
+// Enhanced Magnetic Element with stronger effects
+function MagneticElement({ children, strength = 0.4 }: { children: React.ReactNode, strength?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const mousePosition = useMousePosition();
+  const x = useSpring(0, { stiffness: 200, damping: 20 });
+  const y = useSpring(0, { stiffness: 200, damping: 20 });
+
+  useEffect(() => {
+    if (!ref.current || !isHovered) {
+      x.set(0);
+      y.set(0);
+      return;
+    }
+
+    const rect = ref.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    const deltaX = (mousePosition.x - centerX) * strength;
+    const deltaY = (mousePosition.y - centerY) * strength;
+    
+    x.set(deltaX);
+    y.set(deltaY);
+  }, [mousePosition, isHovered, strength, x, y]);
+
+  return (
+    <motion.div
+      ref={ref}
+      style={{ x, y }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      transition={{ type: "spring", stiffness: 200, damping: 20 }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// Type for process step
+interface ProcessStepType {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+}
+
+// Enhanced Process Step Component
+function ProcessStep({ step, index, isActive }: { step: ProcessStepType, index: number, isActive: boolean }) {
+  const { ref, isIntersecting } = useViewportIntersection({ threshold: 0.3 });
+  
+  return (
+    <motion.div
+      ref={ref as React.RefObject<HTMLDivElement>}
+      className="group relative"
+      initial={{ opacity: 0, y: 60 }}
+      animate={{ 
+        opacity: isIntersecting ? 1 : 0,
+        y: isIntersecting ? 0 : 60 
+      }}
+      transition={{
+        duration: 0.8,
+        delay: index * 0.1,
+        ease: [0.33, 1, 0.68, 1],
+      }}
+    >
+      <MagneticElement strength={0.3}>
+        <div className={`p-8 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 transition-all duration-500 h-full group-hover:bg-neutral-100 dark:group-hover:bg-neutral-700 ${isActive ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-100 dark:bg-neutral-700' : ''}`}>
+          <div className="flex items-center gap-6 mb-6">
+            <motion.div
+              className={`w-12 h-12 flex items-center justify-center text-sm border-2 transition-all duration-300 ${isActive ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900' : 'border-neutral-400 dark:border-neutral-600'}`}
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              {index + 1}
+            </motion.div>
+            <h3 className="text-lg font-medium lowercase">
+              {step.title}
+            </h3>
+          </div>
+          <div className="mb-6 text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors duration-300">
+            {step.icon}
+          </div>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed group-hover:text-neutral-700 dark:group-hover:text-neutral-300 transition-colors duration-300">
+            {step.description}
+          </p>
+        </div>
+      </MagneticElement>
+    </motion.div>
+  );
+}
+
+// Enhanced Form Field Component
+function FormField({ 
+  label, 
+  children, 
+  error, 
+  required = false,
+  description 
+}: { 
+  label: string, 
+  children: React.ReactNode, 
+  error?: string,
+  required?: boolean,
+  description?: string 
+}) {
+  return (
+    <motion.div
+      className="space-y-2"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <label className="block text-sm text-neutral-600 dark:text-neutral-400 lowercase">
+        {label}{required && <span className="text-red-500 ml-1">*</span>}
+      </label>
+      {description && (
+        <p className="text-xs text-neutral-500 dark:text-neutral-500 lowercase">
+          {description}
+        </p>
+      )}
+      {children}
+      <AnimatePresence>
+        {error && (
+          <motion.p
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="text-xs text-red-500 dark:text-red-400 lowercase"
+          >
+            {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+// Enhanced Button Component
+function EnhancedButton({ 
+  children, 
+  variant = 'primary', 
+  onClick, 
+  disabled = false,
+  type = 'button',
+  className = ''
+}: {
+  children: React.ReactNode,
+  variant?: 'primary' | 'secondary',
+  onClick?: () => void,
+  disabled?: boolean,
+  type?: 'button' | 'submit',
+  className?: string
+}) {
+  return (
+    <MagneticElement strength={0.2}>
+      <motion.button
+        type={type}
+        onClick={onClick}
+        disabled={disabled}
+        className={`
+          relative overflow-hidden transition-all duration-300 group
+          ${variant === 'primary' 
+            ? 'border-2 border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 hover:bg-transparent hover:text-neutral-900 dark:hover:bg-transparent dark:hover:text-neutral-100' 
+            : 'border border-neutral-300 dark:border-neutral-700 bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800'
+          }
+          px-8 py-3 text-sm lowercase
+          ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+          ${className}
+        `}
+        whileHover={{ scale: disabled ? 1 : 1.02 }}
+        whileTap={{ scale: disabled ? 1 : 0.98 }}
+        transition={{ type: "spring", stiffness: 300 }}
+      >
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-neutral-200 to-neutral-300 dark:from-neutral-700 dark:to-neutral-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+          initial={false}
+        />
+        <span className="relative z-10">{children}</span>
+      </motion.button>
+    </MagneticElement>
+  );
+}
 
 // Project process steps
 const steps = [
   {
     title: "discovery",
     description:
-      "we'll discuss your project requirements, goals, and vision to ensure we're aligned on the desired outcome.",
+      "we&apos;ll discuss your project requirements, goals, and vision to ensure we&apos;re aligned on the desired outcome.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -21,7 +206,7 @@ const steps = [
         viewBox="0 0 24 24"
         strokeWidth={1.5}
         stroke="currentColor"
-        className="w-6 h-6"
+        className="w-8 h-8"
       >
         <path
           strokeLinecap="round"
@@ -39,7 +224,7 @@ const steps = [
   {
     title: "planning",
     description:
-      "together, we'll create a detailed project plan including timelines, milestones, and deliverables.",
+      "together, we&apos;ll create a detailed project plan including timelines, milestones, and deliverables.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -47,7 +232,7 @@ const steps = [
         viewBox="0 0 24 24"
         strokeWidth={1.5}
         stroke="currentColor"
-        className="w-6 h-6"
+        className="w-8 h-8"
       >
         <path
           strokeLinecap="round"
@@ -60,7 +245,7 @@ const steps = [
   {
     title: "development",
     description:
-      "i'll bring your vision to life with clean, efficient code and regular updates on progress.",
+      "i&apos;ll bring your vision to life with clean, efficient code and regular updates on progress.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -68,7 +253,7 @@ const steps = [
         viewBox="0 0 24 24"
         strokeWidth={1.5}
         stroke="currentColor"
-        className="w-6 h-6"
+        className="w-8 h-8"
       >
         <path
           strokeLinecap="round"
@@ -81,7 +266,7 @@ const steps = [
   {
     title: "delivery",
     description:
-      "after thorough testing and your approval, we'll launch your project and ensure everything runs smoothly.",
+      "after thorough testing and your approval, we&apos;ll launch your project and ensure everything runs smoothly.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -89,7 +274,7 @@ const steps = [
         viewBox="0 0 24 24"
         strokeWidth={1.5}
         stroke="currentColor"
-        className="w-6 h-6"
+        className="w-8 h-8"
       >
         <path
           strokeLinecap="round"
@@ -120,9 +305,11 @@ const formSteps = [
 export default function HirePage() {
   const { playClick } = useSound();
   const { showToast } = useToast();
+  const { scrollY } = useScrollTracker();
   const formRef = useRef<HTMLFormElement>(null);
   const processRef = useRef<HTMLDivElement>(null);
   const [currentStep, setCurrentStep] = useState(0);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     projectType: '',
     timeline: '',
@@ -134,47 +321,56 @@ export default function HirePage() {
     otherProjectType: '',
   });
 
+  // Enhanced parallax effects
+  const heroY = useTransform(scrollY, [0, 500], [0, -100]);
+  const processY = useTransform(scrollY, [500, 1500], [0, -50]);
+
+  const validateStep = (step: number): boolean => {
+    const errors: Record<string, string> = {};
+
+    switch (step) {
+      case 0:
+        if (!formData.projectType) {
+          errors.projectType = 'please select a project type';
+        }
+        if (formData.projectType === 'other' && !formData.otherProjectType) {
+          errors.otherProjectType = 'please specify your project type';
+        }
+        break;
+      case 1:
+        if (!formData.timeline) {
+          errors.timeline = 'please select a timeline';
+        }
+        if (!formData.budget) {
+          errors.budget = 'please select a budget range';
+        }
+        if (!formData.message) {
+          errors.message = 'please tell us about your project';
+        }
+        break;
+      case 2:
+        if (!formData.name) {
+          errors.name = 'please enter your name';
+        }
+        if (!formData.email) {
+          errors.email = 'please enter your email';
+        }
+        if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
+          errors.email = 'please enter a valid email address';
+        }
+        break;
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleFormSubmit = async () => {
-    // validate all required fields first
-    if (!formData.projectType) {
-      showToast('Please select a project type');
-      setCurrentStep(0);
-      return;
-    }
-
-    if (formData.projectType === 'other' && !formData.otherProjectType) {
-      showToast('Please specify your project type');
-      setCurrentStep(0);
-      return;
-    }
-
-    if (!formData.timeline) {
-      showToast('Please select a timeline');
-      setCurrentStep(1);
-      return;
-    }
-
-    if (!formData.budget) {
-      showToast('Please select a budget range');
-      setCurrentStep(1);
-      return;
-    }
-
-    if (!formData.message) {
-      showToast('Please tell us about your project');
-      setCurrentStep(1);
-      return;
-    }
-
-    if (!formData.name) {
-      showToast('Please enter your name');
-      setCurrentStep(2);
-      return;
-    }
-
-    if (!formData.email) {
-      showToast('Please enter your email');
-      setCurrentStep(2);
+    // Validate all steps
+    const allValid = [0, 1, 2].every(step => validateStep(step));
+    
+    if (!allValid) {
+      showToast('please complete all required fields');
       return;
     }
 
@@ -208,19 +404,18 @@ export default function HirePage() {
         otherProjectType: '',
       });
       setCurrentStep(0);
+      setFormErrors({});
     } catch (error) {
       console.error('API Error:', error);
       showToast('Failed to send message. Please try again.');
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-  };
-
   const nextStep = () => {
-    playClick();
-    setCurrentStep(prev => Math.min(prev + 1, formSteps.length - 1));
+    if (validateStep(currentStep)) {
+      playClick();
+      setCurrentStep(prev => Math.min(prev + 1, formSteps.length - 1));
+    }
   };
 
   const prevStep = () => {
@@ -228,147 +423,195 @@ export default function HirePage() {
     setCurrentStep(prev => Math.max(prev - 1, 0));
   };
 
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (formErrors[field]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
+  };
+
   const renderFormStep = () => {
     switch (currentStep) {
       case 0:
         return (
-          <div className="space-y-6">
-            <label className="block text-sm mb-2">
-              what type of project are you looking to build?
-            </label>
-            <select
-              value={formData.projectType}
-              onChange={(e) => setFormData(prev => ({ ...prev, projectType: e.target.value }))}
+          <motion.div 
+            className="space-y-8"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.4 }}
+          >
+            <FormField 
+              label="what type of project are you looking to build?" 
               required
-              className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors appearance-none"
+              error={formErrors.projectType}
             >
-              <option value="">select a project type</option>
-              <option value="personal">personal website / portfolio</option>
-              <option value="business">business website / landing page</option>
-              <option value="ecommerce">e-commerce store</option>
-              <option value="blog">blog / content site</option>
-              <option value="marketplace">marketplace platform</option>
-              <option value="community">community / social platform</option>
-              <option value="other">other</option>
-            </select>
+              <motion.select
+                value={formData.projectType}
+                onChange={(e) => handleInputChange('projectType', e.target.value)}
+                className="w-full p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 appearance-none lowercase"
+                whileFocus={{ scale: 1.01 }}
+              >
+                <option value="" className="lowercase">select a project type</option>
+                <option value="personal" className="lowercase">personal website / portfolio</option>
+                <option value="business" className="lowercase">business website / landing page</option>
+                <option value="ecommerce" className="lowercase">e-commerce store</option>
+                <option value="blog" className="lowercase">blog / content site</option>
+                <option value="marketplace" className="lowercase">marketplace platform</option>
+                <option value="community" className="lowercase">community / social platform</option>
+                <option value="other" className="lowercase">other</option>
+              </motion.select>
+            </FormField>
             
-            {formData.projectType === 'other' && (
-              <div className="mt-4">
-                <label className="block text-sm mb-2">
-                  please specify your project type
-                </label>
-                <input
-                  type="text"
-                  value={formData.otherProjectType || ''}
-                  onChange={(e) => setFormData(prev => ({ ...prev, otherProjectType: e.target.value }))}
-                  required
-                  placeholder="describe your project type"
-                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors"
-                />
-              </div>
-            )}
-          </div>
+            <AnimatePresence>
+              {formData.projectType === 'other' && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <FormField 
+                    label="please specify your project type" 
+                    required
+                    error={formErrors.otherProjectType}
+                  >
+                    <motion.input
+                      type="text"
+                      value={formData.otherProjectType}
+                      onChange={(e) => handleInputChange('otherProjectType', e.target.value)}
+                      placeholder="describe your project type"
+                      className="w-full p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 lowercase"
+                      whileFocus={{ scale: 1.01 }}
+                    />
+                  </FormField>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
         );
       case 1:
         return (
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm mb-2">
-                what&apos;s your ideal timeline?
-              </label>
-              <select
+          <motion.div 
+            className="space-y-8"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.4 }}
+          >
+            <FormField 
+              label="what's your ideal timeline?" 
+              required
+              error={formErrors.timeline}
+            >
+              <motion.select
                 value={formData.timeline}
-                onChange={(e) => setFormData(prev => ({ ...prev, timeline: e.target.value }))}
-                required
-                className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors appearance-none"
+                onChange={(e) => handleInputChange('timeline', e.target.value)}
+                className="w-full p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 appearance-none lowercase"
+                whileFocus={{ scale: 1.01 }}
               >
-                <option value="">select a timeline</option>
-                <option value="1_month">within 1 month</option>
-                <option value="3_months">1-3 months</option>
-                <option value="6_months">3-6 months</option>
-                <option value="flexible">flexible</option>
-              </select>
-            </div>
+                <option value="" className="lowercase">select a timeline</option>
+                <option value="1_month" className="lowercase">within 1 month</option>
+                <option value="3_months" className="lowercase">1-3 months</option>
+                <option value="6_months" className="lowercase">3-6 months</option>
+                <option value="flexible" className="lowercase">flexible</option>
+              </motion.select>
+            </FormField>
 
-            <div>
-              <label className="block text-sm mb-2">
-                what&apos;s your budget range?
-              </label>
-              <select
+            <FormField 
+              label="what's your budget range?" 
+              required
+              error={formErrors.budget}
+            >
+              <motion.select
                 value={formData.budget}
-                onChange={(e) => setFormData(prev => ({ ...prev, budget: e.target.value }))}
-                required
-                className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors appearance-none"
+                onChange={(e) => handleInputChange('budget', e.target.value)}
+                className="w-full p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 appearance-none lowercase"
+                whileFocus={{ scale: 1.01 }}
               >
-                <option value="">select a budget range</option>
-                <option value="500_1k">£500 - £1,000</option>
-                <option value="1k_2k">£1,000 - £2,000</option>
-                <option value="2k_5k">£2,000 - £5,000</option>
-                <option value="5k_plus">£5,000+</option>
-              </select>
-            </div>
+                <option value="" className="lowercase">select a budget range</option>
+                <option value="500_1k" className="lowercase">£500 - £1,000</option>
+                <option value="1k_2k" className="lowercase">£1,000 - £2,000</option>
+                <option value="2k_5k" className="lowercase">£2,000 - £5,000</option>
+                <option value="5k_plus" className="lowercase">£5,000+</option>
+              </motion.select>
+            </FormField>
 
-            <div>
-              <label className="block text-sm mb-2">
-                tell me about your project
-              </label>
-              <textarea
+            <FormField 
+              label="tell me about your project" 
+              required
+              description="what features do you need? any specific requirements or ideas?"
+              error={formErrors.message}
+            >
+              <motion.textarea
                 value={formData.message}
-                onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
-                required
-                rows={4}
-                placeholder="What features do you need? Any specific requirements or ideas?"
-                className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors resize-none"
-              ></textarea>
-            </div>
-          </div>
+                onChange={(e) => handleInputChange('message', e.target.value)}
+                rows={5}
+                placeholder="describe your project vision, required features, and any specific ideas you have..."
+                className="w-full p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 resize-none lowercase"
+                whileFocus={{ scale: 1.01 }}
+              />
+            </FormField>
+          </motion.div>
         );
       case 2:
         return (
-          <div className="space-y-6">
-            <div className="grid sm:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="name" className="block text-sm mb-2">
-                  name
-                </label>
-                <input
+          <motion.div 
+            className="space-y-8"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.4 }}
+          >
+            <div className="grid sm:grid-cols-2 gap-8">
+              <FormField 
+                label="name" 
+                required
+                error={formErrors.name}
+              >
+                <motion.input
                   type="text"
-                  id="name"
                   value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  required
-                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors"
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  className="w-full p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 lowercase"
+                  whileFocus={{ scale: 1.01 }}
                 />
-              </div>
+              </FormField>
 
-              <div>
-                <label htmlFor="email" className="block text-sm mb-2">
-                  email
-                </label>
-                <input
+              <FormField 
+                label="email" 
+                required
+                error={formErrors.email}
+              >
+                <motion.input
                   type="email"
-                  id="email"
                   value={formData.email}
-                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  required
-                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors"
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  className="w-full p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 lowercase"
+                  whileFocus={{ scale: 1.01 }}
                 />
-              </div>
+              </FormField>
             </div>
 
-            <div>
-              <label htmlFor="company" className="block text-sm mb-2">
-                company / organization (optional)
-              </label>
-              <input
+            <FormField 
+              label="company / organization" 
+              description="optional - let me know if this is for a business"
+              error={formErrors.company}
+            >
+              <motion.input
                 type="text"
-                id="company"
                 value={formData.company}
-                onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
-                className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-colors"
+                onChange={(e) => handleInputChange('company', e.target.value)}
+                className="w-full p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 lowercase"
+                whileFocus={{ scale: 1.01 }}
               />
-            </div>
-          </div>
+            </FormField>
+          </motion.div>
         );
       default:
         return null;
@@ -376,214 +619,367 @@ export default function HirePage() {
   };
 
   return (
-    <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50">
-        <MinimalLink
-          href="/"
-          className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors cursor-pointer"
-        >
-          atanas kyurkchiev
-        </MinimalLink>
-        <MinimalLink
-          href="/#work"
-          className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors cursor-pointer"
-        >
-          back to work
-        </MinimalLink>
-      </nav>
+    <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900 relative overflow-hidden">
+      {/* Enhanced Navigation */}
+      <motion.nav 
+        className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50 border-b border-neutral-200/50 dark:border-neutral-800/50"
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+      >
+        <MagneticElement>
+          <MinimalLink
+            href="/"
+            className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors cursor-pointer"
+          >
+            atanas kyurkchiev
+          </MinimalLink>
+        </MagneticElement>
+        <MagneticElement>
+          <MinimalLink
+            href="/#work"
+            className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors cursor-pointer"
+          >
+            back to work
+          </MinimalLink>
+        </MagneticElement>
+      </motion.nav>
 
-      {/* Hero Section */}
+      {/* Enhanced Hero Section */}
       <SectionTransition>
-        <section className="relative min-h-screen flex items-center px-6 md:px-12">
-          <div className="max-w-3xl">
-            <RevealText>
-              <h1 className="text-2xl sm:text-3xl mb-6">
+        <motion.section 
+          className="relative min-h-screen flex items-center px-6 md:px-12"
+          style={{ y: heroY }}
+        >
+          <div className="max-w-5xl relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 60 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: [0.33, 1, 0.68, 1] }}
+            >
+              <AnimatedText
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-8 leading-tight font-light"
+                type="words"
+                animationType="slide"
+                direction="up"
+                stagger={0.08}
+              >
                 let&apos;s work together to bring your vision to life
-              </h1>
-            </RevealText>
-            <RevealText>
-              <p className="text-base sm:text-lg text-neutral-600 dark:text-neutral-400 mb-8 leading-relaxed">
-                i specialize in creating modern, efficient, and user-friendly
-                applications that solve real problems
-              </p>
-            </RevealText>
-            <RevealText>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button
+              </AnimatedText>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: [0.33, 1, 0.68, 1] }}
+            >
+              <AnimatedText
+                className="text-lg sm:text-xl text-neutral-600 dark:text-neutral-400 mb-12 leading-relaxed max-w-3xl"
+                type="words"
+                animationType="fade"
+                delay={0.6}
+                stagger={0.02}
+              >
+                i specialize in creating modern, efficient, and user-friendly applications that solve real problems and drive meaningful results for your business.
+              </AnimatedText>
+            </motion.div>
+            
+            <motion.div
+              className="flex flex-col sm:flex-row gap-6"
+              variants={staggerContainer}
+              initial="hidden"
+              animate="show"
+            >
+              <motion.div variants={staggerItem}>
+                <EnhancedButton
+                  variant="primary"
                   onClick={() => {
                     formRef.current?.scrollIntoView({ behavior: "smooth" });
                     playClick();
                   }}
-                  className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-6 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                  className="group"
                 >
-                  start a project
-                </button>
-                <button
+                  <span className="flex items-center gap-3">
+                    start a project
+                    <motion.svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-4 h-4"
+                      whileHover={{ x: 5, rotate: -15 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                      />
+                    </motion.svg>
+                  </span>
+                </EnhancedButton>
+              </motion.div>
+              
+              <motion.div variants={staggerItem}>
+                <EnhancedButton
+                  variant="secondary"
                   onClick={() => {
                     processRef.current?.scrollIntoView({ behavior: "smooth" });
                     playClick();
                   }}
-                  className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-6 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
                 >
                   what&apos;s the process?
-                </button>
-              </div>
-            </RevealText>
+                </EnhancedButton>
+              </motion.div>
+            </motion.div>
           </div>
-        </section>
+          
+          {/* Background decoration */}
+          <motion.div
+            className="absolute top-1/2 right-10 w-96 h-96 border border-neutral-300 dark:border-neutral-700 opacity-20"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+          />
+        </motion.section>
       </SectionTransition>
 
-      {/* Process Section */}
+      {/* Enhanced Process Section */}
       <SectionTransition>
-        <section
+        <motion.section
           ref={processRef}
-          className="min-h-screen flex flex-col justify-center px-6 md:px-12 py-24"
+          className="min-h-screen flex flex-col justify-center px-6 md:px-12 py-24 relative"
+          style={{ y: processY }}
         >
-          <div className="max-w-5xl mx-auto w-full">
-            <RevealText>
-              <h2 className="text-2xl sm:text-3xl mb-16">the process</h2>
-            </RevealText>
+          <div className="max-w-7xl mx-auto w-full">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+              className="mb-20"
+            >
+              <AnimatedText
+                className="text-3xl sm:text-4xl md:text-5xl mb-6 font-light"
+                type="words"
+                animationType="slide"
+                direction="up"
+                stagger={0.1}
+              >
+                the process
+              </AnimatedText>
+              <AnimatedText
+                className="text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl"
+                type="words"
+                animationType="fade"
+                delay={0.3}
+                stagger={0.02}
+              >
+                a collaborative approach focused on understanding your needs and delivering exceptional results.
+              </AnimatedText>
+            </motion.div>
 
-            <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {steps.map((step, index) => (
-                <RevealText key={`step-${step.title}-${index}`}>
-                  <div
-                    className="group p-6 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-                  >
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="w-8 h-8 flex items-center justify-center text-sm border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900">
-                        {index + 1}
-                      </div>
-                      <h3 className="text-base sm:text-lg">
-                        {step.title}
-                      </h3>
-                    </div>
-                    <div className="mb-4">
-                      {step.icon}
-                    </div>
-                    <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                      {step.description}
-                    </p>
-                  </div>
-                </RevealText>
+                <ProcessStep
+                  key={`step-${step.title}-${index}`}
+                  step={step}
+                  index={index}
+                  isActive={false}
+                />
               ))}
             </div>
           </div>
-        </section>
+        </motion.section>
       </SectionTransition>
 
-      {/* Contact Form Section */}
+      {/* Enhanced Contact Form Section */}
       <SectionTransition>
         <section
           ref={formRef}
           className="min-h-screen flex items-center px-6 md:px-12 py-24"
         >
-          <div className="max-w-2xl w-full mx-auto">
-            <RevealText>
-              <h2 className="text-xl sm:text-2xl mb-12">ready to start your project?</h2>
-            </RevealText>
+          <div className="max-w-3xl w-full mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+              className="mb-12"
+            >
+              <RevealText>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl mb-6 font-light lowercase">ready to start your project?</h2>
+              </RevealText>
+              <RevealText>
+                <p className="text-lg text-neutral-600 dark:text-neutral-400 lowercase">
+                  let&apos;s discuss your vision and make it a reality.
+                </p>
+              </RevealText>
+            </motion.div>
 
-            <form onSubmit={handleSubmit} className="space-y-8 border border-neutral-300 dark:border-neutral-700 p-6 bg-neutral-100/50 dark:bg-neutral-800/50 backdrop-blur-sm">
-              <div className="flex justify-between mb-8">
+            <motion.div 
+              className="border border-neutral-300 dark:border-neutral-700 p-8 bg-neutral-100/50 dark:bg-neutral-800/50 backdrop-blur-sm relative overflow-hidden"
+              initial={{ opacity: 0, y: 60 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2, ease: [0.33, 1, 0.68, 1] }}
+            >
+              {/* Progress indicator */}
+              <div className="flex justify-between mb-12">
                 {formSteps.map((step, index) => (
                   <div
                     key={step.title}
-                    className={`flex-1 text-center ${
+                    className={`flex-1 text-center transition-all duration-500 ${
                       index === currentStep
                         ? 'text-neutral-900 dark:text-neutral-100'
                         : 'text-neutral-400 dark:text-neutral-600'
                     }`}
                   >
                     <div className="relative">
-                      <div
-                        className={`w-8 h-8 mx-auto flex items-center justify-center mb-2 border ${
+                      <motion.div
+                        className={`w-10 h-10 mx-auto flex items-center justify-center mb-3 border-2 transition-all duration-500 ${
                           index === currentStep
-                            ? 'border-neutral-900 dark:border-neutral-100'
+                            ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100'
                             : index < currentStep
                             ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100'
                             : 'border-neutral-300 dark:border-neutral-700'
                         }`}
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ type: "spring", stiffness: 300 }}
                       >
                         {index < currentStep ? (
-                          <svg
+                          <motion.svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4 text-neutral-50 dark:text-neutral-900"
+                            className="h-5 w-5 text-neutral-50 dark:text-neutral-900"
                             viewBox="0 0 20 20"
                             fill="currentColor"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 300, delay: 0.1 }}
                           >
                             <path
                               fillRule="evenodd"
                               d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                               clipRule="evenodd"
                             />
-                          </svg>
+                          </motion.svg>
                         ) : (
-                          <span className={index < currentStep ? 'text-neutral-50 dark:text-neutral-900' : ''}>
+                          <span className={`text-sm ${index === currentStep ? 'text-neutral-50 dark:text-neutral-900' : ''}`}>
                             {index + 1}
                           </span>
                         )}
-                      </div>
+                      </motion.div>
                       {index < formSteps.length - 1 && (
-                        <div
-                          className={`absolute top-4 left-full w-full h-0.5 -translate-y-1/2 ${
+                        <motion.div
+                          className={`absolute top-5 left-full w-full h-0.5 -translate-y-1/2 transition-all duration-500 ${
                             index < currentStep
                               ? 'bg-neutral-900 dark:bg-neutral-100'
                               : 'bg-neutral-300 dark:bg-neutral-700'
                           }`}
-                        ></div>
+                          initial={{ scaleX: 0 }}
+                          animate={{ scaleX: index < currentStep ? 1 : 0 }}
+                          transition={{ duration: 0.5, delay: index < currentStep ? 0.3 : 0 }}
+                        />
                       )}
                     </div>
-                    <span className="text-sm hidden sm:block">{step.title}</span>
+                    <span className="text-sm hidden sm:block lowercase font-medium">{step.title}</span>
+                    <span className="text-xs text-neutral-500 dark:text-neutral-500 hidden sm:block lowercase mt-1">{step.description}</span>
                   </div>
                 ))}
               </div>
 
+              {/* Form content */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentStep}
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: 50 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  transition={{ duration: 0.4, ease: [0.33, 1, 0.68, 1] }}
+                  className="mb-8"
                 >
                   {renderFormStep()}
                 </motion.div>
               </AnimatePresence>
 
-              <div className="flex justify-between pt-4">
-                <button
-                  type="button"
+              {/* Navigation buttons */}
+              <div className="flex justify-between items-center pt-8 border-t border-neutral-200 dark:border-neutral-800">
+                <EnhancedButton
+                  variant="secondary"
                   onClick={prevStep}
-                  className={`text-sm border border-neutral-300 dark:border-neutral-700 px-4 py-2 transition-colors ${
-                    currentStep === 0
-                      ? 'opacity-50 cursor-not-allowed'
-                      : 'bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700'
-                  }`}
                   disabled={currentStep === 0}
+                  className={currentStep === 0 ? 'opacity-0 pointer-events-none' : ''}
                 >
-                  previous
-                </button>
+                  <span className="flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-4 h-4"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+                      />
+                    </svg>
+                    previous
+                  </span>
+                </EnhancedButton>
                 
                 {currentStep === formSteps.length - 1 ? (
-                  <button
-                    type="button"
+                  <EnhancedButton
+                    variant="primary"
                     onClick={handleFormSubmit}
-                    className="text-sm border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 px-4 py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
                   >
-                    submit
-                  </button>
+                    <span className="flex items-center gap-3">
+                      send message
+                      <motion.svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-4 h-4"
+                        whileHover={{ x: 5, y: -5 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
+                        />
+                      </motion.svg>
+                    </span>
+                  </EnhancedButton>
                 ) : (
-                  <button
-                    type="button"
+                  <EnhancedButton
+                    variant="primary"
                     onClick={nextStep}
-                    className="text-sm border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 px-4 py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
                   >
-                    next
-                  </button>
+                    <span className="flex items-center gap-2">
+                      next
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-4 h-4"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                        />
+                      </svg>
+                    </span>
+                  </EnhancedButton>
                 )}
               </div>
-            </form>
+            </motion.div>
           </div>
         </section>
       </SectionTransition>

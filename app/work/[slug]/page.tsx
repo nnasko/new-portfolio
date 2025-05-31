@@ -1,27 +1,41 @@
 "use client";
 
-import { motion, useMotionValue, animate } from "framer-motion";
+import { motion, useMotionValue, animate, useSpring, useTransform } from "framer-motion";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { use, Suspense } from "react";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
-import { RevealText } from "../../components/RevealText";
 import { MinimalLink } from "../../components/MinimalLink";
 import { useSound } from "../../components/SoundProvider";
 import { ReadingTime } from "../../components/ReadingTime";
 import { ViewCounter } from "../../components/ViewCounter";
 import { useState, useEffect, useRef } from "react";
 import { siteConfig } from "../../metadata";
+import { 
+  useScrollTracker, 
+  useMousePosition,   
+  useViewportIntersection,
+  useParallax,
+} from "../../../lib/animation-utils";
 
 interface Project {
+  id: string;
   title: string;
   description: string;
-  fullDescription: string;
+  overview?: string;
+  fullDescription?: string;
+  image: string;
+  mobileImage?: string;
   images: string[];
   mobileImages: string[];
-  tech?: string[];
+  technologies: string[];
   link: string;
-  year: string;
+  year?: string;
+  isVisible: boolean;
+  priority: boolean;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface ProjectSchema {
@@ -45,386 +59,152 @@ interface ProjectSchema {
   };
 }
 
-const projects = {
-  surplush: {
-    title: "surplush",
-    description:
-      "a platform for businesses to get essential supplies cheaper & the eco-friendly way",
-    fullDescription: `
-      overview:
-      surplush is a next.js-powered marketplace revolutionizing how businesses source their essential supplies. the platform focuses on sustainability and cost-effectiveness, making eco-friendly supplies accessible to all businesses.
+// Enhanced scroll progress indicator
+function ScrollProgressBar() {
+  const { scrollYProgress } = useScrollTracker();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
-      the challenge:
-      • reducing supply chain complexity and costs for businesses
-      • making eco-friendly supplies more accessible and affordable
-      • streamlining the ordering process for regular business supplies
-      • implementing efficient delivery and inventory management
+  return (
+    <motion.div
+      className="fixed top-0 left-0 right-0 h-1 bg-neutral-200 dark:bg-neutral-800 z-50 origin-left"
+      style={{ scaleX }}
+    />
+  );
+}
 
-      the solution:
-      developed a comprehensive platform focusing on three main areas:
+// Magnetic effect component
+function MagneticElement({ children, strength = 0.3 }: { children: React.ReactNode, strength?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const mousePosition = useMousePosition();
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
 
-      1. business experience
-      • intuitive dashboard for order management
-      • simplified reordering process
-      • real-time stock availability
-      • automated delivery scheduling
-      • bulk ordering capabilities
+  useEffect(() => {
+    if (!ref.current || !isHovered) {
+      x.set(0);
+      y.set(0);
+      return;
+    }
 
-      2. sustainability features
-      • eco-friendly product highlighting
-      • carbon footprint tracking
-      • sustainable packaging options
-      • waste reduction analytics
-      • environmental impact reports
+    const rect = ref.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    const deltaX = (mousePosition.x - centerX) * strength;
+    const deltaY = (mousePosition.y - centerY) * strength;
+    
+    x.set(deltaX);
+    y.set(deltaY);
+  }, [mousePosition, isHovered, strength, x, y]);
 
-      3. supply chain optimization
-      • direct supplier connections
-      • smart inventory management
-      • automated stock alerts
-      • efficient delivery routing
-      • bulk pricing calculations
+  return (
+    <motion.div
+      ref={ref}
+      style={{ x, y }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      transition={{ type: "spring", stiffness: 150, damping: 15 }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
-      technical highlights:
-      • next.js 15 with server components
-      • typescript for type safety
-      • mysql database with prisma orm
-      • stripe payment processing
-      • klaviyo email automation
-      • zedify delivery integration
-      • cloudinary media optimization
-      • netlify edge functions
-    `,
-    images: [
-      "/surplush/main.png",
-      "/surplush/detail1.png",
-      "/surplush/detail2.png",
-    ],
-    mobileImages: [
-      "/surplush/mobile-main.png",
-      "/surplush/mobile-detail1.png",
-      "/surplush/mobile-detail2.png",
-    ],
-    tech: [
-      "next.js",
-      "typescript",
-      "tailwind css",
-      "stripe",
-      "klaviyo",
-      "zedify",
-      "prisma",
-      "mysql",
-    ],
-    link: "https://surplush.co.uk",
-    year: "2024 - 2025",
-  },
-  kronos: {
-    title: "kronos clothing",
-    description: "my custom-built store for my clothing brand",
-    fullDescription: `
-      overview:
-      kronos is a modern e-commerce platform built specifically for uk streetwear culture. the platform combines high-performance technology with sleek design to deliver an exceptional shopping experience.
-
-      the challenge:
-      • creating a modern, high-performance e-commerce platform for uk streetwear
-      • managing complex inventory across multiple product categories
-      • building an engaging customer experience with personalized features
-      • implementing secure payment and user management systems
-
-      the solution:
-      developed a full-stack application with focus on three core areas:
-
-      1. shopping experience
-      • responsive, minimalist design with smooth animations
-      • real-time cart updates and stock tracking
-      • intuitive product navigation by categories
-      • seamless checkout process with stripe
-
-      2. product management
-      • sophisticated inventory system with size-specific tracking
-      • scheduled product releases
-      • automated stock notifications
-      • dynamic pricing and discount system
-      • detailed product analytics
-
-      3. customer engagement
-      • personalized email campaigns via resend
-      • custom newsletter system
-      • promotional code engine
-      • order tracking and notifications
-      • customer feedback integration
-
-      technical highlights:
-      • next.js app router with server components
-      • typescript for type safety
-      • postgresql database with prisma orm
-      • stripe payment integration
-      • resend for transactional emails
-      • responsive images with next/image
-      • secure authentication system
-      • automated deployment with netlify
-    `,
-    images: ["/kronos/main.png", "/kronos/detail1.png", "/kronos/detail2.png"],
-    mobileImages: [
-      "/kronos/mobile-main.png",
-      "/kronos/mobile-detail1.png",
-      "/kronos/mobile-detail2.png",
-    ],
-    tech: ["next.js", "typescript", "resend", "stripe", "prisma", "postgresql"],
-    link: "https://wearkronos.store",
-    year: "2024 - 2025",
-  },
-  jacked: {
-    title: "jacked fitness",
-    description:
-      "a place for people to find out more about jack and his abilities as a personal trainer",
-    fullDescription: `
-      overview:
-      jacked fitness is a modern platform designed to showcase professional training services and provide accessible fitness guidance. the site combines sleek design with practical functionality to help users start their fitness journey.
-
-      the challenge:
-      • creating an engaging platform to showcase personal training services
-      • implementing a tiered pricing system with subscription capabilities
-      • developing an intuitive interface for fitness content delivery
-      • building a responsive system for client transformations and testimonials
-
-      the solution:
-      developed a comprehensive fitness platform focusing on three core areas:
-
-      1. client experience
-      • clean, responsive interface across all devices
-      • easy-to-navigate program tiers (bronze to platinum)
-      • monthly routine subscription service
-      • interactive equipment tutorials
-      • comprehensive faq section
-      • before/after transformation gallery
-      
-      2. training programs
-      • detailed program breakdowns
-      • custom pricing tiers with feature comparison
-      • equipment guides and tutorials
-      • nutrition guidance integration
-
-      3. engagement features
-      • client transformation gallery
-      • testimonials and success stories
-      • equipment tutorial videos
-      • responsive contact form
-      • social media integration
-      • newsletter subscription
-
-      technical highlights:
-      • next.js app router with server components
-      • typescript for type safety
-      • tailwind css for responsive design
-      • postgresql database with prisma orm
-      • stripe subscription system
-      • responsive image optimization
-      • custom animation system
-      • automated deployment with netlify
-    `,
-    images: ["/jacked/main.png", "/jacked/detail1.png", "/jacked/detail2.png"],
-    mobileImages: [
-      "/jacked/mobile-main.png",
-      "/jacked/mobile-detail1.png",
-      "/jacked/mobile-detail2.png",
-    ],
-    tech: ["next.js", "typescript", "tailwind css", "prisma", "postgresql"],
-    link: "https://jackedfitness.com",
-    year: "2024 - 2025",
-  },
-};
-
-function ImageGalleryWheel({ images, title }: { images: string[], title: string }) {
+// Simplified image gallery with better performance
+function SimplifiedImageGallery({ images, title }: { images: string[], title: string }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const dragX = useMotionValue(0);
+  const { ref: galleryRef, isIntersecting } = useViewportIntersection({ threshold: 0.1 });
   
-  useEffect(() => {
-    const updateDimensions = () => {
-      const width = window.innerWidth;
-      const imageWidth = width > 768 ? Math.min(800, width * 0.5) : width - 48;
-      const imageHeight = (imageWidth * 9) / 16;
-      
-      setDimensions({
-        width: imageWidth,
-        height: imageHeight
-      });
-    };
-
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
-  }, []);
-
-  const handleDragStart = () => {
-    if (isAnimating) return false;
-    setIsDragging(true);
+  const animateToIndex = (index: number) => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    setCurrentIndex(index);
+    
+    animate(dragX, 0, {
+      type: "spring",
+      stiffness: 300,
+      damping: 30,
+      onComplete: () => setIsAnimating(false)
+    });
   };
 
   const handleDragEnd = (
     event: MouseEvent | TouchEvent | PointerEvent,
     info: { offset: { x: number }; velocity: { x: number } }
   ) => {
-    if (isAnimating) {
-      dragX.set(0);
-      setIsAnimating(false);
-      return;
-    }
-    
-    setIsDragging(false);
     const offset = info.offset.x;
     const velocity = info.velocity.x;
-    const threshold = dimensions.width * 0.15;
+    const threshold = 50;
     
-    if (Math.abs(offset) > threshold || Math.abs(velocity) > 300) {
-      const direction = offset > 0 || velocity > 300 ? -1 : 1;
+    if (Math.abs(offset) > threshold || Math.abs(velocity) > 500) {
+      const direction = offset > 0 || velocity > 500 ? -1 : 1;
       const newIndex = (currentIndex + direction + images.length) % images.length;
-      setCurrentIndex(newIndex);
-    }
-
-    setIsAnimating(true);
-    animate(dragX, 0, {
-      type: "spring",
-      stiffness: 200,
-      damping: 25,
-      velocity: info.velocity.x * 0.5,
-      onComplete: () => setIsAnimating(false)
-    });
-  };
-
-  const animateToIndex = (index: number, instant = false) => {
-    if (isAnimating || isDragging) return;
-    
-    setIsAnimating(true);
-    setCurrentIndex(index);
-
-    if (instant) {
-      dragX.set(0);
-      setIsAnimating(false);
+      animateToIndex(newIndex);
     } else {
-      // Single smooth animation
       animate(dragX, 0, {
         type: "spring",
-        stiffness: 150,
-        damping: 22,
-        onComplete: () => {
-          setIsAnimating(false);
-        }
+        stiffness: 300,
+        damping: 30,
       });
     }
   };
 
-  const handleWheel = (e: React.WheelEvent) => {
-    if (isAnimating || isDragging) return;
-    
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-      e.preventDefault();
-      const direction = e.deltaX > 0 ? 1 : -1;
-      const newIndex = (currentIndex + direction + images.length) % images.length;
-      animateToIndex(newIndex);
-    }
-  };
-
-  if (dimensions.width === 0) return null;
-
-  const getStackStyles = (index: number) => {
-    const totalImages = images.length;
-    const position = (index - currentIndex + totalImages) % totalImages;
-    
-    let zIndex = totalImages - Math.abs(position);
-    if (position === 0) zIndex = totalImages;
-
-    let translateX = 0;
-    let translateZ = 0;
-    let rotateY = 0;
-    let opacity = 1;
-    let scale = 1;
-    
-    const currentDrag = dragX.get();
-    
-    if (position === 0) {
-      // Current image
-      translateZ = 50;
-      translateX = currentDrag;
-      scale = 1.04;
-    } else if (position === 1 || position === -totalImages + 1) {
-      // Next image
-      translateX = dimensions.width * 0.75;
-      translateZ = -50;
-      rotateY = -15;
-      opacity = 0.7;
-      scale = 0.96;
-      if (currentDrag < 0) {
-        const progress = Math.min(Math.abs(currentDrag) / dimensions.width, 1);
-        translateX += currentDrag * 0.5;
-        rotateY += progress * 15;
-        opacity = 0.7 + progress * 0.3;
-        scale = 0.96 + progress * 0.08;
-      }
-    } else if (position === totalImages - 1 || position === -1) {
-      // Previous image
-      translateX = -dimensions.width * 0.75;
-      translateZ = -50;
-      rotateY = 15;
-      opacity = 0.7;
-      scale = 0.96;
-      if (currentDrag > 0) {
-        const progress = Math.min(currentDrag / dimensions.width, 1);
-        translateX += currentDrag * 0.5;
-        rotateY -= progress * 15;
-        opacity = 0.7 + progress * 0.3;
-        scale = 0.96 + progress * 0.08;
-      }
-    } else if (position > 1) {
-      // Stack to the right
-      translateX = dimensions.width * (0.75 + position * 0.1);
-      translateZ = -100 - position * 25;
-      rotateY = -15;
-      opacity = 0.5;
-      scale = 0.92;
-    } else {
-      // Stack to the left
-      translateX = -dimensions.width * (0.75 + Math.abs(position) * 0.1);
-      translateZ = -100 - Math.abs(position) * 25;
-      rotateY = 15;
-      opacity = 0.5;
-      scale = 0.92;
-    }
-
-    return {
-      zIndex,
-      transform: `translate3d(${translateX}px, 0, ${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
-      opacity,
-      transition: isAnimating ? 'all 0.3s cubic-bezier(0.2, 0, 0.2, 1)' : 'none',
-    };
+  const handleDragStart = () => {
+    setIsAnimating(true);
   };
 
   return (
-    <div className="w-full mb-24 relative">
+    <motion.div 
+      ref={galleryRef as React.RefObject<HTMLDivElement>}
+      className="w-full mb-24 relative"
+      initial={{ opacity: 0, y: 60 }}
+      animate={{ 
+        opacity: isIntersecting ? 1 : 0,
+        y: isIntersecting ? 0 : 60 
+      }}
+      transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+    >
+      {/* Gallery counter */}
+      <div className="absolute top-4 right-4 z-20 text-xs text-neutral-500 dark:text-neutral-400 bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm px-2 py-1">
+        {currentIndex + 1} / {images.length}
+      </div>
+
+      {/* Main gallery container */}
       <motion.div 
         ref={containerRef}
-        className="relative h-[500px] md:h-[600px] flex items-center cursor-grab active:cursor-grabbing"
+        className="relative w-full h-[400px] md:h-[600px] overflow-hidden cursor-grab active:cursor-grabbing"
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.1}
+        dragElastic={0.2}
+        dragMomentum={false}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
-        onWheel={handleWheel}
         style={{ x: dragX }}
       >
-        <div className="absolute inset-0 flex items-center justify-center perspective-[2000px]">
-          <div className="relative preserve-3d w-full h-full flex items-center justify-center">
-            {images.map((image, index) => (
+        <div className="flex items-center justify-center h-full">
+          {images.map((image, index) => {
+            const offset = index - currentIndex;
+            const isActive = index === currentIndex;
+            
+            return (
               <motion.div
                 key={image}
-                className="absolute origin-center preserve-3d"
-                style={{
-                  width: dimensions.width,
-                  height: dimensions.height,
-                  ...getStackStyles(index),
+                className="absolute w-full max-w-4xl h-full"
+                initial={false}
+                animate={{
+                  x: `${offset * 100}%`,
+                  scale: isActive ? 1 : 0.8,
+                  opacity: Math.abs(offset) > 1 ? 0 : isActive ? 1 : 0.6,
+                  zIndex: isActive ? 10 : 5,
+                }}
+                transition={{
+                  duration: 0.5,
+                  ease: [0.33, 1, 0.68, 1],
                 }}
               >
                 <div className="relative w-full h-full">
@@ -432,7 +212,7 @@ function ImageGalleryWheel({ images, title }: { images: string[], title: string 
                     src={image}
                     alt={`${title} - image ${index + 1}`}
                     fill
-                    sizes={`(max-width: 768px) 100vw, 800px`}
+                    sizes="(max-width: 768px) 100vw, 1024px"
                     quality={90}
                     className="object-contain"
                     priority={index === 0}
@@ -440,29 +220,50 @@ function ImageGalleryWheel({ images, title }: { images: string[], title: string 
                   />
                 </div>
               </motion.div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </motion.div>
       
       {/* Navigation dots */}
-      <div className="flex justify-center gap-3 mt-8">
+      <div className="flex justify-center gap-2 mt-8">
         {images.map((_, index) => (
-          <motion.button
+          <button
             key={index}
-            onClick={() => !isAnimating && animateToIndex(index)}
-            className={`w-2.5 h-2.5 rounded-none transition-all duration-300 ${
+            onClick={() => animateToIndex(index)}
+            className={`w-8 h-1 transition-all duration-300 ${
               index === currentIndex 
-                ? 'bg-neutral-800 dark:bg-neutral-200 scale-125' 
+                ? 'bg-neutral-800 dark:bg-neutral-200' 
                 : 'bg-neutral-300 dark:bg-neutral-700 hover:bg-neutral-400 dark:hover:bg-neutral-600'
             }`}
-            whileHover={{ scale: 1.2 }}
-            whileTap={{ scale: 0.9 }}
             disabled={isAnimating}
           />
         ))}
       </div>
-    </div>
+    </motion.div>
+  );
+}
+
+// Simplified tech badge component
+function SimpleTechBadge({ tech, index }: { tech: string, index: number }) {
+  return (
+    <motion.span
+      className="inline-block text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-300"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ 
+        delay: index * 0.05, 
+        duration: 0.4,
+        ease: [0.33, 1, 0.68, 1]
+      }}
+      whileHover={{ 
+        scale: 1.05,
+        transition: { duration: 0.2 }
+      }}
+    >
+      {tech}
+    </motion.span>
   );
 }
 
@@ -488,15 +289,82 @@ const getProjectSchema = (project: Project): ProjectSchema => ({
 });
 
 function ProjectContent({ slug }: { slug: string }) {
-  const project = projects[slug as keyof typeof projects];
+  const [project, setProject] = useState<Project | null>(null);
+  const [loading, setLoading] = useState(true);
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { playClick } = useSound();
+  const { scrollY } = useScrollTracker();
+
+  // Simplified parallax effects
+  const heroParallax = useParallax(scrollY, 0.3);
+  const contentParallax = useParallax(scrollY, 0.1);
+  
+  // Navigation backdrop opacity
+  const navBackdropOpacity = useTransform(scrollY, [0, 100], [0, 1]);
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        const response = await fetch("/api/projects");
+        const data = await response.json();
+        
+        if (data.success) {
+          const projects = data.data.filter((p: Project) => p.isVisible);
+          const foundProject = projects.find((p: Project) => {
+            const projectSlug = p.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            return projectSlug === slug;
+          });
+          
+          if (foundProject) {
+            setProject(foundProject);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch project:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProject();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center">
+        <motion.div
+          className="flex items-center gap-4"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.div
+            className="w-2 h-2 bg-neutral-800 dark:bg-neutral-200 rounded-full"
+            animate={{ scale: [0.8, 1.2, 0.8] }}
+            transition={{ duration: 1, repeat: Infinity, delay: 0 }}
+          />
+          <motion.div
+            className="w-2 h-2 bg-neutral-800 dark:bg-neutral-200 rounded-full"
+            animate={{ scale: [0.8, 1.2, 0.8] }}
+            transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
+          />
+          <motion.div
+            className="w-2 h-2 bg-neutral-800 dark:bg-neutral-200 rounded-full"
+            animate={{ scale: [0.8, 1.2, 0.8] }}
+            transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
+          />
+        </motion.div>
+      </div>
+    );
+  }
 
   if (!project) {
     notFound();
   }
 
-  const images = isMobile ? project.mobileImages : project.images;
+  const images = isMobile ? 
+    (project.mobileImages && project.mobileImages.length > 0 ? project.mobileImages : project.images || []) : 
+    project.images || [];
 
   return (
     <>
@@ -507,119 +375,257 @@ function ProjectContent({ slug }: { slug: string }) {
         }}
       />
       <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
-        {/* navigation */}
-        <nav className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50">
-          <MinimalLink href="/" className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors">
-            atanas kyurkchiev
-          </MinimalLink>
-          <MinimalLink
-            href="/#work"
-            className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-          >
-            back to work
-          </MinimalLink>
-        </nav>
+        <ScrollProgressBar />
+        
+        {/* Enhanced navigation */}
+        <motion.nav 
+          className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center z-50"
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+        >
+          <motion.div
+            className="absolute inset-0 bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm border-b border-neutral-200/50 dark:border-neutral-800/50"
+            style={{
+              opacity: navBackdropOpacity
+            }}
+          />
+          
+          <MagneticElement>
+            <MinimalLink href="/" className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors relative z-10">
+              atanas kyurkchiev
+            </MinimalLink>
+          </MagneticElement>
+          
+          <MagneticElement>
+            <MinimalLink
+              href="/#work"
+              className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors relative z-10"
+            >
+              back to work
+            </MinimalLink>
+          </MagneticElement>
+        </motion.nav>
 
-        <div className="pt-24 px-6 md:px-12 max-w-7xl mx-auto">
-          {/* project header */}
-          <div className="max-w-3xl mb-16">
-            <RevealText>
-              <h1 className="text-3xl mb-4">{project.title}</h1>
-            </RevealText>
-            <RevealText>
-              <p className="text-lg text-neutral-600 dark:text-neutral-400 mb-6">
+        <div className="pt-24 px-6 md:px-12 max-w-6xl mx-auto">
+          {/* Project header */}
+          <motion.div 
+            className="max-w-4xl mb-16 relative"
+            style={{ y: heroParallax }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 60 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+              className="mb-8"
+            >
+              <h1 className="text-4xl md:text-6xl mb-6 leading-tight font-normal">
+                {project.title}
+              </h1>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: [0.33, 1, 0.68, 1] }}
+              className="mb-8"
+            >
+              <p className="text-xl md:text-2xl text-neutral-600 dark:text-neutral-400 leading-relaxed">
                 {project.description}
               </p>
-            </RevealText>
-            <div className="flex flex-wrap gap-4 items-center text-sm">
-              <RevealText>
-                <span>{project.year}</span>
-              </RevealText>
-              <span>•</span>
-              <RevealText>
-                <ReadingTime content={project.fullDescription} />
-              </RevealText>
-              <span>•</span>
-              <RevealText>
+            </motion.div>
+            
+            {project.overview && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="mb-8"
+              >
+                <p className="text-lg text-neutral-500 dark:text-neutral-500 italic leading-relaxed">
+                  {project.overview}
+                </p>
+              </motion.div>
+            )}
+            
+            {/* Meta information */}
+            <motion.div 
+              className="flex flex-wrap gap-6 items-center text-sm text-neutral-600 dark:text-neutral-400"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              {project.year && (
+                <div className="flex items-center gap-2">
+                  <span className="w-1 h-1 bg-neutral-400 rounded-full"></span>
+                  <span>{project.year}</span>
+                </div>
+              )}
+              {project.fullDescription && (
+                <div className="flex items-center gap-2">
+                  <span className="w-1 h-1 bg-neutral-400 rounded-full"></span>
+                  <ReadingTime content={project.fullDescription} />
+                </div>
+              )}
+              <div className="flex items-center gap-2">
+                <span className="w-1 h-1 bg-neutral-400 rounded-full"></span>
                 <ViewCounter slug={slug} />
-              </RevealText>
-              <span>•</span>
-              <RevealText>
+              </div>
+              <MagneticElement strength={0.2}>
                 <a
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 border border-neutral-300 dark:border-neutral-700 hover:border-neutral-900 dark:hover:border-neutral-100 transition-all duration-300 group"
                   onClick={playClick}
                 >
-                  view live site
+                  <span>view live site</span>
+                  <motion.svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-4 h-4"
+                    whileHover={{ x: 3, y: -3 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                    />
+                  </motion.svg>
                 </a>
-              </RevealText>
-            </div>
-          </div>
+              </MagneticElement>
+            </motion.div>
+          </motion.div>
 
-          {/* project images - replaced with gallery wheel */}
-          <RevealText>
-            <ImageGalleryWheel images={images} title={project.title} />
-          </RevealText>
+          {/* Image gallery */}
+          {images.length > 0 && (
+            <SimplifiedImageGallery images={images} title={project.title} />
+          )}
 
-          {/* project content */}
-          <div className="grid md:grid-cols-[2fr,1fr] gap-12 max-w-6xl">
-            {/* main content */}
-            <div className="space-y-8 text-sm">
-              {project.fullDescription.split("\n\n").map((paragraph, index) => (
-                <RevealText key={index}>
-                  <p className="leading-relaxed">{paragraph}</p>
-                </RevealText>
-              ))}
-            </div>
-
-            {/* tech stack sidebar */}
+          {/* Content grid */}
+          <motion.div 
+            className="grid md:grid-cols-[2fr,1fr] gap-16 max-w-6xl mb-24"
+            style={{ y: contentParallax }}
+          >
+            {/* Main content */}
             <div className="space-y-8">
-              <RevealText>
-                <div className="sticky top-24">
-                  <h3 className="text-sm font-medium mb-4">Technologies Used</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {project.tech?.map((tech) => (
-                      <span
-                        key={tech}
-                        className="text-xs px-3 py-1.5 border border-neutral-200 dark:border-neutral-700 rounded-none"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </RevealText>
+              {project.fullDescription ? (
+                project.fullDescription.split("\n\n").map((paragraph: string, index: number) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ 
+                      duration: 0.6, 
+                      delay: index * 0.1,
+                      ease: [0.33, 1, 0.68, 1]
+                    }}
+                  >
+                    <p className="leading-relaxed text-base">{paragraph}</p>
+                  </motion.div>
+                ))
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <p className="leading-relaxed text-neutral-500 dark:text-neutral-400 text-base">
+                    Detailed project information will be available soon.
+                  </p>
+                </motion.div>
+              )}
             </div>
-          </div>
+
+            {/* Tech stack sidebar */}
+            <motion.div 
+              className="space-y-6"
+              initial={{ opacity: 0, x: 60 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+            >
+              <div className="sticky top-32">
+                <h3 className="text-sm font-medium mb-6 uppercase tracking-wider">
+                  Technologies Used
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {(project.technologies || []).map((tech: string, index: number) => (
+                    <SimpleTechBadge key={tech} tech={tech} index={index} />
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
 
           {/* Call to action section */}
-          <div className="relative w-full border-t border-neutral-200 dark:border-neutral-800 mt-32">
-            <div className="max-w-3xl mx-auto py-32">
-              <RevealText>
-                <div className="text-center px-6 md:px-12">
-                  <p className="text-2xl sm:text-3xl mb-12">
-                    ready to build your next digital experience?
-                  </p>
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+          <motion.div 
+            className="relative w-full border-t border-neutral-200 dark:border-neutral-800 mt-32"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1 }}
+          >
+            <div className="max-w-4xl mx-auto py-32">
+              <motion.div
+                className="text-center"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+              >
+                <h2 className="text-3xl md:text-4xl mb-6 leading-tight">
+                  ready to build your next digital experience?
+                </h2>
+                
+                <p className="text-base text-neutral-600 dark:text-neutral-400 mb-12 max-w-2xl mx-auto leading-relaxed">
+                  let&apos;s collaborate on creating something exceptional that drives results and exceeds expectations.
+                </p>
+
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                  <MagneticElement strength={0.4}>
                     <MinimalLink
                       href="/hire"
-                      className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-8 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                      className="inline-flex items-center gap-3 text-sm border-2 border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-8 py-4 hover:bg-transparent hover:text-neutral-900 dark:hover:bg-transparent dark:hover:text-neutral-100 transition-all duration-300"
                     >
-                      start a project
+                      <span>start a project</span>
+                      <motion.svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-4 h-4"
+                        whileHover={{ x: 5 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                        />
+                      </motion.svg>
                     </MinimalLink>
+                  </MagneticElement>
+                  
+                  <MagneticElement strength={0.3}>
                     <MinimalLink
                       href="/#work"
-                      className="text-sm border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-8 py-3 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                      className="text-sm border border-neutral-300 dark:border-neutral-700 bg-transparent px-8 py-4 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-300"
                     >
                       view more work
                     </MinimalLink>
-                  </div>
+                  </MagneticElement>
                 </div>
-              </RevealText>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </main>
     </>
@@ -636,7 +642,27 @@ export default function ProjectPage({
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center">
-        <p className="text-sm">Loading...</p>
+        <motion.div
+          className="flex items-center gap-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <motion.div
+            className="w-2 h-2 bg-neutral-800 dark:bg-neutral-200 rounded-full"
+            animate={{ scale: [0.8, 1.2, 0.8] }}
+            transition={{ duration: 1, repeat: Infinity, delay: 0 }}
+          />
+          <motion.div
+            className="w-2 h-2 bg-neutral-800 dark:bg-neutral-200 rounded-full"
+            animate={{ scale: [0.8, 1.2, 0.8] }}
+            transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
+          />
+          <motion.div
+            className="w-2 h-2 bg-neutral-800 dark:bg-neutral-200 rounded-full"
+            animate={{ scale: [0.8, 1.2, 0.8] }}
+            transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
+          />
+        </motion.div>
       </div>
     }>
       <ProjectContent slug={slug} />

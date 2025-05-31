@@ -30,7 +30,7 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
+    /* scroll-behavior: smooth; */
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -165,4 +165,92 @@ body.pdf-mode [data-nextjs-scroll-focus-boundary],
 body.pdf-mode #NextJSDevToolbar,
 body.pdf-mode button[aria-label="Toggle dark mode"] {
   display: none !important;
+}
+
+/* PDF-specific styles */
+body.pdf-mode {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #1f1f1f;
+}
+
+body.pdf-mode.dark {
+  color: #e5e5e5;
+  background: #1a1a1a;
+}
+
+body.pdf-mode * {
+  animation: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+body.pdf-mode .space-y-20 > * + * {
+  margin-top: 3rem !important;
+}
+
+body.pdf-mode .space-y-12 > * + * {
+  margin-top: 2rem !important;
+}
+
+body.pdf-mode .text-4xl,
+body.pdf-mode .text-5xl {
+  font-size: 2.5rem !important;
+  line-height: 1.2 !important;
+  margin-bottom: 1rem !important;
+}
+
+body.pdf-mode .text-xl {
+  font-size: 1.3rem !important;
+  line-height: 1.3 !important;
+}
+
+body.pdf-mode .text-lg {
+  font-size: 1.1rem !important;
+  line-height: 1.4 !important;
+}
+
+/* Ensure proper page breaks */
+body.pdf-mode section {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+body.pdf-mode .space-y-12 > div {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* Print-friendly colors */
+@media print {
+  body.pdf-mode {
+    background: white !important;
+    color: black !important;
+  }
+  
+  body.pdf-mode.dark {
+    background: #1a1a1a !important;
+    color: #e5e5e5 !important;
+  }
+  
+  /* Hide navigation and interactive elements when printing */
+  nav, button, .fixed {
+    display: none !important;
+  }
+  
+  /* Ensure content fits on page */
+  body {
+    font-size: 12pt !important;
+    line-height: 1.4 !important;
+  }
+  
+  /* Page break handling */
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+  
+  .space-y-20 > * + *,
+  .space-y-12 > * + * {
+    page-break-inside: avoid;
+  }
 }

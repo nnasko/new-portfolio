@@ -11,11 +11,13 @@ export async function POST(request: Request) {
 
     if (password === process.env.INVOICE_PASSWORD) {
       const cookieStore = await cookies();
+      // Set a client-accessible cookie for frontend authentication checks
       cookieStore.set('invoice-auth', process.env.INVOICE_PASSWORD, {
-        httpOnly: true,
+        httpOnly: false, // Allow client-side access for portfolio authentication
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax', // Changed from 'strict' to 'lax' for better compatibility
         maxAge: 60 * 60 * 24, // 24 hours
+        path: '/', // Ensure cookie is available site-wide
       });
 
       return new NextResponse('Authenticated', { status: 200 });
