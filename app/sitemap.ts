@@ -26,12 +26,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ]
 
   // Project routes
-  const projectRoutes = ['surplush', 'kronos', 'jacked'].map((slug) => ({
+  const projectRoutes = [
+    "surplush",
+    "kronos",
+    "jacked",
+    "business-bank-accounts",
+  ].map((slug) => ({
     url: `${baseUrl}/work/${slug}`,
     lastModified: new Date().toISOString(),
-    changeFrequency: 'monthly' as const,
+    changeFrequency: "monthly" as const,
     priority: 0.9,
-  }))
+  }));
 
   return [...routes, ...projectRoutes]
 } 

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, animate, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { use, Suspense } from "react";
@@ -111,52 +111,61 @@ function MagneticElement({ children, strength = 0.3 }: { children: React.ReactNo
   );
 }
 
-// Simplified image gallery with better performance
+// Clean image carousel with smooth animations
 function SimplifiedImageGallery({ images, title }: { images: string[], title: string }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const dragX = useMotionValue(0);
+  const [direction, setDirection] = useState(0);
   const { ref: galleryRef, isIntersecting } = useViewportIntersection({ threshold: 0.1 });
-  
-  const animateToIndex = (index: number) => {
-    if (isAnimating) return;
-    
-    setIsAnimating(true);
-    setCurrentIndex(index);
-    
-    animate(dragX, 0, {
-      type: "spring",
-      stiffness: 300,
-      damping: 30,
-      onComplete: () => setIsAnimating(false)
+
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? '100%' : '-100%',
+      opacity: 0
+    }),
+    center: {
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction: number) => ({
+      x: direction < 0 ? '100%' : '-100%',
+      opacity: 0
+    })
+  };
+
+  const swipeConfidenceThreshold = 10000;
+  const swipePower = (offset: number, velocity: number) => {
+    return Math.abs(offset) * velocity;
+  };
+
+  const paginate = (newDirection: number) => {
+    setDirection(newDirection);
+    setCurrentIndex((prevIndex) => {
+      let nextIndex = prevIndex + newDirection;
+      
+      // Wrap around for infinite loop
+      if (nextIndex >= images.length) {
+        nextIndex = 0;
+      } else if (nextIndex < 0) {
+        nextIndex = images.length - 1;
+      }
+      
+      return nextIndex;
     });
   };
 
-  const handleDragEnd = (
-    event: MouseEvent | TouchEvent | PointerEvent,
-    info: { offset: { x: number }; velocity: { x: number } }
-  ) => {
-    const offset = info.offset.x;
-    const velocity = info.velocity.x;
-    const threshold = 50;
-    
-    if (Math.abs(offset) > threshold || Math.abs(velocity) > 500) {
-      const direction = offset > 0 || velocity > 500 ? -1 : 1;
-      const newIndex = (currentIndex + direction + images.length) % images.length;
-      animateToIndex(newIndex);
-    } else {
-      animate(dragX, 0, {
-        type: "spring",
-        stiffness: 300,
-        damping: 30,
-      });
-    }
-  };
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        paginate(-1);
+      } else if (e.key === 'ArrowRight') {
+        paginate(1);
+      }
+    };
 
-  const handleDragStart = () => {
-    setIsAnimating(true);
-  };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <motion.div 
@@ -170,73 +179,90 @@ function SimplifiedImageGallery({ images, title }: { images: string[], title: st
       transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
     >
       {/* Gallery counter */}
-      <div className="absolute top-4 right-4 z-20 text-xs text-neutral-500 dark:text-neutral-400 bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm px-2 py-1">
+      <div className="absolute top-4 right-4 z-20 text-xs text-neutral-500 dark:text-neutral-400 bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm px-2 py-1 rounded">
         {currentIndex + 1} / {images.length}
       </div>
 
       {/* Main gallery container */}
-      <motion.div 
-        ref={containerRef}
-        className="relative w-full h-[400px] md:h-[600px] overflow-hidden cursor-grab active:cursor-grabbing"
-        drag="x"
-        dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.2}
-        dragMomentum={false}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        style={{ x: dragX }}
-      >
-        <div className="flex items-center justify-center h-full">
-          {images.map((image, index) => {
-            const offset = index - currentIndex;
-            const isActive = index === currentIndex;
-            
-            return (
-              <motion.div
-                key={image}
-                className="absolute w-full max-w-4xl h-full"
-                initial={false}
-                animate={{
-                  x: `${offset * 100}%`,
-                  scale: isActive ? 1 : 0.8,
-                  opacity: Math.abs(offset) > 1 ? 0 : isActive ? 1 : 0.6,
-                  zIndex: isActive ? 10 : 5,
-                }}
-                transition={{
-                  duration: 0.5,
-                  ease: [0.33, 1, 0.68, 1],
-                }}
-              >
-                <div className="relative w-full h-full">
-                  <Image
-                    src={image}
-                    alt={`${title} - image ${index + 1}`}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 1024px"
-                    quality={90}
-                    className="object-contain"
-                    priority={index === 0}
-                    draggable={false}
-                  />
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </motion.div>
+      <div className="relative w-full h-[400px] md:h-[600px] overflow-hidden bg-neutral-100 dark:bg-neutral-800 rounded-lg">
+        <AnimatePresence initial={false} custom={direction} mode="wait">
+          <motion.div
+            key={currentIndex}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              x: { type: "spring", stiffness: 300, damping: 30 },
+              opacity: { duration: 0.2 }
+            }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={1}
+            onDragEnd={(e, { offset, velocity }) => {
+              const swipe = swipePower(offset.x, velocity.x);
+
+              if (swipe < -swipeConfidenceThreshold) {
+                paginate(1);
+              } else if (swipe > swipeConfidenceThreshold) {
+                paginate(-1);
+              }
+            }}
+            className="absolute inset-0 flex items-center justify-center cursor-grab active:cursor-grabbing"
+          >
+            <div className="relative w-full h-full max-w-4xl">
+              <Image
+                src={images[currentIndex]}
+                alt={`${title} - image ${currentIndex + 1}`}
+                fill
+                sizes="(max-width: 768px) 100vw, 1024px"
+                quality={90}
+                className="object-contain select-none"
+                priority
+                draggable={false}
+              />
+            </div>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Navigation arrows */}
+        <button
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-white/80 dark:bg-black/80 hover:bg-white dark:hover:bg-black rounded-full transition-all duration-200 opacity-0 hover:opacity-100 focus:opacity-100"
+          onClick={() => paginate(-1)}
+          aria-label="Previous image"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          </svg>
+        </button>
+        
+        <button
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-white/80 dark:bg-black/80 hover:bg-white dark:hover:bg-black rounded-full transition-all duration-200 opacity-0 hover:opacity-100 focus:opacity-100"
+          onClick={() => paginate(1)}
+          aria-label="Next image"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+      </div>
       
       {/* Navigation dots */}
       <div className="flex justify-center gap-2 mt-8">
         {images.map((_, index) => (
           <button
             key={index}
-            onClick={() => animateToIndex(index)}
-            className={`w-8 h-1 transition-all duration-300 ${
+            onClick={() => {
+              setDirection(index > currentIndex ? 1 : -1);
+              setCurrentIndex(index);
+            }}
+            className={`h-2 transition-all duration-300 ${
               index === currentIndex 
-                ? 'bg-neutral-800 dark:bg-neutral-200' 
-                : 'bg-neutral-300 dark:bg-neutral-700 hover:bg-neutral-400 dark:hover:bg-neutral-600'
-            }`}
-            disabled={isAnimating}
+                ? 'w-8 bg-neutral-800 dark:bg-neutral-200' 
+                : 'w-2 bg-neutral-300 dark:bg-neutral-700 hover:bg-neutral-400 dark:hover:bg-neutral-600'
+            } rounded-full`}
+            aria-label={`Go to image ${index + 1}`}
           />
         ))}
       </div>
@@ -362,9 +388,34 @@ function ProjectContent({ slug }: { slug: string }) {
     notFound();
   }
 
-  const images = isMobile ? 
-    (project.mobileImages && project.mobileImages.length > 0 ? project.mobileImages : project.images || []) : 
-    project.images || [];
+  // Handle both single images and image arrays
+  const images = (() => {
+    if (isMobile) {
+      // Mobile: prefer mobileImages array, fallback to mobileImage, then images array, then main image
+      if (project.mobileImages && project.mobileImages.length > 0) {
+        return project.mobileImages;
+      } else if (project.mobileImage) {
+        return [project.mobileImage];
+      } else if (project.images && project.images.length > 0) {
+        return project.images;
+      } else if (project.image) {
+        return [project.image];
+      }
+      return [];
+    } else {
+      // Desktop: prefer images array, fallback to main image, then mobile variants
+      if (project.images && project.images.length > 0) {
+        return project.images;
+      } else if (project.image) {
+        return [project.image];
+      } else if (project.mobileImages && project.mobileImages.length > 0) {
+        return project.mobileImages;
+      } else if (project.mobileImage) {
+        return [project.mobileImage];
+      }
+      return [];
+    }
+  })();
 
   return (
     <>
@@ -552,8 +603,8 @@ function ProjectContent({ slug }: { slug: string }) {
               transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
             >
               <div className="sticky top-32">
-                <h3 className="text-sm font-medium mb-6 uppercase tracking-wider">
-                  Technologies Used
+                <h3 className="text-sm font-medium mb-6 tracking-wider">
+                  technologies used
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {(project.technologies || []).map((tech: string, index: number) => (

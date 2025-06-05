@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useTransform } from "framer-motion";
+import { motion, useTransform, useScroll } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useMediaQuery } from "./hooks/useMediaQuery";
@@ -9,7 +9,7 @@ import { SectionTransition } from "./components/SectionTransition";
 import { ScrollProgress } from "./components/ScrollProgress";
 import { StickyHeader } from "./components/StickyHeader";
 import { AnimatedText } from "./components/AnimatedText";
-import { ParallaxSection, EnhancedProjectCard } from "./components/ParallaxSection";
+import { ParallaxSection } from "./components/ParallaxSection";
 import { useScrollTracker, staggerContainer, staggerItem } from "../lib/animation-utils";
 import { useRef, useState, useEffect } from "react";
 
@@ -65,6 +65,8 @@ const ScrollIndicator = () => {
   );
 };
 
+
+
 export default function Home() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { playClick } = useSound();
@@ -72,6 +74,14 @@ export default function Home() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Horizontal scroll setup for work section
+  const { scrollYProgress } = useScroll({
+    target: workRef,
+    offset: ["start start", "end end"],
+  });
+
+  const xTransform = useTransform(scrollYProgress, [0, 1], ["5%", "-85%"]);
 
   // Check authentication status
   useEffect(() => {
@@ -255,61 +265,91 @@ export default function Home() {
         </section>
       </SectionTransition>
 
-      {/* work section with enhanced animations */}
+      {/* work section with horizontal scroll - using the working implementation */}
       <SectionTransition delay={0.1}>
-        <motion.section ref={workRef} id="work" className="relative py-24">
-          <ParallaxSection speed={0.2}>
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+        <motion.section ref={workRef} id="work" className="relative h-[400vh]">
+          <div className="sticky top-0 h-screen flex items-center overflow-hidden">
+            <AnimatedText
+              className="absolute top-12 left-6 md:left-12 text-sm z-20"
+              type="words"
+              animationType="slide"
+              direction="up"
             >
-              <AnimatedText
-                className="mb-16 px-6 md:px-12 text-sm"
-                type="words"
-                animationType="slide"
-                direction="up"
-              >
-                selected work
-              </AnimatedText>
-            </motion.div>
-          </ParallaxSection>
-
-          {loading ? (
-            <div className="flex items-center justify-center py-24">
-              <motion.div
-                className="w-8 h-8 border-2 border-neutral-800 dark:border-neutral-200 border-t-transparent rounded-full"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              />
-            </div>
-          ) : (
-            <div className="px-6 md:px-12 max-w-7xl mx-auto">
-              <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16"
-                variants={staggerContainer}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true }}
-              >
-                {projects.map((project, index) => (
+              selected work
+            </AnimatedText>
+            
+            <motion.div
+              className="flex gap-12 md:gap-20 px-6 md:px-12"
+              style={{ x: xTransform }}
+            >
+              {loading ? (
+                <div className="flex items-center justify-center w-full">
+                  <motion.div
+                    className="w-8 h-8 border-2 border-neutral-800 dark:border-neutral-200 border-t-transparent rounded-full"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  />
+                </div>
+              ) : (
+                projects.map((project, index) => (
                   <motion.div
                     key={project.id}
-                    variants={staggerItem}
+                    className="relative flex-shrink-0"
+                    style={{
+                      width: isMobile ? '85vw' : '75vw',
+                      height: isMobile ? '70vh' : '80vh'
+                    }}
                   >
-                    <EnhancedProjectCard
-                      title={project.title}
-                      description={project.description}
-                      image={isMobile ? (project.mobileImage || project.image) : project.image}
-                      index={index}
-                      priority={project.priority}
-                    />
+                    <Link href={`/work/${project.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`} className="relative w-full h-full group cursor-pointer block">
+                      <motion.div
+                        className="relative w-full h-full overflow-hidden bg-neutral-100 dark:bg-neutral-800"
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                      >
+                        <Image
+                          src={isMobile ? (project.mobileImage || project.image) : project.image}
+                          alt={project.title}
+                          fill
+                          sizes={isMobile ? "85vw" : "75vw"}
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                          priority={project.priority}
+                        />
+                        
+                        {/* Overlay with project info */}
+                        <motion.div 
+                          className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 md:p-8"
+                        >
+                          <h3 className="text-white text-xl md:text-3xl font-light mb-2 md:mb-4">
+                            {project.title}
+                          </h3>
+                          <p className="text-white/80 text-sm md:text-base leading-relaxed mb-4 md:mb-6">
+                            {project.description}
+                          </p>
+                          <div className="flex items-center gap-2 text-white text-sm">
+                            <span>view project</span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-4 h-4"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                              />
+                            </svg>
+                          </div>
+                        </motion.div>
+                      </motion.div>
+                    </Link>
                   </motion.div>
-                ))}
-              </motion.div>
-            </div>
-          )}
+                ))
+              )}
+            </motion.div>
+          </div>
         </motion.section>
       </SectionTransition>
 

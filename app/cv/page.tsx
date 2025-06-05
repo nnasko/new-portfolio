@@ -653,7 +653,7 @@ export default function CV() {
                     ease: [0.33, 1, 0.68, 1]
                   }}
                 >
-                  <h3 className="text-neutral-500 dark:text-neutral-400 mb-4 text-sm uppercase tracking-wider">
+                  <h3 className="text-neutral-500 dark:text-neutral-400 mb-4 text-sm  tracking-wider">
                     {category}
                   </h3>
                   <ul className="space-y-2 text-sm">
