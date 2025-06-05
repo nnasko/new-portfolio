@@ -418,7 +418,7 @@ export default function CV() {
           {/* Enhanced experience section */}
           <AnimatedSection delay={0.1}>
             <AnimatedText
-              className="text-xl mb-8 uppercase tracking-wider"
+              className="text-xl mb-8 tracking-wider"
               type="words"
               animationType="slide"
               direction="up"
@@ -433,6 +433,42 @@ export default function CV() {
               whileInView="show"
               viewport={{ once: true }}
             >
+              <motion.div 
+                variants={staggerItem}
+                className="relative group"
+                whileHover={{ x: 10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
+                <div className="pl-8">
+                  <h3 className="text-lg mb-2 font-medium">developer @ engage media</h3>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">2025</p>
+                  <motion.ul 
+                    className="space-y-3 text-sm"
+                    variants={staggerContainer}
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true }}
+                  >
+                    {[
+                      "fixed bugs in wordpress components to improve functionality",
+                      "developed and implemented new custom components",
+                      "updated styling and enhanced user interface design",
+                      "optimized development processes and workflows"
+                    ].map((item, index) => (
+                      <motion.li 
+                        key={index}
+                        variants={staggerItem}
+                        className="flex items-start gap-3"
+                      >
+                        <span className="w-1 h-1 bg-neutral-400 rounded-full mt-2 flex-shrink-0"></span>
+                        {item}
+                      </motion.li>
+                    ))}
+                  </motion.ul>
+                </div>
+              </motion.div>
+
               <motion.div 
                 variants={staggerItem}
                 className="relative group"
@@ -510,7 +546,7 @@ export default function CV() {
           {/* Enhanced education section */}
           <AnimatedSection delay={0.2}>
             <AnimatedText
-              className="text-xl mb-8 uppercase tracking-wider"
+              className="text-xl mb-8 tracking-wider"
               type="words"
               animationType="slide"
               direction="up"
@@ -518,46 +554,85 @@ export default function CV() {
               education
             </AnimatedText>
             
-            <motion.div 
-              className="relative group"
-              whileHover={{ x: 10 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
-              <div className="pl-8">
-                <h3 className="text-lg mb-2 font-medium">software development @ access creative college</h3>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">2023 - 2025</p>
-                <motion.ul 
-                  className="space-y-3 text-sm"
-                  variants={staggerContainer}
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={{ once: true }}
-                >
-                  {[
-                    "full-stack web development",
-                    "software engineering principles",
-                    "agile methodologies",
-                    "database design and management"
-                  ].map((item, index) => (
-                    <motion.li 
-                      key={index}
-                      variants={staggerItem}
-                      className="flex items-start gap-3"
-                    >
-                      <span className="w-1 h-1 bg-neutral-400 rounded-full mt-2 flex-shrink-0"></span>
-                      {item}
-                    </motion.li>
-                  ))}
-                </motion.ul>
-              </div>
-            </motion.div>
+            <div className="space-y-12">
+              <motion.div 
+                className="relative group"
+                whileHover={{ x: 10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
+                <div className="pl-8">
+                  <h3 className="text-lg mb-2 font-medium">software development @ access creative college</h3>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">2023 - 2025</p>
+                  <motion.ul 
+                    className="space-y-3 text-sm"
+                    variants={staggerContainer}
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true }}
+                  >
+                    {[
+                      "full-stack web development",
+                      "software engineering principles",
+                      "agile methodologies",
+                      "database design and management"
+                    ].map((item, index) => (
+                      <motion.li 
+                        key={index}
+                        variants={staggerItem}
+                        className="flex items-start gap-3"
+                      >
+                        <span className="w-1 h-1 bg-neutral-400 rounded-full mt-2 flex-shrink-0"></span>
+                        {item}
+                      </motion.li>
+                    ))}
+                  </motion.ul>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                className="relative group"
+                whileHover={{ x: 10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
+                <div className="pl-8">
+                  <h3 className="text-lg mb-2 font-medium">gcses @ reepham high school</h3>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">2023</p>
+                  <motion.ul 
+                    className="space-y-3 text-sm"
+                    variants={staggerContainer}
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true }}
+                  >
+                    {[
+                      "computer science: grade 7",
+                      "mathematics: grade 6",
+                      "business: grade 6",
+                      "english language & literature: grade 5-5",
+                      "combined science: grade 5-5",
+                      "spanish: grade 3"
+                    ].map((item, index) => (
+                      <motion.li 
+                        key={index}
+                        variants={staggerItem}
+                        className="flex items-start gap-3"
+                      >
+                        <span className="w-1 h-1 bg-neutral-400 rounded-full mt-2 flex-shrink-0"></span>
+                        {item}
+                      </motion.li>
+                    ))}
+                  </motion.ul>
+                </div>
+              </motion.div>
+            </div>
           </AnimatedSection>
 
           {/* Enhanced skills section */}
           <AnimatedSection delay={0.3}>
             <AnimatedText
-              className="text-xl mb-8 uppercase tracking-wider"
+              className="text-xl mb-8 tracking-wider"
               type="words"
               animationType="slide"
               direction="up"

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
+import { Project } from "@prisma/client";
 
 // Type for project order update
 interface ProjectOrderUpdate {
@@ -9,9 +10,15 @@ interface ProjectOrderUpdate {
 // GET /api/projects - List all projects
 export async function GET() {
   try {
-    const projects = await prisma.project.findMany({
-      orderBy: { createdAt: "desc" },
-    });
+    // Add a timeout to the database query
+    const projects = await Promise.race([
+      prisma.project.findMany({
+        orderBy: { order: "asc" }, // Changed to order by 'order' field for consistency
+      }),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Database query timeout')), 3000)
+      )
+    ]) as Project[];
 
     // Ensure all projects have the new fields with defaults
     const normalizedProjects = projects.map(project => ({
@@ -30,13 +37,73 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Failed to fetch projects:", error);
-    return NextResponse.json(
+    
+    // Return fallback data instead of just an error
+    const fallbackProjects = [
       {
-        success: false,
-        error: "Failed to fetch projects",
+        id: "1",
+        title: "surplush",
+        description: "a platform for businesses to get essential supplies cheaper & the eco-friendly way",
+        image: "/surplush/main.png",
+        mobileImage: "/surplush/mobile-main.png",
+        link: "/work/surplush",
+        isVisible: true,
+        priority: true,
+        order: 0,
+        overview: null,
+        fullDescription: null,
+        images: [],
+        mobileImages: [],
+        technologies: [],
+        year: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
-      { status: 500 }
-    );
+      {
+        id: "2",
+        title: "kronos clothing",
+        description: "my custom-built store for my clothing brand",
+        image: "/kronos/main.png",
+        mobileImage: "/kronos/mobile-main.png",
+        link: "/work/kronos",
+        isVisible: true,
+        priority: false,
+        order: 1,
+        overview: null,
+        fullDescription: null,
+        images: [],
+        mobileImages: [],
+        technologies: [],
+        year: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: "3",
+        title: "jacked fitness",
+        description: "a place for people to find out more about jack and his abilities as a personal trainer",
+        image: "/jacked/main.png",
+        mobileImage: "/jacked/mobile-main.png",
+        link: "/work/jacked",
+        isVisible: true,
+        priority: false,
+        order: 2,
+        overview: null,
+        fullDescription: null,
+        images: [],
+        mobileImages: [],
+        technologies: [],
+        year: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ];
+
+    return NextResponse.json({
+      success: true,
+      data: fallbackProjects,
+      fallback: true, // Indicate this is fallback data
+    });
   }
 }
 

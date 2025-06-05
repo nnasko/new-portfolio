@@ -101,58 +101,80 @@ export default function Home() {
     checkAuth();
   }, []);
 
-  // Fetch projects from API
+  // Fallback projects data
+  const fallbackProjects: Project[] = [
+    {
+      id: "1",
+      title: "surplush",
+      description: "a platform for businesses to get essential supplies cheaper & the eco-friendly way",
+      image: "/surplush/main.png",
+      mobileImage: "/surplush/mobile-main.png",
+      link: "/work/surplush",
+      isVisible: true,
+      priority: true,
+      order: 0,
+    },
+    {
+      id: "2",
+      title: "kronos clothing",
+      description: "my custom-built store for my clothing brand",
+      image: "/kronos/main.png",
+      mobileImage: "/kronos/mobile-main.png",
+      link: "/work/kronos",
+      isVisible: true,
+      priority: false,
+      order: 1,
+    },
+    {
+      id: "3",
+      title: "jacked fitness",
+      description: "a place for people to find out more about jack and his abilities as a personal trainer",
+      image: "/jacked/main.png",
+      mobileImage: "/jacked/mobile-main.png",
+      link: "/work/jacked",
+      isVisible: true,
+      priority: false,
+      order: 2,
+    },
+  ];
+
+  // Fetch projects from API with robust error handling
   useEffect(() => {
     const fetchProjects = async () => {
+      // Set fallback projects immediately to ensure something is always displayed
+      setProjects(fallbackProjects);
+      setLoading(false);
+
       try {
-        const response = await fetch("/api/projects");
+        // Add timeout to prevent hanging requests
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
+        const response = await fetch("/api/projects", {
+          signal: controller.signal,
+        });
+        
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
-        if (data.success) {
+        
+        if (data.success && data.data && Array.isArray(data.data)) {
           const visibleProjects = data.data
             .filter((project: Project) => project.isVisible)
             .sort((a: Project, b: Project) => a.order - b.order);
-          setProjects(visibleProjects);
+          
+          // Only update if we actually got projects from the API
+          if (visibleProjects.length > 0) {
+            setProjects(visibleProjects);
+          }
         }
       } catch (error) {
-        console.error("Failed to fetch projects:", error);
-        // Fallback to static projects
-        setProjects([
-          {
-            id: "1",
-            title: "surplush",
-            description: "a platform for businesses to get essential supplies cheaper & the eco-friendly way",
-            image: "/surplush/main.png",
-            mobileImage: "/surplush/mobile-main.png",
-            link: "/work/surplush",
-            isVisible: true,
-            priority: true,
-            order: 0,
-          },
-          {
-            id: "2",
-            title: "kronos clothing",
-            description: "my custom-built store for my clothing brand",
-            image: "/kronos/main.png",
-            mobileImage: "/kronos/mobile-main.png",
-            link: "/work/kronos",
-            isVisible: true,
-            priority: false,
-            order: 1,
-          },
-          {
-            id: "3",
-            title: "jacked fitness",
-            description: "a place for people to find out more about jack and his abilities as a personal trainer",
-            image: "/jacked/main.png",
-            mobileImage: "/jacked/mobile-main.png",
-            link: "/work/jacked",
-            isVisible: true,
-            priority: false,
-            order: 2,
-          },
-        ]);
-      } finally {
-        setLoading(false);
+        console.warn("Failed to fetch projects from API, using fallback:", error);
+        // Fallback projects are already set above
       }
     };
 
