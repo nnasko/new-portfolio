@@ -151,8 +151,16 @@ export default function Home() {
   // Fetch projects from API with robust error handling
   useEffect(() => {
     const fetchProjects = async () => {
-      // Set fallback projects immediately to ensure something is always displayed
-      setProjects(fallbackProjects);
+      // Set fallback projects immediately to ensure something is always displayed (with proper sorting)
+      const sortedFallbackProjects = fallbackProjects.sort((a, b) => {
+        // Sort by priority first (priority projects come first)
+        if (a.priority !== b.priority) {
+          return b.priority ? 1 : -1;
+        }
+        // Then sort by order
+        return a.order - b.order;
+      });
+      setProjects(sortedFallbackProjects);
       setLoading(false);
 
       try {
@@ -175,7 +183,14 @@ export default function Home() {
         if (data.success && data.data && Array.isArray(data.data)) {
           const visibleProjects = data.data
             .filter((project: Project) => project.isVisible)
-            .sort((a: Project, b: Project) => a.order - b.order);
+            .sort((a: Project, b: Project) => {
+              // Sort by priority first (priority projects come first)
+              if (a.priority !== b.priority) {
+                return b.priority ? 1 : -1;
+              }
+              // Then sort by order
+              return a.order - b.order;
+            });
           
           // Only update if we actually got projects from the API
           if (visibleProjects.length > 0) {

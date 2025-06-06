@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Reorder } from "framer-motion";
 import { AnimatedText } from "../../components/AnimatedText";
 import { useToast } from "../../components/Toast";
 import { staggerContainer, staggerItem } from "../../../lib/animation-utils";
@@ -42,6 +42,7 @@ interface ProjectFormData {
   year: string;
   isVisible: boolean;
   priority: boolean;
+  order: number;
 }
 
 export default function ProjectsManagementPage() {
@@ -66,6 +67,7 @@ export default function ProjectsManagementPage() {
     year: "",
     isVisible: true,
     priority: false,
+    order: 0,
   });
   const { showToast } = useToast();
 
@@ -131,6 +133,7 @@ export default function ProjectsManagementPage() {
       year: "",
       isVisible: true,
       priority: false,
+      order: 0,
     });
     setEditingProject(null);
     setShowForm(false);
@@ -143,7 +146,14 @@ export default function ProjectsManagementPage() {
       const response = await fetch("/api/projects");
       const data = await response.json();
       if (data.success) {
-        setProjects(data.data.sort((a: Project, b: Project) => a.order - b.order));
+        setProjects(data.data.sort((a: Project, b: Project) => {
+          // Sort by priority first (priority projects come first)
+          if (a.priority !== b.priority) {
+            return b.priority ? 1 : -1;
+          }
+          // Then sort by order
+          return a.order - b.order;
+        }));
       } else {
         showToast("Failed to fetch projects");
       }
@@ -152,7 +162,7 @@ export default function ProjectsManagementPage() {
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, showToast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -207,6 +217,7 @@ export default function ProjectsManagementPage() {
       year: project.year || "",
       isVisible: project.isVisible,
       priority: project.priority,
+      order: project.order,
     });
     setShowForm(true);
   };
@@ -252,6 +263,55 @@ export default function ProjectsManagementPage() {
       }
     } catch {
       showToast("Error updating project");
+    }
+  };
+
+  const handleReorder = async (newOrder: Project[]) => {
+    setProjects(newOrder);
+    
+    // Update the order field for each project
+    try {
+      const updatePromises = newOrder.map((project, index) =>
+        fetch(`/api/projects/${project.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            order: index,
+          }),
+        })
+      );
+      
+      await Promise.all(updatePromises);
+      showToast("Project order updated");
+    } catch {
+      showToast("Error updating project order");
+      fetchProjects(); // Revert to original order if failed
+    }
+  };
+
+  const handleTogglePriority = async (project: Project) => {
+    try {
+      const response = await fetch(`/api/projects/${project.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          priority: !project.priority,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        showToast(`Project ${!project.priority ? "marked as priority" : "unmarked as priority"}`);
+        fetchProjects();
+      } else {
+        showToast("Failed to update project priority");
+      }
+    } catch {
+      showToast("Error updating project priority");
     }
   };
 
@@ -339,122 +399,150 @@ export default function ProjectsManagementPage() {
 
         {/* Projects List */}
         <motion.div
-          className="space-y-6"
+          className="space-y-4"
           variants={staggerContainer}
           initial="hidden"
           animate="show"
         >
-          <AnimatePresence>
-            {projects.map((project) => (
-              <motion.div
-                key={project.id}
-                className="border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/50 p-6"
-                variants={staggerItem}
-                layout
-                exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
-                whileHover={{ y: -2 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="flex justify-between items-start gap-6">
-                  {/* Project Info */}
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-3">
-                      <h3 className="text-lg font-normal">{project.title}</h3>
-                      {project.year && (
-                        <span className="text-xs px-2 py-1 bg-neutral-200 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400">
-                          {project.year}
-                        </span>
-                      )}
-                      {project.priority && (
-                        <span className="text-xs px-2 py-1 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300">
-                          priority
-                        </span>
-                      )}
-                      {!project.isVisible && (
-                        <span className="text-xs px-2 py-1 bg-neutral-300 dark:bg-neutral-600 text-neutral-600 dark:text-neutral-400">
-                          hidden
-                        </span>
-                      )}
-                    </div>
-                    
-                    <p className="text-neutral-600 dark:text-neutral-400 text-sm mb-3 leading-relaxed">
-                      {project.description}
-                    </p>
-                    
-                    {project.overview && (
-                      <p className="text-neutral-500 dark:text-neutral-500 text-xs mb-3 leading-relaxed italic">
-                        {project.overview.length > 100 ? project.overview.substring(0, 100) + "..." : project.overview}
-                      </p>
-                    )}
-                    
-                    {project.technologies && project.technologies.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        {project.technologies.slice(0, 5).map((tech, index) => (
-                          <span
-                            key={index}
-                            className="text-xs px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300"
+          <motion.div 
+            className="text-sm text-neutral-500 dark:text-neutral-400 mb-4 flex items-center gap-2"
+            variants={staggerItem}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+            </svg>
+            drag to reorder projects
+          </motion.div>
+          
+          <Reorder.Group axis="y" values={projects} onReorder={handleReorder} className="space-y-4">
+            <AnimatePresence>
+              {projects.map((project) => (
+                <Reorder.Item
+                  key={project.id}
+                  value={project}
+                  className="border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/50 cursor-grab active:cursor-grabbing"
+                  whileHover={{ y: -2, scale: 1.01 }}
+                  whileDrag={{ scale: 1.02, rotateZ: 1 }}
+                  transition={{ duration: 0.2 }}
+                  exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
+                >
+                  <div className="p-6">
+                    <div className="flex justify-between items-start gap-6">
+                      {/* Project Info with Drag Handle */}
+                      <div className="flex items-start gap-3 flex-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-neutral-400 mt-1 flex-shrink-0">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                        </svg>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-3">
+                            <h3 className="text-lg font-normal">{project.title}</h3>
+                            <span className="text-xs px-2 py-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400">
+                              #{project.order}
+                            </span>
+                            {project.year && (
+                              <span className="text-xs px-2 py-1 bg-neutral-200 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400">
+                                {project.year}
+                              </span>
+                            )}
+                            {project.priority && (
+                              <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
+                                priority
+                              </span>
+                            )}
+                            {!project.isVisible && (
+                              <span className="text-xs px-2 py-1 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300">
+                                hidden
+                              </span>
+                            )}
+                          </div>
+                          
+                          <p className="text-neutral-600 dark:text-neutral-400 text-sm mb-3 leading-relaxed">
+                            {project.description}
+                          </p>
+                          
+                          {project.overview && (
+                            <p className="text-neutral-500 dark:text-neutral-500 text-xs mb-3 leading-relaxed italic">
+                              {project.overview.length > 100 ? project.overview.substring(0, 100) + "..." : project.overview}
+                            </p>
+                          )}
+                          
+                          {project.technologies && project.technologies.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mb-3">
+                              {project.technologies.slice(0, 5).map((tech, index) => (
+                                <span
+                                  key={index}
+                                  className="text-xs px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300"
+                                >
+                                  {tech}
+                                </span>
+                              ))}
+                              {project.technologies.length > 5 && (
+                                <span className="text-xs px-2 py-0.5 text-neutral-500 dark:text-neutral-500">
+                                  +{project.technologies.length - 5} more
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          
+                          {project.images && project.images.length > 0 && (
+                            <p className="text-xs text-neutral-500 dark:text-neutral-500 mb-3">
+                              {project.images.length} gallery image{project.images.length !== 1 ? 's' : ''}
+                            </p>
+                          )}
+                          
+                          <a
+                            href={project.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors underline"
                           >
-                            {tech}
-                          </span>
-                        ))}
-                        {project.technologies.length > 5 && (
-                          <span className="text-xs px-2 py-0.5 text-neutral-500 dark:text-neutral-500">
-                            +{project.technologies.length - 5} more
-                          </span>
-                        )}
+                            {project.link}
+                          </a>
+                        </div>
                       </div>
-                    )}
-                    
-                    {project.images && project.images.length > 0 && (
-                      <p className="text-xs text-neutral-500 dark:text-neutral-500 mb-3">
-                        {project.images.length} gallery image{project.images.length !== 1 ? 's' : ''}
-                      </p>
-                    )}
-                    
-                    <a
-                      href={project.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors underline"
-                    >
-                      {project.link}
-                    </a>
-                  </div>
 
-                  {/* Project Image */}
-                  <div className="w-24 h-16 bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
+                      {/* Project Image */}
+                      <div className="w-24 h-16 bg-neutral-100 dark:bg-neutral-800 overflow-hidden flex-shrink-0">
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
 
-                {/* Actions */}
-                <div className="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-800 flex gap-3 text-xs">
-                  <button
-                    onClick={() => handleEdit(project)}
-                    className="text-neutral-600 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
-                  >
-                    edit
-                  </button>
-                  <button
-                    onClick={() => handleToggleVisibility(project)}
-                    className="text-neutral-600 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
-                  >
-                    {project.isVisible ? "hide" : "show"}
-                  </button>
-                  <button
-                    onClick={() => handleDelete(project.id)}
-                    className="text-neutral-600 dark:text-neutral-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-                  >
-                    delete
-                  </button>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+                    {/* Actions */}
+                    <div className="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-800 flex gap-3 text-xs">
+                      <button
+                        onClick={() => handleEdit(project)}
+                        className="text-neutral-600 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
+                      >
+                        edit
+                      </button>
+                      <button
+                        onClick={() => handleTogglePriority(project)}
+                        className="text-neutral-600 dark:text-neutral-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                      >
+                        {project.priority ? "remove priority" : "mark priority"}
+                      </button>
+                      <button
+                        onClick={() => handleToggleVisibility(project)}
+                        className="text-neutral-600 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
+                      >
+                        {project.isVisible ? "hide" : "show"}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(project.id)}
+                        className="text-neutral-600 dark:text-neutral-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                      >
+                        delete
+                      </button>
+                    </div>
+                  </div>
+                </Reorder.Item>
+              ))}
+            </AnimatePresence>
+          </Reorder.Group>
 
           {projects.length === 0 && (
             <motion.div
@@ -655,6 +743,24 @@ export default function ProjectsManagementPage() {
                   {/* Settings */}
                   <div className="space-y-4">
                     <h3 className="text-sm font-medium text-neutral-600 dark:text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 pb-2">Settings</h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm text-neutral-600 dark:text-neutral-400 mb-2">
+                          display order
+                        </label>
+                        <input
+                          type="number"
+                          value={formData.order}
+                          onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
+                          className="w-full px-3 py-2 text-sm border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-600"
+                          min="0"
+                        />
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                          lower numbers appear first (priority projects always come first)
+                        </p>
+                      </div>
+                    </div>
                     
                     <div className="flex gap-6 text-sm">
                       <label className="flex items-center gap-2">

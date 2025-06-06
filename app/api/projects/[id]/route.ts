@@ -60,7 +60,8 @@ export async function PUT(
       link, 
       year,
       isVisible, 
-      priority 
+      priority,
+      order
     } = body;
 
     const project = await prisma.project.update({
@@ -79,6 +80,7 @@ export async function PUT(
         ...(year !== undefined && { year: year || null }),
         ...(isVisible !== undefined && { isVisible }),
         ...(priority !== undefined && { priority }),
+        ...(order !== undefined && { order }),
       },
     });
 

@@ -124,16 +124,19 @@ export async function POST(request: NextRequest) {
       link, 
       year,
       isVisible, 
-      priority 
+      priority,
+      order 
     } = body;
 
-    // Get the current maximum order value
-    const maxOrderProject = await prisma.project.findFirst({
-      orderBy: { order: 'desc' },
-      select: { order: true }
-    });
-
-    const nextOrder = maxOrderProject ? maxOrderProject.order + 1 : 0;
+    // Use provided order or get the next available order
+    let finalOrder = order;
+    if (finalOrder === undefined || finalOrder === null) {
+      const maxOrderProject = await prisma.project.findFirst({
+        orderBy: { order: 'desc' },
+        select: { order: true }
+      });
+      finalOrder = maxOrderProject ? maxOrderProject.order + 1 : 0;
+    }
 
     const project = await prisma.project.create({
       data: {
@@ -150,7 +153,7 @@ export async function POST(request: NextRequest) {
         year: year || null,
         isVisible: isVisible ?? true,
         priority: priority ?? false,
-        order: nextOrder,
+        order: finalOrder,
       },
     });
 
