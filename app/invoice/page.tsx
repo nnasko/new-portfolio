@@ -294,6 +294,12 @@ export default function InvoiceDashboard() {
               manage clients
             </Link>
             <Link 
+              href="/invoice/legal"
+              className="border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-4 py-2 text-sm hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors lowercase"
+            >
+              legal documents
+            </Link>
+            <Link 
               href="/invoice/create"
               className="border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-4 py-2 text-sm hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors lowercase"
             >

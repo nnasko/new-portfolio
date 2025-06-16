@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { cookies } from 'next/headers';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
@@ -17,29 +15,9 @@ export async function GET() {
       orderBy: {
         name: 'asc',
       },
-      include: {
-        _count: {
-          select: { Invoice: true },
-        },
-        Invoice: {
-          select: {
-            total: true,
-          }
-        }
-      }
     });
 
-    const clientsWithStats = clients.map(client => {
-      const totalInvoiced = client.Invoice.reduce((sum: number, inv) => sum + inv.total, 0);
-      const { _count, ...clientData } = client;
-      return {
-        ...clientData,
-        invoiceCount: _count.Invoice,
-        totalInvoiced: totalInvoiced,
-      };
-    });
-
-    return NextResponse.json({ clients: clientsWithStats }); 
+    return NextResponse.json({ clients }); 
   } catch (error) {
     console.error("Error fetching clients with stats:", error);
     return NextResponse.json({ success: false, error: 'failed to fetch clients' }, { status: 500 });

@@ -32,6 +32,8 @@ model Project {
   order             Int      @default(0)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  
+  legalDocuments    LegalDocument[]
 }
 
 model Invoice {
@@ -49,6 +51,7 @@ model Invoice {
   clientId      String?
   Client        Client?       @relation(fields: [clientId], references: [id])
   items         InvoiceItem[]
+  legalDocuments LegalDocument[]
 }
 
 model InvoiceItem {
@@ -61,17 +64,68 @@ model InvoiceItem {
 }
 
 model Client {
-  id        String    @id
+  id        String    @id @default(cuid())
   name      String
   email     String    @unique
   address   String
   createdAt DateTime  @default(now())
-  updatedAt DateTime
-  Invoice   Invoice[]
+  updatedAt DateTime  @updatedAt
+  
+  invoices  Invoice[]
+  legalDocuments LegalDocument[]
 }
 
 enum InvoiceStatus {
   PAID
   UNPAID
   OVERDUE
+}
+
+model LegalDocument {
+  id               String             @id @default(cuid())
+  documentNumber   String             @unique
+  title            String
+  documentType     LegalDocumentType
+  content          String             // HTML content of the document
+  status           DocumentStatus     @default(DRAFT)
+  
+  // Relations
+  clientId         String?
+  Client           Client?            @relation(fields: [clientId], references: [id])
+  invoiceId        String?
+  Invoice          Invoice?           @relation(fields: [invoiceId], references: [id])
+  projectId        String?
+  Project          Project?           @relation(fields: [projectId], references: [id])
+  
+  // Metadata
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  sentAt           DateTime?
+  acknowledgedAt   DateTime?
+  
+  // Legal specific fields
+  signatureRequired Boolean           @default(false)
+  clientSignature  String?            // Base64 encoded signature image
+  expiresAt        DateTime?
+  legalBasis       String?            // Legal basis for the document
+  jurisdiction     String?            // UK, England & Wales, etc.
+}
+
+enum LegalDocumentType {
+  SERVICE_AGREEMENT
+  TERMS_CONDITIONS
+  DEBT_COLLECTION_LETTER
+  FORMAL_DEMAND
+  COURT_NOTICE
+  PROJECT_CONTRACT
+  NDA
+  WORK_ORDER
+}
+
+enum DocumentStatus {
+  DRAFT
+  SENT
+  ACKNOWLEDGED
+  EXPIRED
+  VOIDED
 }
