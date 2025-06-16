@@ -39,7 +39,16 @@ export async function POST(request: Request) {
       }, { status: 400 });
     }
 
-    const signingUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/sign/${documentId}`;
+    // Get the base URL from environment variable or construct from request headers
+    let baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    
+    if (!baseUrl) {
+      const url = new URL(request.url);
+      const protocol = process.env.NODE_ENV === 'production' ? 'https' : url.protocol;
+      baseUrl = `${protocol}//${url.host}`;
+    }
+
+    const signingUrl = `${baseUrl}/sign/${documentId}`;
 
     // Send email to client with signing link
     try {
