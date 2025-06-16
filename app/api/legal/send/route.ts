@@ -43,12 +43,28 @@ export async function POST(request: Request) {
     let baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     
     if (!baseUrl) {
-      const url = new URL(request.url);
-      const protocol = process.env.NODE_ENV === 'production' ? 'https' : url.protocol;
-      baseUrl = `${protocol}//${url.host}`;
+      // Try to get the origin from headers first (more reliable in serverless)
+      const origin = request.headers.get('origin') || request.headers.get('referer');
+      
+      if (origin) {
+        // Extract base URL from origin/referer
+        const originUrl = new URL(origin);
+        baseUrl = `${originUrl.protocol}//${originUrl.host}`;
+      } else {
+        // Fallback to constructing from request URL
+        const url = new URL(request.url);
+        const protocol = process.env.NODE_ENV === 'production' ? 'https' : url.protocol;
+        baseUrl = `${protocol}//${url.host}`;
+      }
     }
 
     const signingUrl = `${baseUrl}/sign/${documentId}`;
+    
+    // Debug logging
+    console.log('Base URL:', baseUrl);
+    console.log('Signing URL:', signingUrl);
+    console.log('NEXT_PUBLIC_BASE_URL env var:', process.env.NEXT_PUBLIC_BASE_URL);
+    console.log('Request URL:', request.url);
 
     // Send email to client with signing link
     try {
