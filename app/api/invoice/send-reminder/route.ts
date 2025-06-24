@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const { invoiceId } = await request.json();
+    const { invoiceId, selectedEmails } = await request.json();
 
     // Get invoice details, including Client and items
     const invoice = await prisma.invoice.findUnique({
@@ -37,14 +37,51 @@ export async function POST(request: Request) {
        return NextResponse.json({ success: false, error: 'Invoice is missing client data' }, { status: 400 });
     }
 
+    // Determine which emails to send to - handle both old and new schema
+    let recipientEmails: string[] = [];
+    
+    if (selectedEmails && Array.isArray(selectedEmails) && selectedEmails.length > 0) {
+      // Use selected emails if provided
+      recipientEmails = selectedEmails;
+    } else {
+      // Handle both new schema (emails array) and old schema (single email)
+      const clientData = invoice.Client as {
+        emails?: string[];
+        email?: string;
+      };
+      if (clientData.emails && Array.isArray(clientData.emails)) {
+        // New schema with emails array
+        recipientEmails = clientData.emails;
+      } else if (clientData.email) {
+        // Old schema with single email field
+        recipientEmails = [clientData.email];
+      }
+    }
+
+    if (recipientEmails.length === 0) {
+      return NextResponse.json({ success: false, error: 'No email addresses found for client' }, { status: 400 });
+    }
+
     // --- Prepare data for PDF generation --- 
     // (Similar to generate/route.ts, create the object generateInvoicePDF expects)
+    const clientData = invoice.Client as {
+      emails?: string[];
+      email?: string;
+      name: string;
+      address: string;
+      id: string;
+    };
+    const invoiceData = invoice as {
+      amountPaid?: number;
+      total: number;
+    };
+    
     const invoiceForPdf = {
         // Fields directly from invoice record
         ...invoice, 
         // Add direct client fields expected by the current pdf function input type
         clientName: invoice.Client.name,
-        clientEmail: invoice.Client.email,
+        clientEmail: clientData.emails?.[0] || clientData.email || '',
         clientAddress: invoice.Client.address,
         clientId: invoice.Client.id,
         // Ensure date types match if needed (assuming they are already Date objects here)
@@ -59,10 +96,14 @@ export async function POST(request: Request) {
     // Generate PDF using the adapted data structure
     const pdfBuffer = await generateInvoicePDF(invoiceForPdf);
 
+    // Handle amountPaid field - may not exist in current schema
+    const amountPaid = invoiceData.amountPaid || 0;
+    const remainingBalance = invoice.total - amountPaid;
+
     // Send reminder email using fetched client details
     const { data: emailData, error } = await resend.emails.send({
       from: process.env.CONTACT_EMAIL!,
-      to: invoice.Client.email, // Use fetched client email
+      to: recipientEmails, // Send to multiple selected emails
       subject: `reminder: invoice ${invoice.invoiceNumber} payment due`,
       cc: process.env.CONTACT_EMAIL!, // Add CC back to self
       html: `
@@ -108,6 +149,9 @@ export async function POST(request: Request) {
             <div class="container">
               <p>hello ${invoice.Client.name.toLowerCase()},</p>
               <p>this is a friendly reminder regarding invoice <span class="highlight">${invoice.invoiceNumber.toLowerCase()}</span> which is currently pending payment.</p>
+              <p><strong>invoice total:</strong> £${invoice.total.toFixed(2)}</p>
+              ${amountPaid > 0 ? `<p><strong>amount paid:</strong> £${amountPaid.toFixed(2)}</p>
+              <p><strong>remaining balance:</strong> £${remainingBalance.toFixed(2)}</p>` : ''}
               <p>i have attached a copy of the invoice for your reference.</p>
               <p>if you have already processed the payment, please disregard this message.</p>
               <p>if you have any questions or need assistance with the payment process, please don't hesitate to reach out.</p>
@@ -144,7 +188,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ 
       success: true, 
-      message: 'Reminder sent successfully',
+      message: `Reminder sent successfully to ${recipientEmails.length} email address(es)`,
+      sentTo: recipientEmails,
       data: emailData,
     });
 

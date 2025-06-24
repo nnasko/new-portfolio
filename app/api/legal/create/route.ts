@@ -166,7 +166,13 @@ export async function POST(request: Request) {
     // Fetch client data
     const client = await prisma.client.findUnique({
       where: { id: requestData.clientId }
-    });
+    }) as {
+      id: string;
+      name: string;
+      email?: string;
+      emails?: string[];
+      address: string;
+    } | null;
 
     if (!client) {
       return NextResponse.json({ 
@@ -178,9 +184,17 @@ export async function POST(request: Request) {
     // Generate unique document number
     const documentNumber = await generateUniqueDocumentNumber();
 
+    // Ensure client data is compatible (handle both old and new schema)
+    const clientData: ClientData = {
+      id: client.id,
+      name: client.name,
+      email: client.email || (client.emails && client.emails.length > 0 ? client.emails[0] : ''),
+      address: client.address
+    };
+
     // Generate service agreement content
     const content = generateServiceAgreementContent(
-      client,
+      clientData,
       requestData.projectDescription,
       requestData.estimatedValue,
       requestData.timeline

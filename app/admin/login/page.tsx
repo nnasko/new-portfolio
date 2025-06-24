@@ -1,13 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
   const [state, setState] = useState({
     password: '',
     error: '',
     isLoading: false
   });
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +26,7 @@ export default function LoginPage() {
       });
 
       if (response.ok) {
-        window.location.href = '/invoice';
+        router.push('/admin');
       } else {
         setState(prev => ({ ...prev, error: 'invalid password', isLoading: false }));
       }
@@ -37,12 +40,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center px-4">
+      <motion.div
+        className="max-w-md w-full space-y-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <div>
           <h2 className="mt-6 text-center text-3xl font-light lowercase">
-            invoice system access
+            admin access
           </h2>
+          <p className="mt-2 text-center text-sm text-neutral-600 dark:text-neutral-400 lowercase">
+            enter your admin password to continue
+          </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
@@ -65,7 +76,14 @@ export default function LoginPage() {
           </div>
 
           {state.error && (
-            <div className="text-red-500 text-sm text-center lowercase">{state.error}</div>
+            <motion.div 
+              className="text-red-500 text-sm text-center lowercase"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              {state.error}
+            </motion.div>
           )}
 
           <div>
@@ -78,7 +96,7 @@ export default function LoginPage() {
             </button>
           </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 } 

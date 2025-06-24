@@ -266,7 +266,7 @@ export default function Home() {
               {isAuthenticated && (
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Link
-                    href="/admin/projects"
+                    href="/admin"
                     className="border border-neutral-400 bg-neutral-200 dark:bg-neutral-700 dark:border-neutral-600 px-4 py-2 hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors"
                     onClick={playClick}
                   >

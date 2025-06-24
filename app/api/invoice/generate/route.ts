@@ -327,6 +327,7 @@ export async function POST(request: Request) {
       clientId: generationData.client.id,
       notes: generationData.notes || null,
       total,
+      amountPaid: 0,
       status: 'UNPAID' as InvoiceStatus,
       createdAt: new Date(),
       updatedAt: new Date(),

@@ -68,6 +68,7 @@ export async function generateInvoicePDF(invoice: InvoiceForPdfType): Promise<Bu
     
     // Reconstruct the Client object for InvoiceGenerationData
     const clientData: Client = {
+        emails: [invoice.clientEmail],
         id: invoice.clientId,
         name: invoice.clientName,
         email: invoice.clientEmail,

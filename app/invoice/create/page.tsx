@@ -7,10 +7,10 @@ export default function CreateInvoicePage() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-light lowercase">create invoice</h1>
         <Link 
-          href="/invoice"
+          href="/admin"
           className="border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-4 py-2 text-sm hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors lowercase"
         >
-          back to dashboard
+          back to admin dashboard
         </Link>
       </div>
       <InvoiceForm />
