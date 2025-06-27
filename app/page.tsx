@@ -209,7 +209,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900 relative">
       <ScrollProgress />
-      
+
       {/* Enhanced Sticky Navigation */}
       <StickyHeader />
 
@@ -234,10 +234,11 @@ export default function Home() {
                 direction="up"
                 stagger={0.1}
               >
-                hi, i&apos;m atanas — a software developer focused on creating full-stack, user-friendly applications
+                hi, i&apos;m atanas — a software developer focused on creating
+                full-stack, user-friendly applications
               </AnimatedText>
             </motion.div>
-            
+
             <motion.div
               className="flex gap-6 text-sm"
               variants={staggerItem}
@@ -245,7 +246,10 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.2, duration: 0.6 }}
             >
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Link
                   href="/cv"
                   className="border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
@@ -254,7 +258,10 @@ export default function Home() {
                   view cv
                 </Link>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Link
                   href="#work"
                   className="border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
@@ -263,8 +270,23 @@ export default function Home() {
                   see my work
                 </Link>
               </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href="/hire"
+                  className="border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                  onClick={playClick}
+                >
+                  hire me
+                </Link>
+              </motion.div>
               {isAuthenticated && (
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   <Link
                     href="/admin"
                     className="border border-neutral-400 bg-neutral-200 dark:bg-neutral-700 dark:border-neutral-600 px-4 py-2 hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors"
@@ -292,7 +314,7 @@ export default function Home() {
             >
               selected work
             </AnimatedText>
-            
+
             <motion.div
               className="flex gap-12 md:gap-20 px-6 md:px-12"
               style={{ x: xTransform }}
@@ -302,7 +324,11 @@ export default function Home() {
                   <motion.div
                     className="w-8 h-8 border-2 border-neutral-800 dark:border-neutral-200 border-t-transparent rounded-full"
                     animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
                   />
                 </div>
               ) : (
@@ -311,29 +337,37 @@ export default function Home() {
                     key={project.id}
                     className="relative flex-shrink-0"
                     style={{
-                      width: isMobile ? '85vw' : '75vw',
-                      height: isMobile ? '70vh' : '80vh'
+                      width: isMobile ? "85vw" : "75vw",
+                      height: isMobile ? "70vh" : "80vh",
                     }}
                   >
-                    <Link href={`/work/${project.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`} className="relative w-full h-full group cursor-pointer block">
+                    <Link
+                      href={`/work/${project.title
+                        .toLowerCase()
+                        .replace(/\s+/g, "-")
+                        .replace(/[^a-z0-9-]/g, "")}`}
+                      className="relative w-full h-full group cursor-pointer block"
+                    >
                       <motion.div
                         className="relative w-full h-full overflow-hidden bg-neutral-100 dark:bg-neutral-800"
                         whileHover={{ scale: 1.02 }}
                         transition={{ duration: 0.4, ease: "easeOut" }}
                       >
                         <Image
-                          src={isMobile ? (project.mobileImage || project.image) : project.image}
+                          src={
+                            isMobile
+                              ? project.mobileImage || project.image
+                              : project.image
+                          }
                           alt={project.title}
                           fill
                           sizes={isMobile ? "85vw" : "75vw"}
                           className="object-cover transition-transform duration-700 group-hover:scale-105"
                           priority={project.priority}
                         />
-                        
+
                         {/* Overlay with project info */}
-                        <motion.div 
-                          className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 md:p-8"
-                        >
+                        <motion.div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 md:p-8">
                           <h3 className="text-white text-xl md:text-3xl font-light mb-2 md:mb-4">
                             {project.title}
                           </h3>
@@ -371,10 +405,7 @@ export default function Home() {
       {/* about section with parallax */}
       <SectionTransition delay={0.2}>
         <ParallaxSection speed={0.3} opacity={true}>
-          <motion.section
-            id="about"
-            className="py-24 px-6 md:px-12"
-          >
+          <motion.section id="about" className="py-24 px-6 md:px-12">
             <div className="max-w-4xl grid md:grid-cols-[1fr,1.5fr] gap-12 items-start">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -408,7 +439,9 @@ export default function Home() {
                     stagger={0.02}
                     delay={0.3}
                   >
-                    i&apos;m a software developer with a focus on creating intuitive and efficient applications. my approach combines technical expertise with a deep understanding of user needs.
+                    i&apos;m a software developer with a focus on creating
+                    intuitive and efficient applications. my approach combines
+                    technical expertise with a deep understanding of user needs.
                   </AnimatedText>
                   <AnimatedText
                     type="words"
@@ -435,12 +468,10 @@ export default function Home() {
                       </motion.li>
                     ))}
                   </motion.ul>
-                  <AnimatedText
-                    type="words"
-                    animationType="blur"
-                    delay={1.2}
-                  >
-                    when i&apos;m not coding, you can find me exploring nature, improving my health at the gym or enjoying the company of friends.
+                  <AnimatedText type="words" animationType="blur" delay={1.2}>
+                    when i&apos;m not coding, you can find me exploring nature,
+                    improving my health at the gym or enjoying the company of
+                    friends.
                   </AnimatedText>
                 </div>
               </div>
@@ -451,10 +482,7 @@ export default function Home() {
 
       {/* contact section */}
       <SectionTransition delay={0.3}>
-        <motion.section
-          id="contact"
-          className="py-24 px-6 md:px-12"
-        >
+        <motion.section id="contact" className="py-24 px-6 md:px-12">
           <div className="max-w-2xl">
             <AnimatedText
               className="text-sm mb-12"
@@ -470,7 +498,8 @@ export default function Home() {
               animationType="scale"
               stagger={0.1}
             >
-              have a project in mind? let&apos;s create something amazing together
+              have a project in mind? let&apos;s create something amazing
+              together
             </AnimatedText>
             <motion.div
               className="flex flex-col gap-8"
@@ -508,17 +537,35 @@ export default function Home() {
               <div className="space-y-4 text-sm">
                 {[
                   { label: "or reach out directly:", value: null },
-                  { label: "email:", value: "me@atanaskyurkchiev.info", href: "mailto:me@atanaskyurkchiev.info" },
-                  { label: "github:", value: "github.com/nnasko", href: "https://github.com/nnasko" },
-                  { label: "linkedin:", value: "linkedin.com/in/atanas-kyurkchiev", href: "https://www.linkedin.com/in/atanas-kyurkchiev-36a609291/" },
+                  {
+                    label: "email:",
+                    value: "me@atanaskyurkchiev.info",
+                    href: "mailto:me@atanaskyurkchiev.info",
+                  },
+                  {
+                    label: "github:",
+                    value: "github.com/nnasko",
+                    href: "https://github.com/nnasko",
+                  },
+                  {
+                    label: "linkedin:",
+                    value: "linkedin.com/in/atanas-kyurkchiev",
+                    href: "https://www.linkedin.com/in/atanas-kyurkchiev-36a609291/",
+                  },
                 ].map((item, index) => (
                   <motion.p key={index} variants={staggerItem}>
                     {item.label}{" "}
                     {item.value && item.href ? (
                       <a
                         href={item.href}
-                        target={item.href.startsWith("http") ? "_blank" : undefined}
-                        rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                        target={
+                          item.href.startsWith("http") ? "_blank" : undefined
+                        }
+                        rel={
+                          item.href.startsWith("http")
+                            ? "noopener noreferrer"
+                            : undefined
+                        }
                         className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
                       >
                         {item.value}
@@ -531,7 +578,6 @@ export default function Home() {
           </div>
         </motion.section>
       </SectionTransition>
-
     </main>
   );
 }
