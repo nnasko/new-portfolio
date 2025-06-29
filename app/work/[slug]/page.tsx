@@ -14,8 +14,7 @@ import { siteConfig } from "../../metadata";
 import { 
   useScrollTracker, 
   useMousePosition,   
-  useViewportIntersection,
-  useParallax,
+  useViewportIntersection
 } from "../../../lib/animation-utils";
 
 interface Project {

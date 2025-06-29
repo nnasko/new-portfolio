@@ -9,14 +9,9 @@ import { useSound } from "../components/SoundProvider";
 import { useTransform } from "framer-motion";
 
 export default function OfflinePage() {
-  const { playClick } = useSound();
   const { scrollY, scrollDirection } = useScrollTracker();
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-
-  // Parallax effects
-  const heroY = useTransform(scrollY, [0, 500], [0, -100]);
-  const contentOpacity = useTransform(scrollY, [0, 200], [1, 0.8]);
 
   // Transform scroll position to header opacity and blur (matching StickyHeader)
   const headerOpacity = useTransform(scrollY, [0, 100], [1, 0.95]);
