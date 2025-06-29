@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { MinimalLink } from "../components/MinimalLink";
 import { RevealText } from "../components/RevealText";
 import { useScrollTracker } from "../../lib/animation-utils";
-import { useSound } from "../components/SoundProvider";
 import { useTransform } from "framer-motion";
 
 export default function OfflinePage() {
