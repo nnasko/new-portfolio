@@ -56,7 +56,7 @@ function generateCVHTML(theme: string = 'light') {
       <!-- Header -->
       <header class="text-center space-y-4">
         <h1 class="text-4xl">Atanas Kyurkchiev</h1>
-        <p class="text-xl text-neutral-600">Software Developer</p>
+        <p class="text-xl text-neutral-600">Web Developer & Digital Solutions Specialist</p>
         <div class="flex justify-center space-x-6 text-sm">
           <span>me@atanaskyurkchiev.info</span>
           <span>github.com/nnasko</span>
@@ -68,9 +68,9 @@ function generateCVHTML(theme: string = 'light') {
       <section class="space-y-4">
         <h2 class="text-2xl border-b">About</h2>
         <p class="leading-relaxed">
-          I'm a software developer with a focus on creating intuitive and efficient applications. 
-          My approach combines technical expertise with a deep understanding of user needs, 
-          resulting in solutions that are both powerful and user-friendly.
+          I'm a passionate web developer dedicated to helping businesses succeed in the digital world. 
+          With expertise in modern technologies and a client-first approach, I create solutions that not only look great 
+          but drive real business results. I believe in building long-term partnerships with my clients.
         </p>
       </section>
 

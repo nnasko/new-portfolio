@@ -1,20 +1,20 @@
 {
-  "name": "atanas kyurkchiev | software dev",
+  "name": "atanas kyurkchiev | web developer & digital solutions",
   "short_name": "atanas k.",
-  "description": "full-stack software dev focused on creating intuitive and efficient applications.",
+  "description": "professional web development services for businesses. custom websites, web applications, and digital solutions that drive results.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
   "icons": [
     {
-      "src": "/icons/icon-192x192.png",
+      "src": "/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

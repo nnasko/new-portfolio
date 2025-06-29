@@ -91,7 +91,10 @@ export const StickyHeader = ({ className = "" }: StickyHeaderProps) => {
               href="#top"
               className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors font-medium"
             >
-              atanas kyurkchiev
+              <div>
+                <div>atanas kyurkchiev</div>
+                <div className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">web developer</div>
+              </div>
             </MinimalLink>
           </motion.div>
 
@@ -112,9 +115,9 @@ export const StickyHeader = ({ className = "" }: StickyHeaderProps) => {
             animate="visible"
           >
             {[
+              { href: "#services", label: "services" },
               { href: "#work", label: "work" },
-              { href: "#about", label: "about" },
-              { href: "#contact", label: "contact" },
+              { href: "/hire", label: "get started" },
             ].map((item) => (
               <motion.span
                 key={item.href}

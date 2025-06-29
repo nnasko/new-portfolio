@@ -317,16 +317,42 @@ const getProjectSchema = (project: Project): ProjectSchema => ({
 function ProjectContent({ slug }: { slug: string }) {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
+  const { scrollY, scrollDirection } = useScrollTracker();
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isNavVisible, setIsNavVisible] = useState(true);
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { playClick } = useSound();
-  const { scrollY } = useScrollTracker();
 
-  // Simplified parallax effects
-  const heroParallax = useParallax(scrollY, 0.3);
-  const contentParallax = useParallax(scrollY, 0.1);
-  
-  // Navigation backdrop opacity
-  const navBackdropOpacity = useTransform(scrollY, [0, 100], [0, 1]);
+  // Parallax effects
+  const heroY = useTransform(scrollY, [0, 500], [0, -100]);
+  const contentOpacity = useTransform(scrollY, [0, 200], [1, 0.8]);
+
+  // Transform scroll position to header opacity and blur (matching StickyHeader)
+  const headerOpacity = useTransform(scrollY, [0, 100], [1, 0.95]);
+  const headerScale = useTransform(scrollY, [0, 200], [1, 0.98]);
+  const blurValue = useTransform(scrollY, [0, 100], [0, 8]);
+  const backgroundOpacity = useTransform(scrollY, [0, 50], [0.8, 1]);
+
+  // Navigation scroll behavior (matching StickyHeader exactly)
+  useEffect(() => {
+    const unsubscribe = scrollY.on("change", (latest) => {
+      const currentScrollY = latest;
+      const scrollDifference = Math.abs(currentScrollY - lastScrollY);
+
+      // Show header when scrolling up or at the top
+      if (scrollDirection === "up" || currentScrollY < 100) {
+        setIsNavVisible(true);
+      }
+      // Hide header when scrolling down with sufficient velocity
+      else if (scrollDirection === "down" && scrollDifference > 10 && currentScrollY > 200) {
+        setIsNavVisible(false);
+      }
+
+      setLastScrollY(currentScrollY);
+    });
+
+    return () => unsubscribe();
+  }, [scrollY, scrollDirection, lastScrollY]);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -430,39 +456,58 @@ function ProjectContent({ slug }: { slug: string }) {
         
         {/* Enhanced navigation */}
         <motion.nav 
-          className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center z-50"
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+          className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+          style={{
+            opacity: headerOpacity,
+            backdropFilter: `blur(${blurValue}px)`,
+            scale: headerScale,
+          }}
+          initial={{ y: 0 }}
+          animate={{
+            y: isNavVisible ? 0 : -100,
+          }}
+          transition={{
+            duration: 0.3,
+            ease: [0.25, 0.46, 0.45, 0.94],
+          }}
         >
-          <motion.div
-            className="absolute inset-0 bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm border-b border-neutral-200/50 dark:border-neutral-800/50"
-            style={{
-              opacity: navBackdropOpacity
-            }}
-          />
-          
-          <MagneticElement>
-            <MinimalLink href="/" className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors relative z-10">
-              atanas kyurkchiev
-            </MinimalLink>
-          </MagneticElement>
-          
-          <MagneticElement>
-            <MinimalLink
-              href="/#work"
-              className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors relative z-10"
-            >
-              back to work
-            </MinimalLink>
-          </MagneticElement>
+          <div className="relative">
+            {/* Background with dynamic opacity */}
+            <motion.div
+              className="absolute inset-0 bg-neutral-50/80 dark:bg-neutral-900/80 border-b border-neutral-200/50 dark:border-neutral-800/50"
+              style={{
+                opacity: backgroundOpacity,
+              }}
+            />
+
+            {/* Content */}
+            <div className="relative p-6 flex justify-between items-center">
+              <MagneticElement>
+                <MinimalLink href="/" className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors">
+                  <div>
+                    <div>atanas kyurkchiev</div>
+                    <div className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">web developer</div>
+                  </div>
+                </MinimalLink>
+              </MagneticElement>
+              
+              <MagneticElement>
+                <MinimalLink
+                  href="/#work"
+                  className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+                >
+                  back to work
+                </MinimalLink>
+              </MagneticElement>
+            </div>
+          </div>
         </motion.nav>
 
         <div className="pt-24 px-6 md:px-12 max-w-6xl mx-auto">
           {/* Project header */}
           <motion.div 
             className="max-w-4xl mb-16 relative"
-            style={{ y: heroParallax }}
+            style={{ y: heroY }}
           >
             <motion.div
               initial={{ opacity: 0, y: 60 }}
@@ -481,7 +526,7 @@ function ProjectContent({ slug }: { slug: string }) {
               transition={{ duration: 0.8, delay: 0.2, ease: [0.33, 1, 0.68, 1] }}
               className="mb-8"
             >
-              <p className="text-xl md:text-2xl text-neutral-600 dark:text-neutral-400 leading-relaxed">
+              <p className="text-xl md:text-2xl text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-4xl">
                 {project.description}
               </p>
             </motion.div>
@@ -559,11 +604,11 @@ function ProjectContent({ slug }: { slug: string }) {
 
           {/* Content grid */}
           <motion.div 
-            className="grid md:grid-cols-[2fr,1fr] gap-16 max-w-6xl mb-24"
-            style={{ y: contentParallax }}
+            className="grid md:grid-cols-[2fr,1fr] gap-16 max-w-6xl mb-32"
+            style={{ opacity: contentOpacity }}
           >
             {/* Main content */}
-            <div className="space-y-8">
+            <div className="space-y-8 overflow-hidden">
               {project.fullDescription ? (
                 project.fullDescription.split("\n\n").map((paragraph: string, index: number) => (
                   <motion.div
@@ -577,7 +622,7 @@ function ProjectContent({ slug }: { slug: string }) {
                       ease: [0.33, 1, 0.68, 1]
                     }}
                   >
-                    <p className="leading-relaxed text-base">{paragraph}</p>
+                    <p className="leading-relaxed text-base break-words">{paragraph}</p>
                   </motion.div>
                 ))
               ) : (
@@ -617,7 +662,7 @@ function ProjectContent({ slug }: { slug: string }) {
 
           {/* Call to action section */}
           <motion.div 
-            className="relative w-full border-t border-neutral-200 dark:border-neutral-800 mt-32"
+            className="relative w-full border-t border-neutral-200 dark:border-neutral-800 mt-24 pt-16"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}

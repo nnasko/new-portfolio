@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "atanas kyurkchiev | software dev",
+  title: "atanas kyurkchiev | web developer & digital solutions",
   description:
-    "full-stack developer specializing in modern web applications. let's build something amazing together.",
+    "professional web development services for businesses. custom websites, web applications, and digital solutions that drive results. get your project started today.",
   manifest: "/manifest.json",
   themeColor: "#000000",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "atanas kyurkchiev | software dev",
+    title: "atanas kyurkchiev | web developer",
   },
   viewport: {
     width: "device-width",
@@ -29,41 +29,45 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://atanaskyurkchiev.info",
-    title: "atanas kyurkchiev | software dev",
+    title: "atanas kyurkchiev | web developer & digital solutions",
     description:
-      "full-stack developer specializing in modern web applications. let's build something amazing together.",
+      "professional web development services for businesses. custom websites, web applications, and digital solutions that drive results. get your project started today.",
     images: [
       {
         url: "https://atanaskyurkchiev.info/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "atanas kyurkchiev | software dev",
+        alt: "atanas kyurkchiev | web developer & digital solutions",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "atanas kyurkchiev | software dev",
+    title: "atanas kyurkchiev | web developer & digital solutions",
     description:
-      "full-stack developer specializing in modern web applications. let's build something amazing together.",
+      "professional web development services for businesses. custom websites, web applications, and digital solutions that drive results. get your project started today.",
     images: ["https://atanaskyurkchiev.info/og-image.jpg"],
   },
 };
 
 export const siteConfig = {
-  title: "atanas kyurkchiev | software dev",
-  description: "full-stack software dev focused on creating intuitive and efficient applications. specializing in next.js, typescript, and modern web development.",
+  title: "atanas kyurkchiev | web developer & digital solutions",
+  description: "professional web development services helping businesses grow online. specializing in custom websites, web applications, e-commerce solutions, and digital transformation using modern technologies like Next.js, React, and TypeScript.",
   url: "https://atanaskyurkchiev.info",
   author: "atanas kyurkchiev",
   ogImage: "https://atanaskyurkchiev.info/og-image.jpg",
   keywords: [
-    "software developer",
-    "web development",
-    "full stack",
-    "next.js",
+    "web developer",
+    "web development services",
+    "business websites",
+    "custom web applications",
+    "e-commerce development",
+    "digital solutions",
+    "next.js developer",
+    "react developer",
     "typescript",
-    "react",
-    "portfolio",
+    "professional web development",
+    "uk web developer",
     "atanas kyurkchiev",
   ],
 };

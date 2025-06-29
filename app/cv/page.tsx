@@ -116,6 +116,8 @@ export default function CV() {
   const [isPdfMode, setIsPdfMode] = useState(false);
   const [theme, setTheme] = useState('light');
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [isNavVisible, setIsNavVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   
   // Make sound optional to prevent errors in headless environments
   let playClick = () => {}; // Default no-op function
@@ -126,14 +128,38 @@ export default function CV() {
     // Keep the no-op function if sound fails
   }
   
-  const { scrollY } = useScrollTracker();
+  const { scrollY, scrollDirection } = useScrollTracker();
   
   // Parallax effect for header
   const headerY = useTransform(scrollY, [0, 300], [0, -50]);
   const headerOpacity = useTransform(scrollY, [0, 200], [1, 0.8]);
   
-  // Navigation background opacity transform - moved to top level
-  const navBackgroundOpacity = useTransform(scrollY, [0, 100], [0, 1]);
+  // Transform scroll position to header opacity and blur (matching StickyHeader)
+  const navHeaderOpacity = useTransform(scrollY, [0, 100], [1, 0.95]);
+  const navHeaderScale = useTransform(scrollY, [0, 200], [1, 0.98]);
+  const blurValue = useTransform(scrollY, [0, 100], [0, 8]);
+  const backgroundOpacity = useTransform(scrollY, [0, 50], [0.8, 1]);
+
+  // Navigation scroll behavior (matching StickyHeader exactly)
+  useEffect(() => {
+    const unsubscribe = scrollY.on("change", (latest) => {
+      const currentScrollY = latest;
+      const scrollDifference = Math.abs(currentScrollY - lastScrollY);
+
+      // Show header when scrolling up or at the top
+      if (scrollDirection === "up" || currentScrollY < 100) {
+        setIsNavVisible(true);
+      }
+      // Hide header when scrolling down with sufficient velocity
+      else if (scrollDirection === "down" && scrollDifference > 10 && currentScrollY > 200) {
+        setIsNavVisible(false);
+      }
+
+      setLastScrollY(currentScrollY);
+    });
+
+    return () => unsubscribe();
+  }, [scrollY, scrollDirection, lastScrollY]);
 
   useEffect(() => {
     // Ensure we're in a browser environment
@@ -260,61 +286,80 @@ export default function CV() {
       {/* Enhanced navigation */}
       {!isPdfMode && (
         <motion.nav 
-          className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center z-40"
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+          className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+          style={{
+            opacity: navHeaderOpacity,
+            backdropFilter: `blur(${blurValue}px)`,
+            scale: navHeaderScale,
+          }}
+          initial={{ y: 0 }}
+          animate={{
+            y: isNavVisible ? 0 : -100,
+          }}
+          transition={{
+            duration: 0.3,
+            ease: [0.25, 0.46, 0.45, 0.94],
+          }}
         >
-          <motion.div
-            className="absolute inset-0 bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm border-b border-neutral-200/50 dark:border-neutral-800/50"
-            style={{
-              opacity: navBackgroundOpacity
-            }}
-          />
-          
-          <MagneticElement>
-            <MinimalLink
-              href="/"
-              className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors relative z-10"
-            >
-              atanas kyurkchiev
-            </MinimalLink>
-          </MagneticElement>
-          
-          <MagneticElement>
-            <button
-              onClick={handleDownloadPdf}
-              disabled={isGeneratingPdf}
-              className="text-sm border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-300 relative z-10 group disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span>{isGeneratingPdf ? 'generating...' : 'download cv'}</span>
-              {!isGeneratingPdf && (
-                <motion.svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4 inline-block ml-2"
-                  whileHover={{ y: 2 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+          <div className="relative">
+            {/* Background with dynamic opacity */}
+                          <motion.div
+                className="absolute inset-0 bg-neutral-50/80 dark:bg-neutral-900/80 border-b border-neutral-200/50 dark:border-neutral-800/50"
+                style={{
+                  opacity: backgroundOpacity,
+                }}
+              />
+
+            {/* Content */}
+            <div className="relative p-6 flex justify-between items-center">
+              <MagneticElement>
+                <MinimalLink
+                  href="/"
+                  className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-                  />
-                </motion.svg>
-              )}
-              {isGeneratingPdf && (
-                <motion.div
-                  className="w-4 h-4 border border-current border-t-transparent rounded-full ml-2 inline-block"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                />
-              )}
-            </button>
-          </MagneticElement>
+                  <div>
+                    <div>atanas kyurkchiev</div>
+                    <div className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">web developer</div>
+                  </div>
+                </MinimalLink>
+              </MagneticElement>
+              
+              <MagneticElement>
+                <button
+                  onClick={handleDownloadPdf}
+                  disabled={isGeneratingPdf}
+                  className="text-sm border border-neutral-300 dark:border-neutral-700 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span>{isGeneratingPdf ? 'generating...' : 'download cv'}</span>
+                  {!isGeneratingPdf && (
+                    <motion.svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-4 h-4 inline-block ml-2"
+                      whileHover={{ y: 2 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+                      />
+                    </motion.svg>
+                  )}
+                  {isGeneratingPdf && (
+                    <motion.div
+                      className="w-4 h-4 border border-current border-t-transparent rounded-full ml-2 inline-block"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    />
+                  )}
+                </button>
+              </MagneticElement>
+            </div>
+          </div>
         </motion.nav>
       )}
 
@@ -347,7 +392,7 @@ export default function CV() {
               transition={{ duration: 0.8, delay: 0.3 }}
             >
               <p className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-2xl">
-                software developer focused on creating intuitive and efficient applications that solve real problems
+                18-year-old web developer & digital solutions specialist from the UK, helping businesses grow online through custom applications and modern web experiences
               </p>
             </motion.div>
             
@@ -562,8 +607,43 @@ export default function CV() {
               >
                 <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
                 <div className="pl-8">
+                  <h3 className="text-lg mb-2 font-medium">computer science @ university of lancaster (current)</h3>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">2025 - present</p>
+                  <motion.ul 
+                    className="space-y-3 text-sm"
+                    variants={staggerContainer}
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true }}
+                  >
+                    {[
+                      "pursuing higher education while actively freelancing",
+                      "balancing academic studies with professional development work",
+                      "continuing to expand technical knowledge and skills",
+                      "applying theoretical concepts to real-world client projects"
+                    ].map((item, index) => (
+                      <motion.li 
+                        key={index}
+                        variants={staggerItem}
+                        className="flex items-start gap-3"
+                      >
+                        <span className="w-1 h-1 bg-neutral-400 rounded-full mt-2 flex-shrink-0"></span>
+                        {item}
+                      </motion.li>
+                    ))}
+                  </motion.ul>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                className="relative group"
+                whileHover={{ x: 10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
+                <div className="pl-8">
                   <h3 className="text-lg mb-2 font-medium">software development @ access creative college</h3>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">2023 - 2025</p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">2023 - 2024 (completed)</p>
                   <motion.ul 
                     className="space-y-3 text-sm"
                     variants={staggerContainer}
@@ -575,7 +655,8 @@ export default function CV() {
                       "full-stack web development",
                       "software engineering principles",
                       "agile methodologies",
-                      "database design and management"
+                      "database design and management",
+                      "successfully completed with practical project experience"
                     ].map((item, index) => (
                       <motion.li 
                         key={index}

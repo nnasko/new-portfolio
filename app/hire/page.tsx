@@ -305,11 +305,13 @@ const formSteps = [
 export default function HirePage() {
   const { playClick } = useSound();
   const { showToast } = useToast();
-  const { scrollY } = useScrollTracker();
+  const { scrollY, scrollDirection } = useScrollTracker();
   const formRef = useRef<HTMLFormElement>(null);
   const processRef = useRef<HTMLDivElement>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [isNavVisible, setIsNavVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const [formData, setFormData] = useState({
     projectType: '',
     timeline: '',
@@ -324,6 +326,33 @@ export default function HirePage() {
   // Enhanced parallax effects
   const heroY = useTransform(scrollY, [0, 500], [0, -100]);
   const processY = useTransform(scrollY, [500, 1500], [0, -50]);
+
+  // Transform scroll position to header opacity and blur (matching StickyHeader)
+  const headerOpacity = useTransform(scrollY, [0, 100], [1, 0.95]);
+  const headerScale = useTransform(scrollY, [0, 200], [1, 0.98]);
+  const blurValue = useTransform(scrollY, [0, 100], [0, 8]);
+  const backgroundOpacity = useTransform(scrollY, [0, 50], [0.8, 1]);
+
+  // Navigation scroll behavior (matching StickyHeader exactly)
+  useEffect(() => {
+    const unsubscribe = scrollY.on("change", (latest) => {
+      const currentScrollY = latest;
+      const scrollDifference = Math.abs(currentScrollY - lastScrollY);
+
+      // Show header when scrolling up or at the top
+      if (scrollDirection === "up" || currentScrollY < 100) {
+        setIsNavVisible(true);
+      }
+      // Hide header when scrolling down with sufficient velocity
+      else if (scrollDirection === "down" && scrollDifference > 10 && currentScrollY > 200) {
+        setIsNavVisible(false);
+      }
+
+      setLastScrollY(currentScrollY);
+    });
+
+    return () => unsubscribe();
+  }, [scrollY, scrollDirection, lastScrollY]);
 
   const validateStep = (step: number): boolean => {
     const errors: Record<string, string> = {};
@@ -622,27 +651,53 @@ export default function HirePage() {
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900 relative overflow-hidden">
       {/* Enhanced Navigation */}
       <motion.nav 
-        className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-neutral-50/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50 border-b border-neutral-200/50 dark:border-neutral-800/50"
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+        style={{
+          opacity: headerOpacity,
+          backdropFilter: `blur(${blurValue}px)`,
+          scale: headerScale,
+        }}
+        initial={{ y: 0 }}
+        animate={{
+          y: isNavVisible ? 0 : -100,
+        }}
+        transition={{
+          duration: 0.3,
+          ease: [0.25, 0.46, 0.45, 0.94],
+        }}
       >
-        <MagneticElement>
-          <MinimalLink
-            href="/"
-            className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors cursor-pointer"
-          >
-            atanas kyurkchiev
-          </MinimalLink>
-        </MagneticElement>
-        <MagneticElement>
-          <MinimalLink
-            href="/#work"
-            className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors cursor-pointer"
-          >
-            back to work
-          </MinimalLink>
-        </MagneticElement>
+        <div className="relative">
+          {/* Background with dynamic opacity */}
+                      <motion.div
+              className="absolute inset-0 bg-neutral-50/80 dark:bg-neutral-900/80 border-b border-neutral-200/50 dark:border-neutral-800/50"
+              style={{
+                opacity: backgroundOpacity,
+              }}
+            />
+
+          {/* Content */}
+          <div className="relative p-6 flex justify-between items-center">
+            <MagneticElement>
+              <MinimalLink
+                href="/"
+                className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors cursor-pointer"
+              >
+                <div>
+                  <div>atanas kyurkchiev</div>
+                  <div className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">web developer</div>
+                </div>
+              </MinimalLink>
+            </MagneticElement>
+            <MagneticElement>
+              <MinimalLink
+                href="/#work"
+                className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors cursor-pointer"
+              >
+                back to work
+              </MinimalLink>
+            </MagneticElement>
+          </div>
+        </div>
       </motion.nav>
 
       {/* Enhanced Hero Section */}

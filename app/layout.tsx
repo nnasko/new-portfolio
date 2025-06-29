@@ -12,11 +12,20 @@ const spaceGrotesk = Space_Grotesk({
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "Person",
+  "@type": ["Person", "ProfessionalService"],
   name: siteConfig.author,
   url: siteConfig.url,
-  jobTitle: "Software Developer",
+  jobTitle: "Web Developer & Digital Solutions Specialist",
   description: siteConfig.description,
+  serviceType: [
+    "Web Development",
+    "Custom Web Applications",
+    "E-commerce Development", 
+    "Website Design",
+    "Digital Solutions",
+    "API Development"
+  ],
+  areaServed: "Worldwide",
   sameAs: [
     "https://github.com/nnasko",
     "https://www.linkedin.com/in/atanas-kyurkchiev-36a609291/",
@@ -27,7 +36,15 @@ const jsonLd = {
     "Next.js",
     "TypeScript",
     "React",
+    "E-commerce Solutions",
+    "API Development",
+    "Business Websites"
   ],
+  offers: {
+    "@type": "Service",
+    name: "Professional Web Development Services",
+    description: "Custom web development solutions for businesses including websites, web applications, and e-commerce platforms"
+  }
 };
 
 export const metadata: Metadata = {
