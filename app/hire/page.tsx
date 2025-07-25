@@ -10,7 +10,7 @@ import { useToast } from "../components/Toast";
 import { motion, AnimatePresence, useTransform, useSpring } from "framer-motion";
 import { staggerContainer, staggerItem, useScrollTracker, useMousePosition, useViewportIntersection } from "../../lib/animation-utils";
 
-// Enhanced Magnetic Element with stronger effects
+// Enhanced Magnetic Element with mobile detection
 function MagneticElement({ children, strength = 0.4 }: { children: React.ReactNode, strength?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -19,7 +19,10 @@ function MagneticElement({ children, strength = 0.4 }: { children: React.ReactNo
   const y = useSpring(0, { stiffness: 200, damping: 20 });
 
   useEffect(() => {
-    if (!ref.current || !isHovered) {
+    // Disable magnetic effect on mobile
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+    
+    if (!ref.current || !isHovered || isMobile) {
       x.set(0);
       y.set(0);
       return;
@@ -76,23 +79,23 @@ function ProcessStep({ step, index, isActive }: { step: ProcessStepType, index: 
       }}
     >
       <MagneticElement strength={0.3}>
-        <div className={`p-8 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 transition-all duration-500 h-full group-hover:bg-neutral-100 dark:group-hover:bg-neutral-700 ${isActive ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-100 dark:bg-neutral-700' : ''}`}>
-          <div className="flex items-center gap-6 mb-6">
+        <div className={`p-6 md:p-8 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 transition-all duration-500 h-full group-hover:bg-neutral-100 dark:group-hover:bg-neutral-700 ${isActive ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-100 dark:bg-neutral-700' : ''}`}>
+          <div className="flex items-center gap-4 md:gap-6 mb-4 md:mb-6">
             <motion.div
-              className={`w-12 h-12 flex items-center justify-center text-sm border-2 transition-all duration-300 ${isActive ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900' : 'border-neutral-400 dark:border-neutral-600'}`}
+              className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-sm border-2 transition-all duration-300 ${isActive ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900' : 'border-neutral-400 dark:border-neutral-600'}`}
               whileHover={{ scale: 1.1, rotate: 5 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
               {index + 1}
             </motion.div>
-            <h3 className="text-lg font-medium lowercase">
+            <h3 className="text-base md:text-lg font-medium lowercase">
               {step.title}
             </h3>
           </div>
-          <div className="mb-6 text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors duration-300">
+          <div className="mb-4 md:mb-6 text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors duration-300">
             {step.icon}
           </div>
-          <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed group-hover:text-neutral-700 dark:group-hover:text-neutral-300 transition-colors duration-300">
+          <p className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-neutral-300 transition-colors duration-300">
             {step.description}
           </p>
         </div>
@@ -175,7 +178,7 @@ function EnhancedButton({
             ? 'border-2 border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 hover:bg-transparent hover:text-neutral-900 dark:hover:bg-transparent dark:hover:text-neutral-100' 
             : 'border border-neutral-300 dark:border-neutral-700 bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800'
           }
-          px-8 py-3 text-sm lowercase
+          px-6 md:px-8 py-3 text-sm lowercase
           ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
           ${className}
         `}
@@ -206,7 +209,7 @@ const steps = [
         viewBox="0 0 24 24"
         strokeWidth={1.5}
         stroke="currentColor"
-        className="w-8 h-8"
+        className="w-6 h-6 md:w-8 md:h-8"
       >
         <path
           strokeLinecap="round"
@@ -232,7 +235,7 @@ const steps = [
         viewBox="0 0 24 24"
         strokeWidth={1.5}
         stroke="currentColor"
-        className="w-8 h-8"
+        className="w-6 h-6 md:w-8 md:h-8"
       >
         <path
           strokeLinecap="round"
@@ -253,7 +256,7 @@ const steps = [
         viewBox="0 0 24 24"
         strokeWidth={1.5}
         stroke="currentColor"
-        className="w-8 h-8"
+        className="w-6 h-6 md:w-8 md:h-8"
       >
         <path
           strokeLinecap="round"
@@ -274,7 +277,7 @@ const steps = [
         viewBox="0 0 24 24"
         strokeWidth={1.5}
         stroke="currentColor"
-        className="w-8 h-8"
+        className="w-6 h-6 md:w-8 md:h-8"
       >
         <path
           strokeLinecap="round"
@@ -323,9 +326,9 @@ export default function HirePage() {
     otherProjectType: '',
   });
 
-  // Enhanced parallax effects
-  const heroY = useTransform(scrollY, [0, 500], [0, -100]);
-  const processY = useTransform(scrollY, [500, 1500], [0, -50]);
+  // Enhanced parallax effects - reduced for mobile
+  const heroY = useTransform(scrollY, [0, 500], [0, -50]);
+  const processY = useTransform(scrollY, [500, 1500], [0, -25]);
 
   // Transform scroll position to header opacity and blur (matching StickyHeader)
   const headerOpacity = useTransform(scrollY, [0, 100], [1, 0.95]);
@@ -469,7 +472,7 @@ export default function HirePage() {
       case 0:
         return (
           <motion.div 
-            className="space-y-8"
+            className="space-y-6 md:space-y-8"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
@@ -483,7 +486,7 @@ export default function HirePage() {
               <motion.select
                 value={formData.projectType}
                 onChange={(e) => handleInputChange('projectType', e.target.value)}
-                className="w-full p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 appearance-none lowercase"
+                className="w-full p-3 md:p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 appearance-none lowercase text-sm md:text-base"
                 whileFocus={{ scale: 1.01 }}
               >
                 <option value="" className="lowercase">select a project type</option>
@@ -515,7 +518,7 @@ export default function HirePage() {
                       value={formData.otherProjectType}
                       onChange={(e) => handleInputChange('otherProjectType', e.target.value)}
                       placeholder="describe your project type"
-                      className="w-full p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 lowercase"
+                      className="w-full p-3 md:p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 lowercase text-sm md:text-base"
                       whileFocus={{ scale: 1.01 }}
                     />
                   </FormField>
@@ -527,7 +530,7 @@ export default function HirePage() {
       case 1:
         return (
           <motion.div 
-            className="space-y-8"
+            className="space-y-6 md:space-y-8"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
@@ -541,7 +544,7 @@ export default function HirePage() {
               <motion.select
                 value={formData.timeline}
                 onChange={(e) => handleInputChange('timeline', e.target.value)}
-                className="w-full p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 appearance-none lowercase"
+                className="w-full p-3 md:p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 appearance-none lowercase text-sm md:text-base"
                 whileFocus={{ scale: 1.01 }}
               >
                 <option value="" className="lowercase">select a timeline</option>
@@ -560,7 +563,7 @@ export default function HirePage() {
               <motion.select
                 value={formData.budget}
                 onChange={(e) => handleInputChange('budget', e.target.value)}
-                className="w-full p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 appearance-none lowercase"
+                className="w-full p-3 md:p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 appearance-none lowercase text-sm md:text-base"
                 whileFocus={{ scale: 1.01 }}
               >
                 <option value="" className="lowercase">select a budget range</option>
@@ -580,9 +583,9 @@ export default function HirePage() {
               <motion.textarea
                 value={formData.message}
                 onChange={(e) => handleInputChange('message', e.target.value)}
-                rows={5}
+                rows={4}
                 placeholder="describe your project vision, required features, and any specific ideas you have..."
-                className="w-full p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 resize-none lowercase"
+                className="w-full p-3 md:p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 resize-none lowercase text-sm md:text-base"
                 whileFocus={{ scale: 1.01 }}
               />
             </FormField>
@@ -591,13 +594,13 @@ export default function HirePage() {
       case 2:
         return (
           <motion.div 
-            className="space-y-8"
+            className="space-y-6 md:space-y-8"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
             transition={{ duration: 0.4 }}
           >
-            <div className="grid sm:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
               <FormField 
                 label="name" 
                 required
@@ -607,7 +610,7 @@ export default function HirePage() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  className="w-full p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 lowercase"
+                  className="w-full p-3 md:p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 lowercase text-sm md:text-base"
                   whileFocus={{ scale: 1.01 }}
                 />
               </FormField>
@@ -621,7 +624,7 @@ export default function HirePage() {
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="w-full p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 lowercase"
+                  className="w-full p-3 md:p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 lowercase text-sm md:text-base"
                   whileFocus={{ scale: 1.01 }}
                 />
               </FormField>
@@ -636,7 +639,7 @@ export default function HirePage() {
                 type="text"
                 value={formData.company}
                 onChange={(e) => handleInputChange('company', e.target.value)}
-                className="w-full p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 lowercase"
+                className="w-full p-3 md:p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 lowercase text-sm md:text-base"
                 whileFocus={{ scale: 1.01 }}
               />
             </FormField>
@@ -649,7 +652,7 @@ export default function HirePage() {
 
   return (
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900 relative overflow-hidden">
-      {/* Enhanced Navigation */}
+      {/* Enhanced Navigation - mobile optimized */}
       <motion.nav 
         className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
         style={{
@@ -668,15 +671,15 @@ export default function HirePage() {
       >
         <div className="relative">
           {/* Background with dynamic opacity */}
-                      <motion.div
-              className="absolute inset-0 bg-neutral-50/80 dark:bg-neutral-900/80 border-b border-neutral-200/50 dark:border-neutral-800/50"
-              style={{
-                opacity: backgroundOpacity,
-              }}
-            />
+          <motion.div
+            className="absolute inset-0 bg-neutral-50/80 dark:bg-neutral-900/80 border-b border-neutral-200/50 dark:border-neutral-800/50"
+            style={{
+              opacity: backgroundOpacity,
+            }}
+          />
 
-          {/* Content */}
-          <div className="relative p-6 flex justify-between items-center">
+          {/* Content - mobile optimized */}
+          <div className="relative p-4 md:p-6 flex justify-between items-center">
             <MagneticElement>
               <MinimalLink
                 href="/"
@@ -700,10 +703,10 @@ export default function HirePage() {
         </div>
       </motion.nav>
 
-      {/* Enhanced Hero Section */}
+      {/* Enhanced Hero Section - mobile optimized */}
       <SectionTransition>
         <motion.section 
-          className="relative min-h-screen flex items-center px-6 md:px-12"
+          className="relative min-h-screen flex items-center px-4 md:px-6 lg:px-12"
           style={{ y: heroY }}
         >
           <div className="max-w-5xl relative z-10">
@@ -713,7 +716,7 @@ export default function HirePage() {
               transition={{ duration: 1, ease: [0.33, 1, 0.68, 1] }}
             >
               <AnimatedText
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-8 leading-tight font-light"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl mb-6 md:mb-8 leading-tight font-light"
                 type="words"
                 animationType="slide"
                 direction="up"
@@ -729,7 +732,7 @@ export default function HirePage() {
               transition={{ duration: 0.8, delay: 0.4, ease: [0.33, 1, 0.68, 1] }}
             >
               <AnimatedText
-                className="text-lg sm:text-xl text-neutral-600 dark:text-neutral-400 mb-12 leading-relaxed max-w-3xl"
+                className="text-base md:text-lg lg:text-xl text-neutral-600 dark:text-neutral-400 mb-8 md:mb-12 leading-relaxed max-w-3xl"
                 type="words"
                 animationType="fade"
                 delay={0.6}
@@ -740,7 +743,7 @@ export default function HirePage() {
             </motion.div>
             
             <motion.div
-              className="flex flex-col sm:flex-row gap-6"
+              className="flex flex-col sm:flex-row gap-4 md:gap-6"
               variants={staggerContainer}
               initial="hidden"
               animate="show"
@@ -752,9 +755,9 @@ export default function HirePage() {
                     formRef.current?.scrollIntoView({ behavior: "smooth" });
                     playClick();
                   }}
-                  className="group"
+                  className="group w-full sm:w-auto"
                 >
-                  <span className="flex items-center gap-3">
+                  <span className="flex items-center justify-center gap-3">
                     start a project
                     <motion.svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -783,6 +786,7 @@ export default function HirePage() {
                     processRef.current?.scrollIntoView({ behavior: "smooth" });
                     playClick();
                   }}
+                  className="w-full sm:w-auto"
                 >
                   what&apos;s the process?
                 </EnhancedButton>
@@ -790,20 +794,20 @@ export default function HirePage() {
             </motion.div>
           </div>
           
-          {/* Background decoration */}
+          {/* Background decoration - smaller on mobile */}
           <motion.div
-            className="absolute top-1/2 right-10 w-96 h-96 border border-neutral-300 dark:border-neutral-700 opacity-20"
+            className="absolute top-1/2 right-4 md:right-10 w-48 h-48 md:w-96 md:h-96 border border-neutral-300 dark:border-neutral-700 opacity-20"
             animate={{ rotate: 360 }}
             transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
           />
         </motion.section>
       </SectionTransition>
 
-      {/* Enhanced Process Section */}
+      {/* Enhanced Process Section - mobile optimized */}
       <SectionTransition>
         <motion.section
           ref={processRef}
-          className="min-h-screen flex flex-col justify-center px-6 md:px-12 py-24 relative"
+          className="min-h-screen flex flex-col justify-center px-4 md:px-6 lg:px-12 py-16 md:py-24 relative"
           style={{ y: processY }}
         >
           <div className="max-w-7xl mx-auto w-full">
@@ -812,10 +816,10 @@ export default function HirePage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
-              className="mb-20"
+              className="mb-12 md:mb-20"
             >
               <AnimatedText
-                className="text-3xl sm:text-4xl md:text-5xl mb-6 font-light"
+                className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl mb-4 md:mb-6 font-light"
                 type="words"
                 animationType="slide"
                 direction="up"
@@ -824,7 +828,7 @@ export default function HirePage() {
                 the process
               </AnimatedText>
               <AnimatedText
-                className="text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl"
+                className="text-base md:text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl"
                 type="words"
                 animationType="fade"
                 delay={0.3}
@@ -834,7 +838,7 @@ export default function HirePage() {
               </AnimatedText>
             </motion.div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
               {steps.map((step, index) => (
                 <ProcessStep
                   key={`step-${step.title}-${index}`}
@@ -848,11 +852,11 @@ export default function HirePage() {
         </motion.section>
       </SectionTransition>
 
-      {/* Enhanced Contact Form Section */}
+      {/* Enhanced Contact Form Section - mobile optimized */}
       <SectionTransition>
         <section
           ref={formRef}
-          className="min-h-screen flex items-center px-6 md:px-12 py-24"
+          className="min-h-screen flex items-center px-4 md:px-6 lg:px-12 py-16 md:py-24"
         >
           <div className="max-w-3xl w-full mx-auto">
             <motion.div
@@ -860,27 +864,27 @@ export default function HirePage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
-              className="mb-12"
+              className="mb-8 md:mb-12"
             >
               <RevealText>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl mb-6 font-light lowercase">ready to start your project?</h2>
+                <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl mb-4 md:mb-6 font-light lowercase">ready to start your project?</h2>
               </RevealText>
               <RevealText>
-                <p className="text-lg text-neutral-600 dark:text-neutral-400 lowercase">
+                <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-400 lowercase">
                   let&apos;s discuss your vision and make it a reality.
                 </p>
               </RevealText>
             </motion.div>
 
             <motion.div 
-              className="border border-neutral-300 dark:border-neutral-700 p-8 bg-neutral-100/50 dark:bg-neutral-800/50 backdrop-blur-sm relative overflow-hidden"
+              className="border border-neutral-300 dark:border-neutral-700 p-6 md:p-8 bg-neutral-100/50 dark:bg-neutral-800/50 backdrop-blur-sm relative overflow-hidden"
               initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2, ease: [0.33, 1, 0.68, 1] }}
             >
-              {/* Progress indicator */}
-              <div className="flex justify-between mb-12">
+              {/* Progress indicator - mobile optimized */}
+              <div className="flex justify-between mb-8 md:mb-12">
                 {formSteps.map((step, index) => (
                   <div
                     key={step.title}
@@ -892,7 +896,7 @@ export default function HirePage() {
                   >
                     <div className="relative">
                       <motion.div
-                        className={`w-10 h-10 mx-auto flex items-center justify-center mb-3 border-2 transition-all duration-500 ${
+                        className={`w-8 h-8 md:w-10 md:h-10 mx-auto flex items-center justify-center mb-2 md:mb-3 border-2 transition-all duration-500 ${
                           index === currentStep
                             ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100'
                             : index < currentStep
@@ -905,7 +909,7 @@ export default function HirePage() {
                         {index < currentStep ? (
                           <motion.svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 text-neutral-50 dark:text-neutral-900"
+                            className="h-4 w-4 md:h-5 md:w-5 text-neutral-50 dark:text-neutral-900"
                             viewBox="0 0 20 20"
                             fill="currentColor"
                             initial={{ scale: 0 }}
@@ -919,14 +923,14 @@ export default function HirePage() {
                             />
                           </motion.svg>
                         ) : (
-                          <span className={`text-sm ${index === currentStep ? 'text-neutral-50 dark:text-neutral-900' : ''}`}>
+                          <span className={`text-xs md:text-sm ${index === currentStep ? 'text-neutral-50 dark:text-neutral-900' : ''}`}>
                             {index + 1}
                           </span>
                         )}
                       </motion.div>
                       {index < formSteps.length - 1 && (
                         <motion.div
-                          className={`absolute top-5 left-full w-full h-0.5 -translate-y-1/2 transition-all duration-500 ${
+                          className={`absolute top-4 md:top-5 left-full w-full h-0.5 -translate-y-1/2 transition-all duration-500 ${
                             index < currentStep
                               ? 'bg-neutral-900 dark:bg-neutral-100'
                               : 'bg-neutral-300 dark:bg-neutral-700'
@@ -937,8 +941,8 @@ export default function HirePage() {
                         />
                       )}
                     </div>
-                    <span className="text-sm hidden sm:block lowercase font-medium">{step.title}</span>
-                    <span className="text-xs text-neutral-500 dark:text-neutral-500 hidden sm:block lowercase mt-1">{step.description}</span>
+                    <span className="text-xs md:text-sm hidden sm:block lowercase font-medium">{step.title}</span>
+                    <span className="text-xs text-neutral-500 dark:text-neutral-500 hidden md:block lowercase mt-1">{step.description}</span>
                   </div>
                 ))}
               </div>
@@ -951,21 +955,21 @@ export default function HirePage() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -50 }}
                   transition={{ duration: 0.4, ease: [0.33, 1, 0.68, 1] }}
-                  className="mb-8"
+                  className="mb-6 md:mb-8"
                 >
                   {renderFormStep()}
                 </motion.div>
               </AnimatePresence>
 
-              {/* Navigation buttons */}
-              <div className="flex justify-between items-center pt-8 border-t border-neutral-200 dark:border-neutral-800">
+              {/* Navigation buttons - mobile optimized */}
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 md:pt-8 border-t border-neutral-200 dark:border-neutral-800">
                 <EnhancedButton
                   variant="secondary"
                   onClick={prevStep}
                   disabled={currentStep === 0}
-                  className={currentStep === 0 ? 'opacity-0 pointer-events-none' : ''}
+                  className={`w-full sm:w-auto ${currentStep === 0 ? 'opacity-0 pointer-events-none' : ''}`}
                 >
-                  <span className="flex items-center gap-2">
+                  <span className="flex items-center justify-center gap-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -988,8 +992,9 @@ export default function HirePage() {
                   <EnhancedButton
                     variant="primary"
                     onClick={handleFormSubmit}
+                    className="w-full sm:w-auto"
                   >
-                    <span className="flex items-center gap-3">
+                    <span className="flex items-center justify-center gap-3">
                       send message
                       <motion.svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -1013,8 +1018,9 @@ export default function HirePage() {
                   <EnhancedButton
                     variant="primary"
                     onClick={nextStep}
+                    className="w-full sm:w-auto"
                   >
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center justify-center gap-2">
                       next
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
