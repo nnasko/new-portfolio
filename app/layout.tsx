@@ -3,6 +3,7 @@ import { Space_Grotesk } from "next/font/google";
 import { siteConfig } from "./metadata";
 import { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClientLayout } from "./components/ClientLayout";
 
 const spaceGrotesk = Space_Grotesk({
@@ -131,6 +132,7 @@ export default function RootLayout({
       <body className={`${spaceGrotesk.variable} font-sans text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-900 transition-colors`}>
         <ClientLayout>{children}</ClientLayout>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
