@@ -12,7 +12,7 @@ import {
 import { useToast } from './Toast';
 
 // Load Stripe outside of component to avoid recreating on every render
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_placeholder');
+const stripePromise = loadStripe(process.env.STRIPE_PUBLISHABLE_KEY || 'pk_test_placeholder');
 
 interface PaymentFormProps {
   amount: number;
@@ -134,7 +134,7 @@ export function PaymentForm(props: PaymentFormProps) {
 
   useEffect(() => {
     // Only create payment intent if Stripe is configured
-    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+    if (!process.env.STRIPE_PUBLISHABLE_KEY) {
       props.onError?.('Stripe not configured');
       return;
     }
@@ -178,7 +178,7 @@ export function PaymentForm(props: PaymentFormProps) {
         animate={{ opacity: 1 }}
       >
         <div className="text-neutral-600 dark:text-neutral-400 lowercase">
-          {process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ? 'initializing payment...' : 'stripe not configured'}
+          {process.env.STRIPE_PUBLISHABLE_KEY ? 'initializing payment...' : 'stripe not configured'}
         </div>
       </motion.div>
     );
