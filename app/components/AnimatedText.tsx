@@ -30,6 +30,7 @@ export const AnimatedText = ({
 }: AnimatedTextProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isIntersecting, setIsIntersecting] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
 
   useEffect(() => {
     const element = ref.current;
@@ -37,7 +38,18 @@ export const AnimatedText = ({
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsIntersecting(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          setIsIntersecting(true);
+          if (once) {
+            setHasAnimated(true);
+            // Disconnect observer if we only want to animate once
+            observer.disconnect();
+          }
+        } else {
+          if (!once) {
+            setIsIntersecting(false);
+          }
+        }
       },
       {
         threshold: 0.1,
@@ -46,7 +58,7 @@ export const AnimatedText = ({
 
     observer.observe(element);
     return () => observer.disconnect();
-  }, []);
+  }, [once]);
 
   const textArray = splitText(children, type);
 
@@ -112,13 +124,16 @@ export const AnimatedText = ({
     },
   };
 
+  // Determine animation state: if once is true and has animated, stay visible
+  const animationState = once && hasAnimated ? "visible" : isIntersecting ? "visible" : "hidden";
+
   return (
     <motion.div
       ref={ref}
       className={className}
       variants={container}
       initial="hidden"
-      animate={isIntersecting ? "visible" : once ? "hidden" : "visible"}
+      animate={animationState}
     >
       {textArray.map((text, index) => (
         <motion.span

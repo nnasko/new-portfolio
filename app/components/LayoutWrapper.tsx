@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { SoundProvider } from './SoundProvider';
@@ -13,31 +13,52 @@ import { ScrollProgress } from './ScrollProgress';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 
-const getTransitionDirection = (pathname: string, prevPathname: string | null) => {
-  // Going to a project page
-  if (pathname.includes('/work/') && !prevPathname?.includes('/work/')) {
-    return { enter: 100, exit: -100 };
+const getTransitionDirection = (currentPath: string, previousPath: string | null) => {
+  // If no previous path, default to slide in from right
+  if (!previousPath) {
+    return { enter: 30, exit: -30 };
   }
-  // Leaving a project page
-  if (!pathname.includes('/work/') && prevPathname?.includes('/work/')) {
-    return { enter: -100, exit: 100 };
+
+  // Define route hierarchy for logical transitions
+  const routes = {
+    '/': 0,
+    '/work': 1,
+    '/pricing': 1,
+    '/hire': 2,
+    '/cv': 2,
+  };
+
+  // Get base paths for comparison
+  const currentBase = currentPath.split('/').slice(0, 2).join('/') || '/';
+  const previousBase = previousPath.split('/').slice(0, 2).join('/') || '/';
+
+  // Handle work detail pages
+  if (currentPath.includes('/work/') && !previousPath.includes('/work/')) {
+    return { enter: 100, exit: -50 }; // Going into project detail
   }
-  // Default transitions
-  return { enter: 20, exit: -20 };
+  if (!currentPath.includes('/work/') && previousPath.includes('/work/')) {
+    return { enter: -50, exit: 100 }; // Coming back from project detail
+  }
+
+  // Use hierarchy for other pages
+  const currentLevel = routes[currentBase as keyof typeof routes] ?? 1;
+  const previousLevel = routes[previousBase as keyof typeof routes] ?? 1;
+
+  if (currentLevel > previousLevel) {
+    return { enter: 50, exit: -30 }; // Going deeper
+  } else if (currentLevel < previousLevel) {
+    return { enter: -30, exit: 50 }; // Going back
+  } else {
+    return { enter: 30, exit: -30 }; // Same level
+  }
 };
 
 export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [prevPathname, setPrevPathname] = useState<string | null>(null);
-  const [isProjectPage, setIsProjectPage] = useState(false);
+  const prevPathnameRef = useRef<string | null>(null);
+  const [isReady, setIsReady] = useState(false);
 
-  useEffect(() => {
-    setPrevPathname(pathname);
-    setIsProjectPage(pathname.includes('/work/') || pathname === '/hire' || pathname === '/cv');
-  }, [pathname]);
-
-  const { enter, exit } = getTransitionDirection(pathname, prevPathname);
-
+  // Service worker registration
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       navigator.serviceWorker
@@ -54,6 +75,41 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Initialize and track ready state
+  useEffect(() => {
+    setIsReady(true);
+  }, []);
+
+  // Get transition directions
+  const { enter, exit } = getTransitionDirection(pathname, prevPathnameRef.current);
+
+  // Update previous pathname ref after component mounts but before next render
+  useEffect(() => {
+    // Store the current pathname as previous for the next navigation
+    return () => {
+      prevPathnameRef.current = pathname;
+    };
+  }, [pathname]);
+
+  // Don't render animations until ready to prevent hydration issues
+  if (!isReady) {
+    return (
+      <ThemeProvider>
+        <ToastProvider>
+          <SoundProvider>
+            <ThemeToggle />
+            <ScrollProgress />
+            <PageLoadProgress />
+            <ScrollToTop />
+            <main className="w-full">{children}</main>
+            <Analytics />
+            <SpeedInsights />
+          </SoundProvider>
+        </ToastProvider>
+      </ThemeProvider>
+    );
+  }
+
   return (
     <ThemeProvider>
       <ToastProvider>
@@ -63,43 +119,44 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
           <PageLoadProgress />
           <ScrollToTop />
           <div className="relative w-full">
-            {isProjectPage ? (
-              <main className="w-full">{children}</main>
-            ) : (
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.main
-                  key={pathname}
-                  initial={{
-                    opacity: 0,
-                    x: enter,
-                    scale: 0.98,
-                  }}
-                  animate={{ 
-                    opacity: 1, 
-                    x: 0, 
-                    scale: 1,
-                  }}
-                  exit={{
-                    opacity: 0,
-                    x: exit,
-                    scale: 0.95,
-                    transition: {
-                      duration: 0.3,
-                      ease: [0.22, 1, 0.36, 1],
-                    },
-                  }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 300,
-                    damping: 30,
-                    opacity: { duration: 0.3 },
-                  }}
-                  className="w-full"
-                >
-                  {children}
-                </motion.main>
-              </AnimatePresence>
-            )}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.main
+                key={pathname}
+                initial={{
+                  opacity: 0,
+                  x: enter,
+                  scale: 0.98,
+                }}
+                animate={{ 
+                  opacity: 1, 
+                  x: 0, 
+                  scale: 1,
+                }}
+                exit={{
+                  opacity: 0,
+                  x: exit,
+                  scale: 0.96,
+                  transition: {
+                    duration: 0.4,
+                    ease: [0.4, 0, 0.2, 1],
+                  },
+                }}
+                transition={{
+                  duration: 0.5,
+                  ease: [0.4, 0, 0.2, 1],
+                  opacity: { duration: 0.3 },
+                }}
+                className="w-full"
+                style={{
+                  // Ensure smooth hardware acceleration
+                  willChange: 'transform, opacity',
+                  backfaceVisibility: 'hidden',
+                  perspective: 1000,
+                }}
+              >
+                {children}
+              </motion.main>
+            </AnimatePresence>
           </div>
           <Analytics />
           <SpeedInsights />
