@@ -29,23 +29,29 @@ export async function DELETE(
       );
     }
 
-    // *** Constraint Check: Check for associated invoices ***
-    const invoiceCount = await prisma.invoice.count({
-      where: { clientId: clientId },
-    });
+    // *** Cascade Delete: Delete associated records first ***
+    
+    // Get counts for logging/response
+    const [invoiceCount, legalDocumentCount] = await Promise.all([
+      prisma.invoice.count({ where: { clientId: clientId } }),
+      prisma.legalDocument.count({ where: { clientId: clientId } })
+    ]);
 
+    // Delete associated invoices
     if (invoiceCount > 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: `cannot delete client: ${invoiceCount} invoice(s) are still assigned to this client. please reassign or delete them first.`,
-        },
-        { status: 409 }
-      ); // 409 Conflict - cannot fulfill due to conflict with existing resources
+      await prisma.invoice.deleteMany({
+        where: { clientId: clientId },
+      });
     }
-    // *** End Constraint Check ***
 
-    // Attempt to delete the client
+    // Delete associated legal documents
+    if (legalDocumentCount > 0) {
+      await prisma.legalDocument.deleteMany({
+        where: { clientId: clientId },
+      });
+    }
+
+    // Now delete the client
     await prisma.client.delete({
       where: { id: clientId },
     });
@@ -53,6 +59,10 @@ export async function DELETE(
     return NextResponse.json({
       success: true,
       message: "Client deleted successfully",
+      deletedCounts: {
+        invoices: invoiceCount,
+        legalDocuments: legalDocumentCount
+      }
     });
   } catch (error) {
     console.error("Error deleting client:", error);

@@ -1,194 +1,113 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { RevealText } from "./RevealText";
+import Link from "next/link";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 import { useSound } from "./SoundProvider";
-import { useToast } from "./Toast";
-import { motion, useInView } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 interface ProjectCardProps {
   title: string;
   description: string;
   image: string;
+  mobileImage?: string;
   link: string;
   priority?: boolean;
   index: number;
-  onVisibilityChange?: (index: number, isVisible: boolean) => void;
 }
 
 export const ProjectCard = ({
   title,
   description,
   image,
-  link,
+  mobileImage,
   priority = false,
   index,
-  onVisibilityChange,
 }: ProjectCardProps) => {
-  const router = useRouter();
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const { playClick } = useSound();
-  const { showToast } = useToast();
-  const ref = useRef(null);
-  const mouseDownTime = useRef<number>(0);
-  const [isHolding, setIsHolding] = useState(false);
-  const [holdProgress, setHoldProgress] = useState(0);
-  const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
-  
-  const isInView = useInView(ref, { 
-    amount: 0.6,
-    margin: "-10% 0px -10% 0px"
-  });
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onVisibilityChange?.(index, isInView);
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [isInView, index, onVisibilityChange]);
-
-  const copyLink = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    navigator.clipboard.writeText(`https://atanaskyurkchiev.info${link}`);
-    showToast("Link copied to clipboard");
-    playClick();
-  };
-
-  // Navigation threshold in milliseconds (500ms = 0.5 seconds)
-  const navigationThreshold = 500;
-
-  const handleMouseDown = () => {
-    mouseDownTime.current = Date.now();
-    setIsHolding(true);
-    setHoldProgress(0);
-    
-    // Start the timer to update hold progress
-    const startTime = Date.now();
-    holdTimerRef.current = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / navigationThreshold, 1);
-      setHoldProgress(progress);
-      
-      if (progress >= 1) {
-        clearInterval(holdTimerRef.current as NodeJS.Timeout);
-      }
-    }, 10);
-  };
-
-  const handleMouseUp = () => {
-    if (holdTimerRef.current) {
-      clearInterval(holdTimerRef.current);
-    }
-    setIsHolding(false);
-    setHoldProgress(0);
-  };
-
-  useEffect(() => {
-    // Clean up interval on unmount
-    return () => {
-      if (holdTimerRef.current) {
-        clearInterval(holdTimerRef.current);
-      }
-    };
-  }, []);
-
-  const handleClick = (e: React.MouseEvent) => {
-    const clickDuration = Date.now() - mouseDownTime.current;
-    
-    if (clickDuration > navigationThreshold) {
-      e.preventDefault();
-      playClick();
-      router.push(link);
-    }
-  };
 
   return (
-    <motion.div 
-      ref={ref}
-      className="group relative select-none"
-      layout
-      animate={{
-        scale: isInView ? 1.03 : 0.97,
-        opacity: isInView ? 1 : 0.8
-      }}
-      transition={{ 
-        duration: 0.3,
-        layout: { duration: 0.3 }
+    <motion.div
+      className="group relative"
+      initial={{ opacity: 0, y: 60 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{
+        duration: 0.8,
+        delay: index * 0.1,
+        ease: [0.33, 1, 0.68, 1],
       }}
     >
-      <div 
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onClick={handleClick} 
-        className="block cursor-pointer relative"
+      <Link
+        href={`/work/${title
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9-]/g, "")}`}
+        className="block group cursor-pointer"
+        onClick={playClick}
       >
-        {/* Hold to navigate indicator */}
-        {isHolding && (
-          <div className="absolute top-4 right-4 z-10 border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200 px-4 py-2 text-xs flex items-center gap-3">
-            <span>hold to view project</span>
-            <div className="w-16 h-1 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
-              <motion.div 
-                className="h-full bg-neutral-500 dark:bg-neutral-400 rounded-full" 
-                style={{ width: `${holdProgress * 100}%` }}
-              />
-            </div>
-          </div>
-        )}
-        
-        <RevealText>
-          <div className="relative h-[50vh] md:h-[70vh] mb-8 overflow-hidden">
-            <div className="absolute inset-0">
-              <Image
-                src={image}
-                alt={title}
-                fill
-                sizes="(max-width: 768px) 100vw, 80vw"
-                quality={90}
-                className="object-contain pointer-events-none"
-                priority={priority}
-                draggable={false}
-              />
-            </div>
-          </div>
-        </RevealText>
-        <RevealText>
-          <div className="flex justify-between items-start select-none">
-            <div className="w-full">
-              <div className="flex items-center gap-2 mb-3">
-                <h3 className="text-sm select-none">{title}</h3>
-                <motion.button
-                  onClick={copyLink}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  aria-label="Copy project link"
-                >
+        <motion.div
+          className="relative overflow-hidden bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg"
+          whileHover={{ y: isMobile ? 0 : -5 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+        >
+          {/* Project Image */}
+          <div className="relative aspect-[16/10] md:aspect-[4/3] overflow-hidden">
+            <Image
+              src={
+                isMobile ? mobileImage || image : image
+              }
+              alt={title}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              priority={priority}
+              loading={priority ? "eager" : "lazy"}
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+            />
+
+            {/* Mobile-friendly overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-300" />
+
+            {/* Mobile-visible project info overlay */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 bg-gradient-to-t from-black/80 to-transparent md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+              <div className="text-white">
+                <div className="flex items-center gap-2">
+                  <p className="text-xs md:text-sm opacity-80 mb-1 lowercase">
+                    view project
+                  </p>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="w-4 h-4 text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+                    className="w-4 h-4"
                   >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"
+                      d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
                     />
                   </svg>
-                </motion.button>
+                </div>
               </div>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400 select-none">
-                {description}
-              </p>
             </div>
           </div>
-        </RevealText>
-      </div>
+
+          {/* Project Details */}
+          <div className="p-4 md:p-6">
+            <h3 className="text-lg md:text-xl font-medium mb-2 md:mb-3 lowercase group-hover:text-neutral-600 dark:group-hover:text-neutral-400 transition-colors">
+              {title}
+            </h3>
+            <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed line-clamp-3">
+              {description}
+            </p>
+          </div>
+        </motion.div>
+      </Link>
     </motion.div>
   );
 };

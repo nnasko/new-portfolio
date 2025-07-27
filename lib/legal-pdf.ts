@@ -33,33 +33,39 @@ function getAdminSignature(): string {
 function updateContentWithSignatures(content: string, clientSignature?: string): string {
   const adminSignature = getAdminSignature();
   
-  // Find and replace the signature section
-  const signatureSection = `
-    <div style="margin-top: 60px; page-break-inside: avoid;">
-      <p style="margin-bottom: 40px;"><strong>By signing below, both parties agree to the terms outlined in this agreement:</strong></p>
-      
-      <div style="display: flex; justify-content: space-between; margin-top: 40px;">
-        <div style="width: 45%;">
-          <div style="border-bottom: 2px solid #000; height: 40px; margin-bottom: 10px; display: flex; align-items: end; justify-content: center;">
-            ${clientSignature ? `<img src="${clientSignature}" style="max-height: 35px; max-width: 200px;" alt="Client Signature" />` : ''}
+  // More robust replacement to target the specific signature section
+  const updatedContent = content.replace(
+    // Target the signature section specifically
+    /<div style="margin-top: 50px; padding: 30px; background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 8px; page-break-inside: avoid;">[\s\S]*?<\/div>/g,
+    `<div style="margin-top: 50px; padding: 30px; background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 8px; page-break-inside: avoid;">
+      <h4 style="margin: 0 0 30px 0; font-weight: 600; text-align: center; font-size: 16px; color: #495057;">SIGNATURE SECTION</h4>
+        
+      <div style="display: flex; justify-content: space-between; gap: 40px; margin-top: 30px;">
+        <div style="flex: 1; text-align: center;">
+          <div style="border-bottom: 2px solid #333; height: 50px; margin-bottom: 15px; background: #ffffff; display: flex; align-items: center; justify-content: center; position: relative;">
+            ${clientSignature ? `<img src="${clientSignature}" style="max-height: 40px; max-width: 180px; position: absolute; bottom: 5px;" alt="Client Signature" />` : ''}
           </div>
-          <p><strong>Client</strong><br>Client Signature<br>Date: ${clientSignature ? new Date().toLocaleDateString('en-GB') : '_____________'}</p>
+          <div style="text-align: center;">
+            <p style="margin: 0; font-weight: 600; font-size: 14px;">${content.match(/Client.*?:.*?<strong>(.*?)<\/strong>/)?.[1] || 'Client Name'}</p>
+            <p style="margin: 5px 0 0 0; color: #666; font-size: 12px;">Client Signature</p>
+            <p style="margin: 5px 0 0 0; color: #666; font-size: 12px;">Date: ${clientSignature ? new Date().toLocaleDateString('en-GB') : '_____________'}</p>
+          </div>
         </div>
-        <div style="width: 45%;">
-          <div style="border-bottom: 2px solid #000; height: 40px; margin-bottom: 10px; display: flex; align-items: end; justify-content: center;">
-            ${adminSignature ? `<img src="${adminSignature}" style="max-height: 35px; max-width: 200px;" alt="Admin Signature" />` : ''}
+        <div style="flex: 1; text-align: center;">
+          <div style="border-bottom: 2px solid #333; height: 50px; margin-bottom: 15px; background: #ffffff; display: flex; align-items: center; justify-content: center; position: relative;">
+            ${adminSignature ? `<img src="${adminSignature}" style="max-height: 40px; max-width: 180px; position: absolute; bottom: 5px;" alt="Service Provider Signature" />` : ''}
           </div>
-          <p><strong>${process.env.NEXT_PUBLIC_ACCOUNT_NAME}</strong><br>Service Provider<br>Date: ${new Date().toLocaleDateString('en-GB')}</p>
+          <div style="text-align: center;">
+            <p style="margin: 0; font-weight: 600; font-size: 14px;">${process.env.NEXT_PUBLIC_ACCOUNT_NAME}</p>
+            <p style="margin: 5px 0 0 0; color: #666; font-size: 12px;">Service Provider</p>
+            <p style="margin: 5px 0 0 0; color: #666; font-size: 12px;">Date: ${new Date().toLocaleDateString('en-GB')}</p>
+          </div>
         </div>
       </div>
-    </div>
-  `;
-
-  // Replace the existing signature section
-  return content.replace(
-    /<div style="margin-top: 60px;[^>]*?>[\s\S]*?<\/div>\s*$/,
-    signatureSection
+    </div>`
   );
+  
+  return updatedContent;
 }
 
 export async function generateServiceAgreementPDF(document: ServiceAgreementForPdf): Promise<Buffer> {
@@ -103,24 +109,25 @@ export async function generateServiceAgreementPDF(document: ServiceAgreementForP
             }
             
             body {
-              font-family: 'Times New Roman', serif;
+              font-family: system-ui, -apple-system, sans-serif;
               font-size: 12pt;
               line-height: 1.6;
-              color: #000;
+              color: #1a1a1a;
               margin: 0;
               padding: 0;
             }
             
             h1, h2, h3, h4 {
-              color: #000;
-              margin-top: 24px;
-              margin-bottom: 12px;
+              color: #1a1a1a;
+              margin-top: 16px;
+              margin-bottom: 8px;
+              font-weight: 500;
             }
             
-            h1 { font-size: 18pt; }
-            h2 { font-size: 16pt; }
-            h3 { font-size: 14pt; }
-            h4 { font-size: 12pt; }
+            h1 { font-size: 16pt; font-weight: 400; letter-spacing: -0.5px; }
+            h2 { font-size: 14pt; font-weight: 500; }
+            h3 { font-size: 12pt; font-weight: 500; }
+            h4 { font-size: 11pt; font-weight: 500; }
             
             p {
               margin: 12px 0;
@@ -141,23 +148,17 @@ export async function generateServiceAgreementPDF(document: ServiceAgreementForP
             }
             
             .header {
-              text-align: center;
-              margin-bottom: 40px;
-              border-bottom: 2px solid #000;
-              padding-bottom: 20px;
-            }
-            
-            .debt-warning {
-              background: #fff3cd;
-              border: 2px solid #856404;
-              padding: 15px;
-              margin: 20px 0;
+              text-align: left;
+              margin-bottom: 32px;
+              border-bottom: 1px solid #e5e5e5;
+              padding-bottom: 16px;
             }
             
             .signature-section {
-              margin-top: 60px;
+              margin-top: 40px;
               display: flex;
               justify-content: space-between;
+              page-break-inside: avoid;
             }
             
             .signature-block {
@@ -165,32 +166,34 @@ export async function generateServiceAgreementPDF(document: ServiceAgreementForP
             }
             
             .signature-line {
-              border-bottom: 1px solid #000;
-              margin-bottom: 5px;
-              height: 20px;
+              border-bottom: 1px solid #1a1a1a;
+              margin-bottom: 8px;
+              height: 30px;
+              display: flex;
+              align-items: end;
+              justify-content: center;
             }
             
             .footer {
-              margin-top: 40px;
-              font-size: 10pt;
-              color: #666;
-              border-top: 1px solid #ccc;
-              padding-top: 20px;
+              margin-top: 32px;
+              font-size: 9pt;
+              color: #6b7280;
+              border-top: 1px solid #e5e5e5;
+              padding-top: 16px;
             }
             
             .document-number {
               text-align: right;
-              font-size: 10pt;
-              color: #666;
-              margin-bottom: 20px;
+              font-size: 9pt;
+              color: #6b7280;
+              margin-bottom: 16px;
             }
             
-            .signature-ready {
-              background: #e8f5e8;
-              border-left: 4px solid #4caf50;
-              padding: 15px;
-              margin: 20px 0;
-              font-size: 11pt;
+            .content-section {
+              background: #fafafa;
+              border: 1px solid #e5e5e5;
+              padding: 16px;
+              margin: 16px 0;
             }
           </style>
         </head>

@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClientLayout } from "./components/ClientLayout";
+import ClientGoogleAds from "./components/ClientGoogleAds";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -94,9 +95,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: "/alogo.png",
+    shortcut: "/alogo.png",
+    apple: "/alogo.png",
   },
   manifest: "/manifest.json",
 };
@@ -116,21 +117,10 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Google Ads Conversion Tracking */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17274943510"></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'AW-17274943510');
-            `,
-          }}
-        />
       </head>
       <body className={`${spaceGrotesk.variable} font-sans text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-900 transition-colors`}>
         <ClientLayout>{children}</ClientLayout>
+        <ClientGoogleAds />
         <Analytics />
         <SpeedInsights />
       </body>

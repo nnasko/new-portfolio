@@ -9,6 +9,7 @@ import { MinimalLink } from "../../components/MinimalLink";
 import { useSound } from "../../components/SoundProvider";
 import { ReadingTime } from "../../components/ReadingTime";
 import { ViewCounter } from "../../components/ViewCounter";
+import { Navigation } from "../../components/Navigation";
 import { useState, useEffect, useRef } from "react";
 import { siteConfig } from "../../metadata";
 import { 
@@ -273,7 +274,7 @@ function SimplifiedImageGallery({ images, title }: { images: string[], title: st
 function SimpleTechBadge({ tech, index }: { tech: string, index: number }) {
   return (
     <motion.span
-      className="inline-block text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-300"
+      className="inline-block text-xs rounded-md px-3 py-2 border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 hover:border-neutral-900 dark:hover:border-neutral-100 transition-all duration-300"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -316,9 +317,8 @@ const getProjectSchema = (project: Project): ProjectSchema => ({
 function ProjectContent({ slug }: { slug: string }) {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
-  const { scrollY, scrollDirection } = useScrollTracker();
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const [isNavVisible, setIsNavVisible] = useState(true);
+  const { scrollY } = useScrollTracker();
+
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { playClick } = useSound();
 
@@ -326,32 +326,7 @@ function ProjectContent({ slug }: { slug: string }) {
   const heroY = useTransform(scrollY, [0, 500], [0, -100]);
   const contentOpacity = useTransform(scrollY, [0, 200], [1, 0.8]);
 
-  // Transform scroll position to header opacity and blur (matching StickyHeader)
-  const headerOpacity = useTransform(scrollY, [0, 100], [1, 0.95]);
-  const headerScale = useTransform(scrollY, [0, 200], [1, 0.98]);
-  const blurValue = useTransform(scrollY, [0, 100], [0, 8]);
-  const backgroundOpacity = useTransform(scrollY, [0, 50], [0.8, 1]);
 
-  // Navigation scroll behavior (matching StickyHeader exactly)
-  useEffect(() => {
-    const unsubscribe = scrollY.on("change", (latest) => {
-      const currentScrollY = latest;
-      const scrollDifference = Math.abs(currentScrollY - lastScrollY);
-
-      // Show header when scrolling up or at the top
-      if (scrollDirection === "up" || currentScrollY < 100) {
-        setIsNavVisible(true);
-      }
-      // Hide header when scrolling down with sufficient velocity
-      else if (scrollDirection === "down" && scrollDifference > 10 && currentScrollY > 200) {
-        setIsNavVisible(false);
-      }
-
-      setLastScrollY(currentScrollY);
-    });
-
-    return () => unsubscribe();
-  }, [scrollY, scrollDirection, lastScrollY]);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -454,58 +429,17 @@ function ProjectContent({ slug }: { slug: string }) {
         <ScrollProgressBar />
         
         {/* Enhanced navigation */}
-        <motion.nav 
-          className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-          style={{
-            opacity: headerOpacity,
-            backdropFilter: `blur(${blurValue}px)`,
-            scale: headerScale,
-          }}
-          initial={{ y: 0 }}
-          animate={{
-            y: isNavVisible ? 0 : -100,
-          }}
-          transition={{
-            duration: 0.3,
-            ease: [0.25, 0.46, 0.45, 0.94],
-          }}
-        >
-          <div className="relative">
-            {/* Background with dynamic opacity */}
-            <motion.div
-              className="absolute inset-0 bg-neutral-50/80 dark:bg-neutral-900/80 border-b border-neutral-200/50 dark:border-neutral-800/50"
-              style={{
-                opacity: backgroundOpacity,
-              }}
-            />
-
-            {/* Content */}
-            <div className="relative p-6 flex justify-between items-center">
-              <MagneticElement>
-                <MinimalLink href="/" className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors">
-                  <div>
-                    <div>atanas kyurkchiev</div>
-                    <div className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">web developer</div>
-                  </div>
-                </MinimalLink>
-              </MagneticElement>
-              
-              <MagneticElement>
-                <MinimalLink
-                  href="/#work"
-                  className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
-                >
-                  back to work
-                </MinimalLink>
-              </MagneticElement>
-            </div>
-          </div>
-        </motion.nav>
+        <Navigation 
+          variant="sticky"
+          customNavItems={[
+            { href: "/#work", label: "back to work" }
+          ]}
+        />
 
         <div className="pt-24 px-6 md:px-12 max-w-6xl mx-auto">
           {/* Project header */}
           <motion.div 
-            className="max-w-4xl mb-16 relative"
+            className="max-w-6xl mx-auto mb-16 md:mb-24"
             style={{ y: heroY }}
           >
             <motion.div
@@ -514,7 +448,7 @@ function ProjectContent({ slug }: { slug: string }) {
               transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
               className="mb-8"
             >
-              <h1 className="text-4xl md:text-6xl mb-6 leading-tight font-normal">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl mb-6 leading-tight font-light">
                 {project.title}
               </h1>
             </motion.div>
@@ -525,7 +459,7 @@ function ProjectContent({ slug }: { slug: string }) {
               transition={{ duration: 0.8, delay: 0.2, ease: [0.33, 1, 0.68, 1] }}
               className="mb-8"
             >
-              <p className="text-xl md:text-2xl text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-4xl">
+              <p className="text-lg md:text-xl lg:text-2xl text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-4xl">
                 {project.description}
               </p>
             </motion.div>
@@ -537,7 +471,7 @@ function ProjectContent({ slug }: { slug: string }) {
                 transition={{ duration: 0.6, delay: 0.4 }}
                 className="mb-8"
               >
-                <p className="text-lg text-neutral-500 dark:text-neutral-500 italic leading-relaxed">
+                <p className="text-base md:text-lg text-neutral-500 dark:text-neutral-500 italic leading-relaxed">
                   {project.overview}
                 </p>
               </motion.div>
@@ -571,7 +505,7 @@ function ProjectContent({ slug }: { slug: string }) {
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 border border-neutral-300 dark:border-neutral-700 hover:border-neutral-900 dark:hover:border-neutral-100 transition-all duration-300 group"
+                  className="inline-flex items-center gap-2 rounded-md px-4 py-2 border border-neutral-300 dark:border-neutral-700 hover:border-neutral-900 dark:hover:border-neutral-100 transition-all duration-300 group"
                   onClick={playClick}
                 >
                   <span>view live site</span>
@@ -603,7 +537,7 @@ function ProjectContent({ slug }: { slug: string }) {
 
           {/* Content grid */}
           <motion.div 
-            className="grid md:grid-cols-[2fr,1fr] gap-16 max-w-6xl mb-32"
+            className="grid md:grid-cols-[2fr,1fr] gap-16 max-w-6xl mx-auto mb-32"
             style={{ opacity: contentOpacity }}
           >
             {/* Main content */}
@@ -621,7 +555,7 @@ function ProjectContent({ slug }: { slug: string }) {
                       ease: [0.33, 1, 0.68, 1]
                     }}
                   >
-                    <p className="leading-relaxed text-base break-words">{paragraph}</p>
+                    <p className="leading-relaxed text-base md:text-lg break-words">{paragraph}</p>
                   </motion.div>
                 ))
               ) : (
@@ -631,7 +565,7 @@ function ProjectContent({ slug }: { slug: string }) {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 }}
                 >
-                  <p className="leading-relaxed text-neutral-500 dark:text-neutral-400 text-base">
+                  <p className="leading-relaxed text-neutral-500 dark:text-neutral-400 text-base md:text-lg">
                     Detailed project information will be available soon.
                   </p>
                 </motion.div>
@@ -647,7 +581,7 @@ function ProjectContent({ slug }: { slug: string }) {
               transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
             >
               <div className="sticky top-32">
-                <h3 className="text-sm font-medium mb-6 tracking-wider">
+                <h3 className="text-sm font-medium mb-6 tracking-wider text-neutral-600 dark:text-neutral-400">
                   technologies used
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -667,7 +601,7 @@ function ProjectContent({ slug }: { slug: string }) {
             viewport={{ once: true }}
             transition={{ duration: 1 }}
           >
-            <div className="max-w-4xl mx-auto py-32">
+            <div className="max-w-4xl mx-auto py-24 md:py-32">
               <motion.div
                 className="text-center"
                 initial={{ opacity: 0, y: 40 }}
@@ -675,11 +609,11 @@ function ProjectContent({ slug }: { slug: string }) {
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
               >
-                <h2 className="text-3xl md:text-4xl mb-6 leading-tight">
+                <h2 className="text-2xl md:text-3xl lg:text-4xl mb-6 leading-tight font-light">
                   ready to build your next digital experience?
                 </h2>
                 
-                <p className="text-base text-neutral-600 dark:text-neutral-400 mb-12 max-w-2xl mx-auto leading-relaxed">
+                <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-400 mb-12 max-w-2xl mx-auto leading-relaxed">
                   let&apos;s collaborate on creating something exceptional that drives results and exceeds expectations.
                 </p>
 
@@ -687,7 +621,7 @@ function ProjectContent({ slug }: { slug: string }) {
                   <MagneticElement strength={0.4}>
                     <MinimalLink
                       href="/hire"
-                      className="inline-flex items-center gap-3 text-sm border-2 border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-8 py-4 hover:bg-transparent hover:text-neutral-900 dark:hover:bg-transparent dark:hover:text-neutral-100 transition-all duration-300"
+                      className="inline-flex rounded-md items-center gap-3 text-sm border-2 border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-8 py-4 hover:bg-transparent hover:text-neutral-900 dark:hover:bg-transparent dark:hover:text-neutral-100 transition-all duration-300"
                     >
                       <span>start a project</span>
                       <motion.svg
@@ -712,7 +646,7 @@ function ProjectContent({ slug }: { slug: string }) {
                   <MagneticElement strength={0.3}>
                     <MinimalLink
                       href="/#work"
-                      className="text-sm border border-neutral-300 dark:border-neutral-700 bg-transparent px-8 py-4 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-300"
+                      className="text-sm border rounded-md border-neutral-300 dark:border-neutral-700 bg-transparent px-8 py-4 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-300"
                     >
                       view more work
                     </MinimalLink>

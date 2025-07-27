@@ -45,6 +45,9 @@ model Invoice {
   status        InvoiceStatus @default(UNPAID)
   total         Float
   amountPaid    Float         @default(0)
+  paidDate      DateTime?
+  paymentMethod String?
+  paymentReference String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   lastReminder  DateTime?
@@ -75,6 +78,64 @@ model Client {
   
   invoices  Invoice[]
   legalDocuments LegalDocument[]
+}
+
+model Inquiry {
+  id                       String        @id @default(cuid())
+  
+  // Contact Information
+  name                     String
+  email                    String
+  company                  String?
+  phone                    String?
+  
+  // Project Information
+  projectType              String        // personal, business, ecommerce, saas, enterprise
+  businessType             String?       // Type of business they run
+  currentChallenge         String?       // Main challenge they're facing
+  projectGoal              String        // What success looks like
+  targetAudience           String?       // Their ideal customers
+  hasExistingWebsite       String?       // no, yes-needs-redesign, yes-needs-updates
+  
+  // Technical Requirements
+  selectedFeatures         String[]      // Array of selected feature keys
+  selectedAdditionalServices String[]    // Array of selected additional service keys
+  designPreference         String?       // modern-minimal, bold-creative, etc.
+  timeline                 String        // rush, normal, flexible
+  contentReady             String?       // yes, partially, no-need-help
+  
+  // Estimate
+  estimateMin              Int?          // Calculated minimum estimate
+  estimateMax              Int?          // Calculated maximum estimate
+  breakdown                Json?         // Pricing breakdown details
+  
+  // Additional Information
+  message                  String        // Additional notes/requirements
+  hearAboutUs              String?       // How they heard about us
+  budget                   String?       // Their budget expectations
+  
+  // System fields
+  status                   InquiryStatus @default(NEW)
+  priority                 Boolean       @default(false)
+  notes                    String?       // Internal notes
+  followUpDate             DateTime?     // When to follow up
+  convertedToClientId      String?       // If converted to client
+  finalPrice               Int?          // Final quoted price in pence
+  quotedAt                 DateTime?     // When the quote was sent
+  
+  createdAt                DateTime      @default(now())
+  updatedAt                DateTime      @updatedAt
+}
+
+enum InquiryStatus {
+  NEW
+  CONTACTED
+  IN_DISCUSSION
+  QUOTED
+  ACCEPTED
+  REJECTED
+  CONVERTED
+  ARCHIVED
 }
 
 enum InvoiceStatus {

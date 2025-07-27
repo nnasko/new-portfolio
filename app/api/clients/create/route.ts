@@ -74,31 +74,14 @@ export async function POST(request: Request) {
       updatedAt: new Date(), // Explicitly provide the current time
     };
 
-    // Try to use new schema first, fallback to old schema
-    try {
-      // Try new schema with emails array
-      clientData.emails = finalEmails;
-      const newClient = await prisma.client.create({ 
-        data: clientData as unknown as Parameters<typeof prisma.client.create>[0]['data']
-      });
-      return NextResponse.json({ client: newClient }, { status: 201 });
-    } catch (schemaError) {
-      // If that fails, try old schema with single email
-      console.error('Error creating client:', schemaError);
-      if (finalEmails.length > 1) {
-        return NextResponse.json({ 
-          error: 'multiple emails not supported in current schema. please provide only one email address.' 
-        }, { status: 400 });
-      }
-      
-      delete clientData.emails;
-      clientData.email = finalEmails[0];
-      
-      const newClient = await prisma.client.create({ 
-        data: clientData as unknown as Parameters<typeof prisma.client.create>[0]['data']
-      });
-      return NextResponse.json({ client: newClient }, { status: 201 });
-    }
+    // Provide both email and emails fields to satisfy schema
+    clientData.email = finalEmails[0]; // Primary email
+    clientData.emails = finalEmails; // Array of emails
+    
+    const newClient = await prisma.client.create({ 
+      data: clientData as unknown as Parameters<typeof prisma.client.create>[0]['data']
+    });
+    return NextResponse.json({ client: newClient }, { status: 201 });
 
   } catch (error) {
     console.error("Error creating client:", error);

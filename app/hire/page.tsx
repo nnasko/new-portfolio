@@ -1,108 +1,170 @@
 'use client';
 
 import { useRef, useState, useEffect } from "react";
-import { MinimalLink } from "../components/MinimalLink";
-import { RevealText } from "../components/RevealText";
+import Link from "next/link";
 import { SectionTransition } from "../components/SectionTransition";
 import { AnimatedText } from "../components/AnimatedText";
 import { useSound } from "../components/SoundProvider";
 import { useToast } from "../components/Toast";
-import { motion, AnimatePresence, useTransform, useSpring } from "framer-motion";
-import { staggerContainer, staggerItem, useScrollTracker, useMousePosition, useViewportIntersection } from "../../lib/animation-utils";
+import { Navigation } from "../components/Navigation";
+import { ScrollProgress } from "../components/ScrollProgress";
+import { motion, AnimatePresence } from "framer-motion";
 
-// Enhanced Magnetic Element with mobile detection
-function MagneticElement({ children, strength = 0.4 }: { children: React.ReactNode, strength?: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
-  const mousePosition = useMousePosition();
-  const x = useSpring(0, { stiffness: 200, damping: 20 });
-  const y = useSpring(0, { stiffness: 200, damping: 20 });
-
-  useEffect(() => {
-    // Disable magnetic effect on mobile
-    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+// Pricing configuration
+const PRICING_CONFIG = {
+  basePackages: {
+    personal: { min: 300, max: 600, name: "personal website" },
+    business: { min: 500, max: 800, name: "business website" },
+    ecommerce: { min: 800, max: 1500, name: "e-commerce platform" },
+    saas: { min: 1500, max: 3000, name: "custom web application" },
+    enterprise: { min: 3000, max: 8000, name: "enterprise solution" }
+  },
+  // Features included in each tier
+  includedFeatures: {
+    personal: [
+      "responsive website design",
+      "up to 4 pages", 
+      "contact forms",
+      "basic seo setup",
+      "mobile-first approach",
+      "photo galleries",
+      "social media links"
+    ],
+    business: [
+      "responsive website design",
+      "up to 6 pages",
+      "advanced contact forms", 
+      "seo optimization setup",
+      "google analytics integration",
+      "mobile-first approach",
+      "photo galleries",
+      "social media links",
+      "content management system",
+      "basic performance optimization"
+    ],
+    ecommerce: [
+      "responsive website design",
+      "up to 6 pages",
+      "advanced contact forms",
+      "seo optimization setup", 
+      "google analytics integration",
+      "mobile-first approach",
+      "photo galleries",
+      "social media links",
+      "content management system",
+      "basic performance optimization",
+      "product catalog & management",
+      "secure payment processing",
+      "inventory tracking system",
+      "customer account system",
+      "order management dashboard",
+      "email notifications",
+      "advanced seo optimization"
+    ],
+    saas: [
+      "responsive website design",
+      "unlimited pages",
+      "advanced contact forms",
+      "seo optimization setup",
+      "google analytics integration", 
+      "mobile-first approach",
+      "photo galleries",
+      "social media links",
+      "content management system",
+      "basic performance optimization",
+      "product catalog & management",
+      "secure payment processing", 
+      "inventory tracking system",
+      "customer account system",
+      "order management dashboard",
+      "email notifications",
+      "advanced seo optimization",
+      "custom user authentication",
+      "admin dashboard & analytics",
+      "api development & integrations",
+      "database design & optimization",
+      "third-party service integrations",
+      "advanced features & automation"
+    ],
+    enterprise: [
+      "completely custom solution",
+      "unlimited everything",
+      "dedicated project manager",
+      "24/7 priority support",
+      "unlimited revisions"
+    ]
+  },
+  features: {
+    // Content & Management
+    blog: { 
+      price: 100, 
+      name: "blog/news section", 
+      description: "share updates, articles, and company news with your audience",
+      category: "Content & Management"
+    },
     
-    if (!ref.current || !isHovered || isMobile) {
-      x.set(0);
-      y.set(0);
-      return;
+    // Business Features
+    booking: { 
+      price: 300, 
+      name: "online appointment booking", 
+      description: "let customers book appointments or services directly from your website",
+      category: "Business Features"
+    },
+    
+    // Customer Experience
+    liveChat: { 
+      price: 150, 
+      name: "live chat support", 
+      description: "chat with visitors in real-time to answer questions and close sales",
+      category: "Customer Experience"
+    },
+    multiLanguage: { 
+      price: 350, 
+      name: "multiple languages", 
+      description: "serve customers in different languages with automatic translation",
+      category: "Customer Experience"
+    },
+    
+    // Advanced Integrations
+    thirdParty: { 
+      price: 250, 
+      name: "connect with your tools", 
+      description: "integrate with accounting software, CRM, email marketing tools, etc.",
+      category: "Advanced Integrations"
+    },
+    automation: { 
+      price: 300, 
+      name: "workflow automation", 
+      description: "automate repetitive tasks like sending emails, updating spreadsheets",
+      category: "Advanced Integrations"
     }
-
-    const rect = ref.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    const deltaX = (mousePosition.x - centerX) * strength;
-    const deltaY = (mousePosition.y - centerY) * strength;
-    
-    x.set(deltaX);
-    y.set(deltaY);
-  }, [mousePosition, isHovered, strength, x, y]);
-
-  return (
-    <motion.div
-      ref={ref}
-      style={{ x, y }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      transition={{ type: "spring", stiffness: 200, damping: 20 }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-// Type for process step
-interface ProcessStepType {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}
-
-// Enhanced Process Step Component
-function ProcessStep({ step, index, isActive }: { step: ProcessStepType, index: number, isActive: boolean }) {
-  const { ref, isIntersecting } = useViewportIntersection({ threshold: 0.3 });
-  
-  return (
-    <motion.div
-      ref={ref as React.RefObject<HTMLDivElement>}
-      className="group relative"
-      initial={{ opacity: 0, y: 60 }}
-      animate={{ 
-        opacity: isIntersecting ? 1 : 0,
-        y: isIntersecting ? 0 : 60 
-      }}
-      transition={{
-        duration: 0.8,
-        delay: index * 0.1,
-        ease: [0.33, 1, 0.68, 1],
-      }}
-    >
-      <MagneticElement strength={0.3}>
-        <div className={`p-6 md:p-8 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 transition-all duration-500 h-full group-hover:bg-neutral-100 dark:group-hover:bg-neutral-700 ${isActive ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-100 dark:bg-neutral-700' : ''}`}>
-          <div className="flex items-center gap-4 md:gap-6 mb-4 md:mb-6">
-            <motion.div
-              className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-sm border-2 transition-all duration-300 ${isActive ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900' : 'border-neutral-400 dark:border-neutral-600'}`}
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              {index + 1}
-            </motion.div>
-            <h3 className="text-base md:text-lg font-medium lowercase">
-              {step.title}
-            </h3>
-          </div>
-          <div className="mb-4 md:mb-6 text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors duration-300">
-            {step.icon}
-          </div>
-          <p className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-neutral-300 transition-colors duration-300">
-            {step.description}
-          </p>
-        </div>
-      </MagneticElement>
-    </motion.div>
-  );
-}
+  },
+  additionalServices: {
+    maintenance: {
+      price: "dynamic", // Will be calculated based on package
+      name: "ongoing maintenance",
+      description: "regular updates, security patches, and technical support"
+    }
+  },
+  // Maintenance pricing based on package
+  maintenancePricing: {
+    personal: 50,
+    business: 100,
+    ecommerce: 150,
+    saas: 200,
+    enterprise: 300
+  },
+  timeline: {
+    rush: 1.3, // +30% for rush delivery
+    normal: 1,
+    flexible: 0.9 // -10% for flexible timeline
+  },
+  maintenance: {
+    basic: 200,
+    standard: 400,
+    premium: 800
+  }
+};
 
 // Enhanced Form Field Component
 function FormField({ 
@@ -110,26 +172,36 @@ function FormField({
   children, 
   error, 
   required = false,
-  description 
+  description,
+  className = ""
 }: { 
-  label: string, 
+  label: string | React.ReactNode, 
   children: React.ReactNode, 
   error?: string,
   required?: boolean,
-  description?: string 
+  description?: string,
+  className?: string
 }) {
   return (
     <motion.div
-      className="space-y-2"
+      className={`space-y-2 ${className}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <label className="block text-sm text-neutral-600 dark:text-neutral-400 lowercase">
-        {label}{required && <span className="text-red-500 ml-1">*</span>}
+      <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+        {typeof label === 'string' ? (
+          <>
+            {label}{required && <span className="text-red-500 ml-1">*</span>}
+          </>
+        ) : (
+          <div className="flex items-center gap-1">
+            {label}{required && <span className="text-red-500 ml-1">*</span>}
+          </div>
+        )}
       </label>
       {description && (
-        <p className="text-xs text-neutral-500 dark:text-neutral-500 lowercase">
+        <p className="text-xs text-neutral-500 dark:text-neutral-500">
           {description}
         </p>
       )}
@@ -140,7 +212,7 @@ function FormField({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="text-xs text-red-500 dark:text-red-400 lowercase"
+            className="text-xs text-red-500 dark:text-red-400"
           >
             {error}
           </motion.p>
@@ -150,157 +222,143 @@ function FormField({
   );
 }
 
-// Enhanced Button Component
-function EnhancedButton({ 
-  children, 
-  variant = 'primary', 
-  onClick, 
-  disabled = false,
-  type = 'button',
-  className = ''
-}: {
-  children: React.ReactNode,
-  variant?: 'primary' | 'secondary',
-  onClick?: () => void,
-  disabled?: boolean,
-  type?: 'button' | 'submit',
-  className?: string
+// Feature toggle component
+function FeatureToggle({ 
+  feature, 
+  description,
+  selected, 
+  onToggle, 
+  price 
+}: { 
+  feature: string,
+  description: string,
+  selected: boolean, 
+  onToggle: () => void, 
+  price: number 
 }) {
   return (
-    <MagneticElement strength={0.2}>
-      <motion.button
-        type={type}
-        onClick={onClick}
-        disabled={disabled}
-        className={`
-          relative overflow-hidden transition-all duration-300 group
-          ${variant === 'primary' 
-            ? 'border-2 border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 hover:bg-transparent hover:text-neutral-900 dark:hover:bg-transparent dark:hover:text-neutral-100' 
-            : 'border border-neutral-300 dark:border-neutral-700 bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800'
-          }
-          px-6 md:px-8 py-3 text-sm lowercase
-          ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
-          ${className}
-        `}
-        whileHover={{ scale: disabled ? 1 : 1.02 }}
-        whileTap={{ scale: disabled ? 1 : 0.98 }}
-        transition={{ type: "spring", stiffness: 300 }}
-      >
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-neutral-200 to-neutral-300 dark:from-neutral-700 dark:to-neutral-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300"
-          initial={false}
-        />
-        <span className="relative z-10">{children}</span>
-      </motion.button>
-    </MagneticElement>
+    <motion.button
+      type="button"
+      onClick={onToggle}
+      className={`p-4 border rounded-md text-left transition-all duration-300 ${
+        selected 
+          ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-100 dark:bg-neutral-800' 
+          : 'border-neutral-300 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-600'
+      }`}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start gap-3 flex-1">
+          <div className={`w-4 h-4 rounded border-2 flex items-center justify-center mt-0.5 flex-shrink-0 ${
+            selected 
+              ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100' 
+              : 'border-neutral-300 dark:border-neutral-700'
+          }`}>
+            {selected && (
+              <svg className="w-2 h-2 text-neutral-50 dark:text-neutral-900" fill="currentColor" viewBox="0 0 8 8">
+                <path d="M6.564.75L3.59 3.724 1.436 1.57.75 2.256l2.842 2.84L7.25 1.436z"/>
+              </svg>
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-medium mb-1">{feature}</div>
+            <div className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">{description}</div>
+          </div>
+        </div>
+        <div className="flex-shrink-0">
+          <span className="text-sm font-bold">+£{price}</span>
+        </div>
+      </div>
+    </motion.button>
   );
 }
 
-// Project process steps
-const steps = [
-  {
-    title: "discovery",
-    description:
-      "we&apos;ll discuss your project requirements, goals, and vision to ensure we&apos;re aligned on the desired outcome.",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="w-6 h-6 md:w-8 md:h-8"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-        />
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-        />
-      </svg>
-    ),
-  },
-  {
-    title: "planning",
-    description:
-      "together, we&apos;ll create a detailed project plan including timelines, milestones, and deliverables.",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="w-6 h-6 md:w-8 md:h-8"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
-        />
-      </svg>
-    ),
-  },
-  {
-    title: "development",
-    description:
-      "i&apos;ll bring your vision to life with clean, efficient code and regular updates on progress.",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="w-6 h-6 md:w-8 md:h-8"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5"
-        />
-      </svg>
-    ),
-  },
-  {
-    title: "delivery",
-    description:
-      "after thorough testing and your approval, we&apos;ll launch your project and ensure everything runs smoothly.",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="w-6 h-6 md:w-8 md:h-8"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"
-        />
-      </svg>
-    ),
-  },
-];
+// Pricing estimate component
+function PricingEstimate({ estimate, breakdown }: { 
+  estimate: { min: number, max: number }, 
+  breakdown: Array<{ item: string, price: number | string }> 
+}) {
+  return (
+    <motion.div
+      className="sticky top-8 p-6 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 rounded-md"
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="flex items-center gap-2 mb-4">
+        <h3 className="text-lg font-semibold">project estimate</h3>
+        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+      </div>
+      
+      {breakdown.length === 0 ? (
+        <div className="text-center py-8">
+          <div className="text-2xl mb-2">💭</div>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
+            select your project type to see a detailed estimate
+          </p>
+          <div className="text-xl font-bold">£300 - £8,000+</div>
+          <p className="text-xs text-neutral-500 dark:text-neutral-500 mt-2">
+            typical project range
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="space-y-3 mb-4">
+            {breakdown.map((item, index) => (
+              <div key={index} className="flex justify-between text-sm">
+                <span className="text-neutral-600 dark:text-neutral-400">{item.item}</span>
+                <span className="font-medium">{typeof item.price === 'number' ? `£${item.price}` : item.price}</span>
+              </div>
+            ))}
+          </div>
+          
+          <div className="border-t border-neutral-200 dark:border-neutral-700 pt-4">
+            <div className="flex justify-between items-center mb-2">
+              <span className="font-semibold">estimated total:</span>
+              <span className="text-xl font-bold">£{estimate.min.toLocaleString()} - £{estimate.max.toLocaleString()}</span>
+            </div>
+          </div>
+        </>
+      )}
+      
+      <div className="mt-4 p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded border">
+        <div className="flex items-start gap-2">
+          <div className="text-blue-500 mt-0.5">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
+              <strong>What&apos;s included:</strong> All estimates include responsive design, contact forms, photo galleries, basic SEO, social media links, visitor analytics, SSL security, and 30 days of support after launch.
+            </p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-500 mt-2">
+              Final price confirmed after project discussion
+            </p>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
-// Form steps
+// Form steps with better organization
 const formSteps = [
   {
-    title: "project type",
-    description: "what kind of project are we cooking up?",
+    title: "project basics",
+    description: "tell us about your project type and goals",
   },
   {
-    title: "timeline & budget",
-    description: "when do you need this to be ready?",
+    title: "features & scope",
+    description: "select the features you need",
   },
   {
-    title: "contact info",
+    title: "timeline & preferences",
+    description: "when do you need this completed?",
+  },
+  {
+    title: "contact details",
     description: "how can we reach you?",
   },
 ];
@@ -308,54 +366,170 @@ const formSteps = [
 export default function HirePage() {
   const { playClick } = useSound();
   const { showToast } = useToast();
-  const { scrollY, scrollDirection } = useScrollTracker();
   const formRef = useRef<HTMLFormElement>(null);
-  const processRef = useRef<HTMLDivElement>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-  const [isNavVisible, setIsNavVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+
   const [formData, setFormData] = useState({
-    projectType: '',
-    timeline: '',
-    budget: '',
+    // Project basics
+    projectType: 'business', // Default to business website to show estimate from start
+    projectGoal: '',
+    businessType: '',
+    currentChallenge: '',
+    targetAudience: '',
+    hasExistingWebsite: '',
+    timeline: 'normal',
+    
+    // Features
+    selectedFeatures: [] as string[],
+    designPreference: '',
+    contentReady: '',
+    
+    // Additional services
+    selectedAdditionalServices: [] as string[],
+    needsMaintenance: false,
+    maintenanceLevel: 'basic',
+    needsHosting: false,
+    needsDomain: false,
+    
+    // Contact
     name: '',
     email: '',
     company: '',
+    phone: '',
     message: '',
-    otherProjectType: '',
+    budget: '',
+    hearAboutUs: '',
+    
+    // Package pre-selection
+    selectedPackage: '',
   });
 
-  // Enhanced parallax effects - reduced for mobile
-  const heroY = useTransform(scrollY, [0, 500], [0, -50]);
-  const processY = useTransform(scrollY, [500, 1500], [0, -25]);
-
-  // Transform scroll position to header opacity and blur (matching StickyHeader)
-  const headerOpacity = useTransform(scrollY, [0, 100], [1, 0.95]);
-  const headerScale = useTransform(scrollY, [0, 200], [1, 0.98]);
-  const blurValue = useTransform(scrollY, [0, 100], [0, 8]);
-  const backgroundOpacity = useTransform(scrollY, [0, 50], [0.8, 1]);
-
-  // Navigation scroll behavior (matching StickyHeader exactly)
+  // Handle URL parameters for package selection
   useEffect(() => {
-    const unsubscribe = scrollY.on("change", (latest) => {
-      const currentScrollY = latest;
-      const scrollDifference = Math.abs(currentScrollY - lastScrollY);
-
-      // Show header when scrolling up or at the top
-      if (scrollDirection === "up" || currentScrollY < 100) {
-        setIsNavVisible(true);
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const packageParam = urlParams.get('package');
+      
+      if (packageParam) {
+        setFormData(prev => ({
+          ...prev,
+          selectedPackage: packageParam,
+          projectType: packageParam === 'business' ? 'business' : 
+                      packageParam === 'ecommerce' ? 'ecommerce' : 
+                      packageParam === 'platform' ? 'saas' : ''
+        }));
       }
-      // Hide header when scrolling down with sufficient velocity
-      else if (scrollDirection === "down" && scrollDifference > 10 && currentScrollY > 200) {
-        setIsNavVisible(false);
-      }
+    }
+  }, []);
 
-      setLastScrollY(currentScrollY);
+  // Calculate pricing estimate
+  const calculateEstimate = () => {
+    const { projectType, selectedFeatures, selectedAdditionalServices, timeline } = formData;
+    
+    if (!projectType) {
+      return { min: 0, max: 0 };
+    }
+
+    const basePackage = PRICING_CONFIG.basePackages[projectType as keyof typeof PRICING_CONFIG.basePackages];
+    if (!basePackage) return { min: 0, max: 0 };
+
+    const baseMin = basePackage.min;
+    const baseMax = basePackage.max;
+
+    // Add feature costs
+    const featureCosts = selectedFeatures.reduce((total, feature) => {
+      const featureConfig = PRICING_CONFIG.features[feature as keyof typeof PRICING_CONFIG.features];
+      return total + (featureConfig?.price || 0);
+    }, 0);
+
+    // Add additional service costs (only for non-percentage services)
+    const additionalServiceCosts = selectedAdditionalServices.reduce((total, service) => {
+      const serviceConfig = PRICING_CONFIG.additionalServices[service as keyof typeof PRICING_CONFIG.additionalServices];
+      if (serviceConfig && !serviceConfig.price.includes('%') && !serviceConfig.price.includes('/month')) {
+        // Extract numeric value from price string like "£300-600"
+        const priceMatch = serviceConfig.price.match(/£(\d+)(?:-(\d+))?/);
+        if (priceMatch) {
+          const minPrice = parseInt(priceMatch[1]);
+          return total + minPrice; // Use minimum price for calculation
+        }
+      }
+      return total;
+    }, 0);
+
+    // Apply timeline multiplier
+    const timelineMultiplier = PRICING_CONFIG.timeline[timeline as keyof typeof PRICING_CONFIG.timeline] || 1;
+
+    const totalMin = Math.round((baseMin + featureCosts + additionalServiceCosts) * timelineMultiplier);
+    const totalMax = Math.round((baseMax + featureCosts + additionalServiceCosts) * timelineMultiplier);
+
+    return { min: totalMin, max: totalMax };
+  };
+
+  // Get pricing breakdown
+  const getPricingBreakdown = () => {
+    const { projectType, selectedFeatures, selectedAdditionalServices, timeline, needsMaintenance, maintenanceLevel } = formData;
+    const breakdown = [];
+
+    if (projectType) {
+      const basePackage = PRICING_CONFIG.basePackages[projectType as keyof typeof PRICING_CONFIG.basePackages];
+      if (basePackage) {
+        breakdown.push({
+          item: basePackage.name,
+          price: `£${basePackage.min} - £${basePackage.max}`
+        });
+      }
+    }
+
+    selectedFeatures.forEach(feature => {
+      const featureConfig = PRICING_CONFIG.features[feature as keyof typeof PRICING_CONFIG.features];
+      if (featureConfig) {
+        breakdown.push({
+          item: featureConfig.name,
+          price: featureConfig.price
+        });
+      }
     });
 
-    return () => unsubscribe();
-  }, [scrollY, scrollDirection, lastScrollY]);
+    selectedAdditionalServices.forEach(service => {
+      const serviceConfig = PRICING_CONFIG.additionalServices[service as keyof typeof PRICING_CONFIG.additionalServices];
+      if (serviceConfig) {
+        // Calculate dynamic price for maintenance
+        let servicePrice = serviceConfig.price;
+        if (service === 'maintenance' && projectType) {
+          const maintenancePrice = PRICING_CONFIG.maintenancePricing[projectType as keyof typeof PRICING_CONFIG.maintenancePricing];
+          servicePrice = maintenancePrice ? `£${maintenancePrice}/month` : 'contact for pricing';
+        }
+        
+        breakdown.push({
+          item: serviceConfig.name,
+          price: servicePrice
+        });
+      }
+    });
+
+    if (timeline === 'rush') {
+      breakdown.push({
+        item: 'rush delivery',
+        price: '+30%'
+      });
+    } else if (timeline === 'flexible') {
+      breakdown.push({
+        item: 'flexible timeline',
+        price: '-10%'
+      });
+    }
+
+    if (needsMaintenance) {
+      const maintenanceCost = PRICING_CONFIG.maintenance[maintenanceLevel as keyof typeof PRICING_CONFIG.maintenance];
+      breakdown.push({
+        item: `${maintenanceLevel} maintenance`,
+        price: `£${maintenanceCost}/month`
+      });
+    }
+
+    return breakdown;
+  };
 
   const validateStep = (step: number): boolean => {
     const errors: Record<string, string> = {};
@@ -365,22 +539,21 @@ export default function HirePage() {
         if (!formData.projectType) {
           errors.projectType = 'please select a project type';
         }
-        if (formData.projectType === 'other' && !formData.otherProjectType) {
-          errors.otherProjectType = 'please specify your project type';
+        if (!formData.projectGoal) {
+          errors.projectGoal = 'please describe your project goal';
         }
         break;
       case 1:
-        if (!formData.timeline) {
-          errors.timeline = 'please select a timeline';
-        }
-        if (!formData.budget) {
-          errors.budget = 'please select a budget range';
-        }
-        if (!formData.message) {
-          errors.message = 'please tell us about your project';
+        if (!formData.designPreference) {
+          errors.designPreference = 'please select a design preference';
         }
         break;
       case 2:
+        if (!formData.timeline) {
+          errors.timeline = 'please select a timeline';
+        }
+        break;
+      case 3:
         if (!formData.name) {
           errors.name = 'please enter your name';
         }
@@ -390,6 +563,9 @@ export default function HirePage() {
         if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
           errors.email = 'please enter a valid email address';
         }
+        if (!formData.message) {
+          errors.message = 'please provide project details';
+        }
         break;
     }
 
@@ -398,8 +574,7 @@ export default function HirePage() {
   };
 
   const handleFormSubmit = async () => {
-    // Validate all steps
-    const allValid = [0, 1, 2].every(step => validateStep(step));
+    const allValid = [0, 1, 2, 3].every(step => validateStep(step));
     
     if (!allValid) {
       showToast('please complete all required fields');
@@ -407,39 +582,63 @@ export default function HirePage() {
     }
 
     try {
-      console.log('Sending form data:', formData);
+      const estimate = calculateEstimate();
+      const breakdown = getPricingBreakdown();
+      
+      const submissionData = {
+        ...formData,
+        estimate,
+        breakdown
+      };
+
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submissionData),
       });
 
       const result = await response.json();
-      console.log('API Response:', result);
       
       if (!response.ok) {
-        showToast(result.error || 'Failed to send message. Please try again.');
+        showToast(result.error || 'failed to send message. please try again.');
         return;
       }
 
-      showToast(result.message);
+      showToast(result.message || 'project inquiry sent successfully! we\'ll be in touch soon.');
+      
+      // Reset form
       setFormData({
         projectType: '',
-        timeline: '',
-        budget: '',
+        projectGoal: '',
+        businessType: '',
+        currentChallenge: '',
+        targetAudience: '',
+        hasExistingWebsite: '',
+        timeline: 'normal',
+        selectedFeatures: [],
+        selectedAdditionalServices: [],
+        designPreference: '',
+        contentReady: '',
+        needsMaintenance: false,
+        maintenanceLevel: 'basic',
+        needsHosting: false,
+        needsDomain: false,
         name: '',
         email: '',
         company: '',
+        phone: '',
         message: '',
-        otherProjectType: '',
+        budget: '',
+        hearAboutUs: '',
+        selectedPackage: '',
       });
       setCurrentStep(0);
       setFormErrors({});
     } catch (error) {
-      console.error('API Error:', error);
-      showToast('Failed to send message. Please try again.');
+      console.error('Error submitting form:', error);
+      showToast('failed to send message. please try again.');
     }
   };
 
@@ -455,9 +654,8 @@ export default function HirePage() {
     setCurrentStep(prev => Math.max(prev - 1, 0));
   };
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | boolean | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
     if (formErrors[field]) {
       setFormErrors(prev => {
         const newErrors = { ...prev };
@@ -467,151 +665,469 @@ export default function HirePage() {
     }
   };
 
+  const toggleFeature = (feature: string) => {
+    const updatedFeatures = formData.selectedFeatures.includes(feature)
+      ? formData.selectedFeatures.filter(f => f !== feature)
+      : [...formData.selectedFeatures, feature];
+    
+    handleInputChange('selectedFeatures', updatedFeatures);
+  };
+
+  const toggleAdditionalService = (service: string) => {
+    const updatedServices = formData.selectedAdditionalServices.includes(service)
+      ? formData.selectedAdditionalServices.filter(s => s !== service)
+      : [...formData.selectedAdditionalServices, service];
+    
+    handleInputChange('selectedAdditionalServices', updatedServices);
+  };
+
   const renderFormStep = () => {
     switch (currentStep) {
       case 0:
         return (
           <motion.div 
-            className="space-y-6 md:space-y-8"
-            initial={{ opacity: 0, x: 50 }}
+            className="space-y-6"
+            initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.4 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
           >
+            {formData.selectedPackage && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                    package pre-selected: {formData.selectedPackage}
+                  </p>
+                </div>
+              </motion.div>
+            )}
+
             <FormField 
-              label="what type of project are you looking to build?" 
+              label={
+                <div className="flex items-center gap-2">
+                  <span>what type of project do you need?</span>
+                  <div className="relative group">
+                    <button
+                      type="button"
+                      className="w-4 h-4 rounded-full bg-neutral-300 dark:bg-neutral-600 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-400 dark:hover:bg-neutral-500 transition-colors flex items-center justify-center text-xs font-medium"
+                    >
+                      i
+                    </button>
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-96 p-4 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 text-xs rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                      <div className="grid grid-cols-2 gap-3 mb-3">
+                        <div className="space-y-1">
+                          <div className="font-medium">personal</div>
+                          <div className="text-neutral-600 dark:text-neutral-400">portfolio, showcase work</div>
+                          <div className="text-xs text-neutral-500">£300-600</div>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="font-medium">business</div>
+                          <div className="text-neutral-600 dark:text-neutral-400">services, get leads</div>
+                          <div className="text-xs text-neutral-500">£500-800</div>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="font-medium">e-commerce</div>
+                          <div className="text-neutral-600 dark:text-neutral-400">sell products online</div>
+                          <div className="text-xs text-neutral-500">£800-1500</div>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="font-medium">web app</div>
+                          <div className="text-neutral-600 dark:text-neutral-400">custom functionality</div>
+                          <div className="text-xs text-neutral-500">£1500-3000</div>
+                        </div>
+                        <div className="space-y-1 col-span-2 text-center">
+                          <div className="font-medium">enterprise</div>
+                          <div className="text-neutral-600 dark:text-neutral-400">large scale solution</div>
+                          <div className="text-xs text-neutral-500">£3000-8000+</div>
+                        </div>
+                      </div>
+                      <div className="text-neutral-500 dark:text-neutral-500 border-t border-neutral-200 dark:border-neutral-700 pt-2 text-center">
+                        not sure? start with business - we can always expand later
+                      </div>
+                      {/* Tooltip arrow */}
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white dark:border-t-neutral-800"></div>
+                    </div>
+                  </div>
+                </div>
+              }
               required
+              description="we've pre-selected 'business website' to show you an estimate - feel free to change it"
               error={formErrors.projectType}
             >
-              <motion.select
+              <select
                 value={formData.projectType}
                 onChange={(e) => handleInputChange('projectType', e.target.value)}
-                className="w-full p-3 md:p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 appearance-none lowercase text-sm md:text-base"
-                whileFocus={{ scale: 1.01 }}
+                className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 rounded-md focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300"
               >
-                <option value="" className="lowercase">select a project type</option>
-                <option value="personal" className="lowercase">personal website / portfolio</option>
-                <option value="business" className="lowercase">business website / landing page</option>
-                <option value="ecommerce" className="lowercase">e-commerce store</option>
-                <option value="blog" className="lowercase">blog / content site</option>
-                <option value="marketplace" className="lowercase">marketplace platform</option>
-                <option value="community" className="lowercase">community / social platform</option>
-                <option value="other" className="lowercase">other</option>
-              </motion.select>
+                <option value="">select project type</option>
+                <option value="personal">personal website / portfolio (£300-600)</option>
+                <option value="business">business website (£500-800)</option>
+                <option value="ecommerce">e-commerce store (£800-1500)</option>
+                <option value="saas">custom web application (£1500-3000)</option>
+                <option value="enterprise">enterprise solution (£3000-8000+)</option>
+              </select>
             </FormField>
-            
-            <AnimatePresence>
-              {formData.projectType === 'other' && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <FormField 
-                    label="please specify your project type" 
-                    required
-                    error={formErrors.otherProjectType}
+
+            <FormField 
+              label="tell us about your business and what you want to achieve" 
+              required
+              description="help us understand your situation so we can build the perfect solution"
+              error={formErrors.projectGoal}
+            >
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-2">
+                    what type of business do you run?
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.businessType || ''}
+                    onChange={(e) => handleInputChange('businessType', e.target.value)}
+                    placeholder="e.g., marketing agency, restaurant, fitness studio, online retailer..."
+                    className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 rounded-md focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-2">
+                    what&apos;s your main challenge right now?
+                  </label>
+                  <textarea
+                    value={formData.currentChallenge || ''}
+                    onChange={(e) => handleInputChange('currentChallenge', e.target.value)}
+                    rows={2}
+                    placeholder="e.g., customers can't find us online, losing sales to competitors, manual processes taking too much time..."
+                    className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 rounded-md focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-2">
+                    what would success look like 6 months after launch?
+                  </label>
+                  <textarea
+                    value={formData.projectGoal}
+                    onChange={(e) => handleInputChange('projectGoal', e.target.value)}
+                    rows={2}
+                    placeholder="e.g., 50% more customer inquiries, selling products 24/7, customers can book appointments online, professional credibility established..."
+                    className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 rounded-md focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-2">
+                    who are your ideal customers?
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.targetAudience || ''}
+                    onChange={(e) => handleInputChange('targetAudience', e.target.value)}
+                    placeholder="e.g., busy professionals aged 25-45, local families, small business owners..."
+                    className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 rounded-md focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300"
+                  />
+                </div>
+              </div>
+            </FormField>
+
+            <FormField 
+              label="do you currently have a website?" 
+              error={formErrors.hasExistingWebsite}
+            >
+              <div className="grid grid-cols-3 gap-3">
+                {['no', 'yes - needs redesign', 'yes - needs updates'].map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => handleInputChange('hasExistingWebsite', option)}
+                    className={`p-3 border rounded-md text-sm transition-all duration-300 ${
+                      formData.hasExistingWebsite === option
+                        ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-100 dark:bg-neutral-800'
+                        : 'border-neutral-300 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-600'
+                    }`}
                   >
-                    <motion.input
-                      type="text"
-                      value={formData.otherProjectType}
-                      onChange={(e) => handleInputChange('otherProjectType', e.target.value)}
-                      placeholder="describe your project type"
-                      className="w-full p-3 md:p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 lowercase text-sm md:text-base"
-                      whileFocus={{ scale: 1.01 }}
-                    />
-                  </FormField>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </FormField>
           </motion.div>
         );
+
       case 1:
         return (
           <motion.div 
-            className="space-y-6 md:space-y-8"
-            initial={{ opacity: 0, x: 50 }}
+            className="space-y-6"
+            initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.4 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
           >
-            <FormField 
-              label="what's your ideal timeline?" 
-              required
-              error={formErrors.timeline}
-            >
-              <motion.select
-                value={formData.timeline}
-                onChange={(e) => handleInputChange('timeline', e.target.value)}
-                className="w-full p-3 md:p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 appearance-none lowercase text-sm md:text-base"
-                whileFocus={{ scale: 1.01 }}
+            {/* What's included in selected tier */}
+            {formData.projectType && (
+              <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
+                <div className="flex items-start gap-3">
+                  <div className="text-green-600 dark:text-green-400 mt-0.5">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-green-800 dark:text-green-200 mb-2">
+                      included in {PRICING_CONFIG.basePackages[formData.projectType as keyof typeof PRICING_CONFIG.basePackages]?.name}
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+                      {PRICING_CONFIG.includedFeatures[formData.projectType as keyof typeof PRICING_CONFIG.includedFeatures]?.map((feature, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <div className="w-1 h-1 bg-green-600 dark:bg-green-400 rounded-full"></div>
+                          <span className="text-xs text-green-700 dark:text-green-300">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {formData.projectType === 'enterprise' ? (
+              <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+                <div className="flex items-start gap-3">
+                  <div className="text-blue-600 dark:text-blue-400 mt-0.5">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-1">
+                      enterprise solution
+                    </h4>
+                    <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
+                      this is a completely custom solution tailored to your specific needs. all features and functionality will be designed and built specifically for your requirements. no additional feature selection needed.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <FormField 
+                label="which additional features do you need?" 
+                description="these are specialized add-ons for more advanced functionality"
               >
-                <option value="" className="lowercase">select a timeline</option>
-                <option value="1_month" className="lowercase">within 1 month</option>
-                <option value="3_months" className="lowercase">1-3 months</option>
-                <option value="6_months" className="lowercase">3-6 months</option>
-                <option value="flexible" className="lowercase">flexible</option>
-              </motion.select>
+              {/* Group features by category */}
+              {Object.entries(
+                Object.entries(PRICING_CONFIG.features).reduce((acc, [key, feature]) => {
+                  const category = feature.category || 'Other';
+                  if (!acc[category]) acc[category] = [];
+                  acc[category].push([key, feature]);
+                  return acc;
+                }, {} as Record<string, [string, { name: string; description: string; category?: string; price?: number }][]>)
+              ).map(([category, categoryFeatures]) => (
+                <div key={category} className="mb-6">
+                  <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
+                    {category}
+                  </h4>
+                  <div className="grid gap-3">
+                    {categoryFeatures.map(([key, feature]) => (
+                      <FeatureToggle
+                        key={key}
+                        feature={feature.name}
+                        description={feature.description}
+                        selected={formData.selectedFeatures.includes(key)}
+                        onToggle={() => toggleFeature(key)}
+                        price={feature.price || 0}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </FormField>
+            )}
+
+            {/* Additional Services */}
+            <FormField 
+              label="additional services" 
+              description="optional add-on services that can enhance your project"
+            >
+              <div className="grid grid-cols-1 gap-4">
+                {Object.entries(PRICING_CONFIG.additionalServices).map(([key, service]) => {
+                  // Calculate dynamic price for maintenance
+                  const getServicePrice = () => {
+                    if (key === 'maintenance' && formData.projectType) {
+                      const maintenancePrice = PRICING_CONFIG.maintenancePricing[formData.projectType as keyof typeof PRICING_CONFIG.maintenancePricing];
+                      return maintenancePrice ? `£${maintenancePrice}/month` : 'contact for pricing';
+                    }
+                    return service.price;
+                  };
+
+                  return (
+                    <motion.button
+                      key={key}
+                      type="button"
+                      onClick={() => toggleAdditionalService(key)}
+                      className={`p-4 border rounded-md text-left transition-all duration-300 ${
+                        formData.selectedAdditionalServices.includes(key)
+                          ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-100 dark:bg-neutral-800' 
+                          : 'border-neutral-300 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-600'
+                      }`}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-start gap-3 flex-1">
+                          <div className={`w-4 h-4 rounded border-2 flex items-center justify-center mt-0.5 flex-shrink-0 ${
+                            formData.selectedAdditionalServices.includes(key)
+                              ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100' 
+                              : 'border-neutral-300 dark:border-neutral-700'
+                          }`}>
+                            {formData.selectedAdditionalServices.includes(key) && (
+                              <svg className="w-2 h-2 text-neutral-50 dark:text-neutral-900" fill="currentColor" viewBox="0 0 8 8">
+                                <path d="M6.564.75L3.59 3.724 1.436 1.57.75 2.256l2.842 2.84L7.25 1.436z"/>
+                              </svg>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium mb-1">{service.name}</div>
+                            <div className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">{service.description}</div>
+                          </div>
+                        </div>
+                        <div className="flex-shrink-0">
+                          <span className="text-sm font-bold">{getServicePrice()}</span>
+                        </div>
+                      </div>
+                    </motion.button>
+                  );
+                })}
+              </div>
             </FormField>
 
             <FormField 
-              label="what's your budget range?" 
+              label="design preference" 
               required
-              error={formErrors.budget}
+              error={formErrors.designPreference}
             >
-              <motion.select
-                value={formData.budget}
-                onChange={(e) => handleInputChange('budget', e.target.value)}
-                className="w-full p-3 md:p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 appearance-none lowercase text-sm md:text-base"
-                whileFocus={{ scale: 1.01 }}
-              >
-                <option value="" className="lowercase">select a budget range</option>
-                <option value="500_1k" className="lowercase">£500 - £1,000</option>
-                <option value="1k_2k" className="lowercase">£1,000 - £2,000</option>
-                <option value="2k_5k" className="lowercase">£2,000 - £5,000</option>
-                <option value="5k_plus" className="lowercase">£5,000+</option>
-              </motion.select>
-            </FormField>
-
-            <FormField 
-              label="tell me about your project" 
-              required
-              description="what features do you need? any specific requirements or ideas?"
-              error={formErrors.message}
-            >
-              <motion.textarea
-                value={formData.message}
-                onChange={(e) => handleInputChange('message', e.target.value)}
-                rows={4}
-                placeholder="describe your project vision, required features, and any specific ideas you have..."
-                className="w-full p-3 md:p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 resize-none lowercase text-sm md:text-base"
-                whileFocus={{ scale: 1.01 }}
-              />
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  'modern & minimal',
+                  'bold & creative', 
+                  'professional & corporate',
+                  'custom design needed'
+                ].map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => handleInputChange('designPreference', option)}
+                    className={`p-3 border rounded-md text-sm transition-all duration-300 ${
+                      formData.designPreference === option
+                        ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-100 dark:bg-neutral-800'
+                        : 'border-neutral-300 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-600'
+                    }`}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
             </FormField>
           </motion.div>
         );
+
       case 2:
         return (
           <motion.div 
-            className="space-y-6 md:space-y-8"
-            initial={{ opacity: 0, x: 50 }}
+            className="space-y-6"
+            initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.4 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
+            <FormField 
+              label="when do you need this completed?" 
+              required
+              error={formErrors.timeline}
+            >
+              <div className="grid gap-3">
+                {[
+                  { key: 'rush', label: 'rush (1-2 weeks)', desc: '+30% cost', highlight: true },
+                  { key: 'normal', label: 'standard (3-6 weeks)', desc: 'standard pricing' },
+                  { key: 'flexible', label: 'flexible (6+ weeks)', desc: '-10% cost', highlight: true }
+                ].map(({ key, label, desc, highlight }) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => handleInputChange('timeline', key)}
+                    className={`p-4 border rounded-md text-left transition-all duration-300 ${
+                      formData.timeline === key
+                        ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-100 dark:bg-neutral-800'
+                        : 'border-neutral-300 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-600'
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <div className="font-medium">{label}</div>
+                        <div className="text-sm text-neutral-500 dark:text-neutral-500">{desc}</div>
+                      </div>
+                      {highlight && (
+                        <span className={`text-xs px-2 py-1 rounded ${
+                          key === 'rush' ? 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400' :
+                          'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                        }`}>
+                          {key === 'rush' ? '+30%' : '-10%'}
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </FormField>
+
+            <FormField 
+              label="do you have content ready?" 
+              description="text, images, logos, etc."
+            >
+              <div className="grid grid-cols-3 gap-3">
+                {['yes', 'partially', 'no - need help'].map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => handleInputChange('contentReady', option)}
+                    className={`p-3 border rounded-md text-sm transition-all duration-300 ${
+                      formData.contentReady === option
+                        ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-100 dark:bg-neutral-800'
+                        : 'border-neutral-300 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-600'
+                    }`}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </FormField>
+
+
+          </motion.div>
+        );
+
+      case 3:
+        return (
+          <motion.div 
+            className="space-y-6"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <FormField 
                 label="name" 
                 required
                 error={formErrors.name}
               >
-                <motion.input
+                <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  className="w-full p-3 md:p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 lowercase text-sm md:text-base"
-                  whileFocus={{ scale: 1.01 }}
+                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 rounded-md focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300"
                 />
               </FormField>
 
@@ -620,426 +1136,288 @@ export default function HirePage() {
                 required
                 error={formErrors.email}
               >
-                <motion.input
+                <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="w-full p-3 md:p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 lowercase text-sm md:text-base"
-                  whileFocus={{ scale: 1.01 }}
+                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 rounded-md focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300"
+                />
+              </FormField>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <FormField 
+                label="company / organization" 
+                description="optional"
+              >
+                <input
+                  type="text"
+                  value={formData.company}
+                  onChange={(e) => handleInputChange('company', e.target.value)}
+                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 rounded-md focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300"
+                />
+              </FormField>
+
+              <FormField 
+                label="phone number" 
+                description="optional"
+              >
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                  className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 rounded-md focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300"
                 />
               </FormField>
             </div>
 
             <FormField 
-              label="company / organization" 
-              description="optional - let me know if this is for a business"
-              error={formErrors.company}
+              label="additional information" 
+              required
+              description="any technical requirements, questions, or specific notes about your project"
+              error={formErrors.message}
             >
-              <motion.input
-                type="text"
-                value={formData.company}
-                onChange={(e) => handleInputChange('company', e.target.value)}
-                className="w-full p-3 md:p-4 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 lowercase text-sm md:text-base"
-                whileFocus={{ scale: 1.01 }}
+              <textarea
+                value={formData.message}
+                onChange={(e) => handleInputChange('message', e.target.value)}
+                rows={4}
+                placeholder="e.g., specific integrations needed, design inspirations, technical constraints, existing systems to connect with, or any questions you have..."
+                className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 rounded-md focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300 resize-none"
               />
+            </FormField>
+
+            <FormField 
+              label="how did you hear about us?" 
+              description="optional"
+            >
+              <select
+                value={formData.hearAboutUs}
+                onChange={(e) => handleInputChange('hearAboutUs', e.target.value)}
+                className="w-full p-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 rounded-md focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition-all duration-300"
+              >
+                <option value="">select an option</option>
+                <option value="google">google search</option>
+                <option value="referral">referral from friend/colleague</option>
+                <option value="social-media">social media</option>
+                <option value="existing-client">existing client</option>
+                <option value="other">other</option>
+              </select>
             </FormField>
           </motion.div>
         );
+
       default:
         return null;
     }
   };
 
+  const estimate = calculateEstimate();
+  const breakdown = getPricingBreakdown();
+
   return (
-    <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900 relative overflow-hidden">
-      {/* Enhanced Navigation - mobile optimized */}
-      <motion.nav 
-        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-        style={{
-          opacity: headerOpacity,
-          backdropFilter: `blur(${blurValue}px)`,
-          scale: headerScale,
-        }}
-        initial={{ y: 0 }}
-        animate={{
-          y: isNavVisible ? 0 : -100,
-        }}
-        transition={{
-          duration: 0.3,
-          ease: [0.25, 0.46, 0.45, 0.94],
-        }}
-      >
-        <div className="relative">
-          {/* Background with dynamic opacity */}
-          <motion.div
-            className="absolute inset-0 bg-neutral-50/80 dark:bg-neutral-900/80 border-b border-neutral-200/50 dark:border-neutral-800/50"
-            style={{
-              opacity: backgroundOpacity,
-            }}
-          />
+    <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900 relative">
+      <ScrollProgress />
+      <Navigation variant="sticky" />
 
-          {/* Content - mobile optimized */}
-          <div className="relative p-4 md:p-6 flex justify-between items-center">
-            <MagneticElement>
-              <MinimalLink
-                href="/"
-                className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors cursor-pointer"
-              >
-                <div>
-                  <div>atanas kyurkchiev</div>
-                  <div className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">web developer</div>
-                </div>
-              </MinimalLink>
-            </MagneticElement>
-            <MagneticElement>
-              <MinimalLink
-                href="/#work"
-                className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors cursor-pointer"
-              >
-                back to work
-              </MinimalLink>
-            </MagneticElement>
-          </div>
-        </div>
-      </motion.nav>
-
-      {/* Enhanced Hero Section - mobile optimized */}
+      {/* Hero Section */}
       <SectionTransition>
-        <motion.section 
-          className="relative min-h-screen flex items-center px-4 md:px-6 lg:px-12"
-          style={{ y: heroY }}
-        >
-          <div className="max-w-5xl relative z-10">
+        <section className="py-28 md:py-32 px-4 md:px-6 lg:px-12">
+          <div className="max-w-4xl mx-auto text-center">
             <motion.div
-              initial={{ opacity: 0, y: 60 }}
+              initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: [0.33, 1, 0.68, 1] }}
+              transition={{ duration: 0.8 }}
             >
               <AnimatedText
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl mb-6 md:mb-8 leading-tight font-light"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight font-light"
                 type="words"
                 animationType="slide"
                 direction="up"
                 stagger={0.08}
               >
-                let&apos;s work together to bring your vision to life
+                let&apos;s build something amazing together
               </AnimatedText>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: [0.33, 1, 0.68, 1] }}
-            >
-              <AnimatedText
-                className="text-base md:text-lg lg:text-xl text-neutral-600 dark:text-neutral-400 mb-8 md:mb-12 leading-relaxed max-w-3xl"
-                type="words"
-                animationType="fade"
-                delay={0.6}
-                stagger={0.02}
-              >
-                i specialize in creating modern, efficient, and user-friendly applications that solve real problems and drive meaningful results for your business.
-              </AnimatedText>
-            </motion.div>
-            
-            <motion.div
-              className="flex flex-col sm:flex-row gap-4 md:gap-6"
-              variants={staggerContainer}
-              initial="hidden"
-              animate="show"
-            >
-              <motion.div variants={staggerItem}>
-                <EnhancedButton
-                  variant="primary"
-                  onClick={() => {
-                    formRef.current?.scrollIntoView({ behavior: "smooth" });
-                    playClick();
-                  }}
-                  className="group w-full sm:w-auto"
-                >
-                  <span className="flex items-center justify-center gap-3">
-                    start a project
-                    <motion.svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-4 h-4"
-                      whileHover={{ x: 5, rotate: -15 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                      />
-                    </motion.svg>
-                  </span>
-                </EnhancedButton>
-              </motion.div>
               
-              <motion.div variants={staggerItem}>
-                <EnhancedButton
-                  variant="secondary"
-                  onClick={() => {
-                    processRef.current?.scrollIntoView({ behavior: "smooth" });
-                    playClick();
-                  }}
-                  className="w-full sm:w-auto"
-                >
-                  what&apos;s the process?
-                </EnhancedButton>
-              </motion.div>
-            </motion.div>
-          </div>
-          
-          {/* Background decoration - smaller on mobile */}
-          <motion.div
-            className="absolute top-1/2 right-4 md:right-10 w-48 h-48 md:w-96 md:h-96 border border-neutral-300 dark:border-neutral-700 opacity-20"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-          />
-        </motion.section>
-      </SectionTransition>
-
-      {/* Enhanced Process Section - mobile optimized */}
-      <SectionTransition>
-        <motion.section
-          ref={processRef}
-          className="min-h-screen flex flex-col justify-center px-4 md:px-6 lg:px-12 py-16 md:py-24 relative"
-          style={{ y: processY }}
-        >
-          <div className="max-w-7xl mx-auto w-full">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
-              className="mb-12 md:mb-20"
-            >
               <AnimatedText
-                className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl mb-4 md:mb-6 font-light"
-                type="words"
-                animationType="slide"
-                direction="up"
-                stagger={0.1}
-              >
-                the process
-              </AnimatedText>
-              <AnimatedText
-                className="text-base md:text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl"
+                className="text-base md:text-lg text-neutral-600 dark:text-neutral-400 mb-8 leading-relaxed max-w-2xl mx-auto"
                 type="words"
                 animationType="fade"
-                delay={0.3}
+                delay={0.4}
                 stagger={0.02}
               >
-                a collaborative approach focused on understanding your needs and delivering exceptional results.
+                get an instant estimate and start your project with our detailed project planner. all features are explained in simple terms - no technical jargon.
               </AnimatedText>
             </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-              {steps.map((step, index) => (
-                <ProcessStep
-                  key={`step-${step.title}-${index}`}
-                  step={step}
-                  index={index}
-                  isActive={false}
-                />
-              ))}
-            </div>
+            
+            <motion.div
+              className="flex flex-col sm:flex-row gap-4 justify-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+            >
+              <button
+                onClick={() => {
+                  formRef.current?.scrollIntoView({ behavior: "smooth" });
+                  playClick();
+                }}
+                className="bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 md:px-8 py-3 rounded-md font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all duration-300"
+              >
+                start project planning
+              </button>
+              
+              <Link
+                href="/pricing"
+                className="border border-neutral-400 dark:border-neutral-600 bg-transparent text-neutral-900 dark:text-neutral-100 px-6 md:px-8 py-3 rounded-md font-medium hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-300"
+              >
+                view pricing
+              </Link>
+            </motion.div>
           </div>
-        </motion.section>
+        </section>
       </SectionTransition>
 
-      {/* Enhanced Contact Form Section - mobile optimized */}
+      {/* Enhanced Form Section */}
       <SectionTransition>
         <section
           ref={formRef}
-          className="min-h-screen flex items-center px-4 md:px-6 lg:px-12 py-16 md:py-24"
+          className="py-16 md:py-24 px-4 md:px-6 lg:px-12"
         >
-          <div className="max-w-3xl w-full mx-auto">
+          <div className="max-w-7xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
-              className="mb-8 md:mb-12"
+              transition={{ duration: 0.8 }}
+              className="text-center mb-8 md:mb-12"
             >
-              <RevealText>
-                <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl mb-4 md:mb-6 font-light lowercase">ready to start your project?</h2>
-              </RevealText>
-              <RevealText>
-                <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-400 lowercase">
-                  let&apos;s discuss your vision and make it a reality.
-                </p>
-              </RevealText>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-light mb-4">
+                project planner & estimate
+              </h2>
+              <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-400">
+                answer a few questions to get an instant price estimate
+              </p>
             </motion.div>
 
-            <motion.div 
-              className="border border-neutral-300 dark:border-neutral-700 p-6 md:p-8 bg-neutral-100/50 dark:bg-neutral-800/50 backdrop-blur-sm relative overflow-hidden"
-              initial={{ opacity: 0, y: 60 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2, ease: [0.33, 1, 0.68, 1] }}
-            >
-              {/* Progress indicator - mobile optimized */}
-              <div className="flex justify-between mb-8 md:mb-12">
-                {formSteps.map((step, index) => (
-                  <div
-                    key={step.title}
-                    className={`flex-1 text-center transition-all duration-500 ${
-                      index === currentStep
-                        ? 'text-neutral-900 dark:text-neutral-100'
-                        : 'text-neutral-400 dark:text-neutral-600'
-                    }`}
-                  >
-                    <div className="relative">
-                      <motion.div
-                        className={`w-8 h-8 md:w-10 md:h-10 mx-auto flex items-center justify-center mb-2 md:mb-3 border-2 transition-all duration-500 ${
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Form */}
+              <div className="lg:col-span-2">
+                <motion.div 
+                  className="border border-neutral-300 dark:border-neutral-700 p-6 md:p-8 bg-neutral-100/50 dark:bg-neutral-800/50 rounded-md"
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                >
+                  {/* Progress indicator */}
+                  <div className="flex justify-between mb-8 md:mb-12">
+                    {formSteps.map((step, index) => (
+                      <div
+                        key={step.title}
+                        className={`flex-1 text-center transition-all duration-500 ${
                           index === currentStep
-                            ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100'
+                            ? 'text-neutral-900 dark:text-neutral-100'
                             : index < currentStep
-                            ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100'
-                            : 'border-neutral-300 dark:border-neutral-700'
+                            ? 'text-neutral-700 dark:text-neutral-300'
+                            : 'text-neutral-400 dark:text-neutral-600'
                         }`}
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ type: "spring", stiffness: 300 }}
                       >
-                        {index < currentStep ? (
-                          <motion.svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4 md:h-5 md:w-5 text-neutral-50 dark:text-neutral-900"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ type: "spring", stiffness: 300, delay: 0.1 }}
+                        <div className="relative">
+                          <div
+                            className={`w-8 h-8 md:w-10 md:h-10 mx-auto flex items-center justify-center mb-2 md:mb-3 border-2 rounded-md transition-all duration-500 ${
+                              index === currentStep
+                                ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100'
+                                : index < currentStep
+                                ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100'
+                                : 'border-neutral-300 dark:border-neutral-700'
+                            }`}
                           >
-                            <path
-                              fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clipRule="evenodd"
+                            {index < currentStep ? (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-4 w-4 md:h-5 md:w-5 text-neutral-50 dark:text-neutral-900"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            ) : (
+                              <span className={`text-xs md:text-sm ${index === currentStep ? 'text-neutral-50 dark:text-neutral-900' : ''}`}>
+                                {index + 1}
+                              </span>
+                            )}
+                          </div>
+                          {index < formSteps.length - 1 && (
+                            <div
+                              className={`absolute top-4 md:top-5 left-full w-full h-0.5 -translate-y-1/2 transition-all duration-500 ${
+                                index < currentStep
+                                  ? 'bg-neutral-900 dark:bg-neutral-100'
+                                  : 'bg-neutral-300 dark:bg-neutral-700'
+                              }`}
                             />
-                          </motion.svg>
-                        ) : (
-                          <span className={`text-xs md:text-sm ${index === currentStep ? 'text-neutral-50 dark:text-neutral-900' : ''}`}>
-                            {index + 1}
-                          </span>
-                        )}
-                      </motion.div>
-                      {index < formSteps.length - 1 && (
-                        <motion.div
-                          className={`absolute top-4 md:top-5 left-full w-full h-0.5 -translate-y-1/2 transition-all duration-500 ${
-                            index < currentStep
-                              ? 'bg-neutral-900 dark:bg-neutral-100'
-                              : 'bg-neutral-300 dark:bg-neutral-700'
-                          }`}
-                          initial={{ scaleX: 0 }}
-                          animate={{ scaleX: index < currentStep ? 1 : 0 }}
-                          transition={{ duration: 0.5, delay: index < currentStep ? 0.3 : 0 }}
-                        />
-                      )}
-                    </div>
-                    <span className="text-xs md:text-sm hidden sm:block lowercase font-medium">{step.title}</span>
-                    <span className="text-xs text-neutral-500 dark:text-neutral-500 hidden md:block lowercase mt-1">{step.description}</span>
+                          )}
+                        </div>
+                        <span className="text-xs md:text-sm hidden sm:block font-medium">{step.title}</span>
+                        <span className="text-xs text-neutral-500 dark:text-neutral-500 hidden md:block mt-1">{step.description}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
 
-              {/* Form content */}
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentStep}
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.4, ease: [0.33, 1, 0.68, 1] }}
-                  className="mb-6 md:mb-8"
-                >
-                  {renderFormStep()}
-                </motion.div>
-              </AnimatePresence>
+                  {/* Form content */}
+                  <AnimatePresence mode="wait">
+                    <div className="mb-6 md:mb-8">
+                      {renderFormStep()}
+                    </div>
+                  </AnimatePresence>
 
-              {/* Navigation buttons - mobile optimized */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 md:pt-8 border-t border-neutral-200 dark:border-neutral-800">
-                <EnhancedButton
-                  variant="secondary"
-                  onClick={prevStep}
-                  disabled={currentStep === 0}
-                  className={`w-full sm:w-auto ${currentStep === 0 ? 'opacity-0 pointer-events-none' : ''}`}
-                >
-                  <span className="flex items-center justify-center gap-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-4 h-4"
+                  {/* Navigation buttons */}
+                  <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 md:pt-8 border-t border-neutral-200 dark:border-neutral-800">
+                    <button
+                      onClick={prevStep}
+                      disabled={currentStep === 0}
+                      className={`border border-neutral-400 dark:border-neutral-600 bg-transparent text-neutral-900 dark:text-neutral-100 px-6 py-3 rounded-md font-medium transition-all duration-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 ${currentStep === 0 ? 'opacity-0 pointer-events-none' : ''}`}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-                      />
-                    </svg>
-                    previous
-                  </span>
-                </EnhancedButton>
-                
-                {currentStep === formSteps.length - 1 ? (
-                  <EnhancedButton
-                    variant="primary"
-                    onClick={handleFormSubmit}
-                    className="w-full sm:w-auto"
-                  >
-                    <span className="flex items-center justify-center gap-3">
-                      send message
-                      <motion.svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-4 h-4"
-                        whileHover={{ x: 5, y: -5 }}
-                        transition={{ type: "spring", stiffness: 300 }}
+                      previous
+                    </button>
+                    
+                    {currentStep === formSteps.length - 1 ? (
+                      <button
+                        onClick={handleFormSubmit}
+                        className="bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 py-3 rounded-md font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all duration-300"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
-                        />
-                      </motion.svg>
-                    </span>
-                  </EnhancedButton>
-                ) : (
-                  <EnhancedButton
-                    variant="primary"
-                    onClick={nextStep}
-                    className="w-full sm:w-auto"
-                  >
-                    <span className="flex items-center justify-center gap-2">
-                      next
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-4 h-4"
+                        send project inquiry
+                      </button>
+                    ) : (
+                      <button
+                        onClick={nextStep}
+                        className="bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 py-3 rounded-md font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all duration-300"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                        />
-                      </svg>
-                    </span>
-                  </EnhancedButton>
-                )}
+                        next step
+                      </button>
+                    )}
+                  </div>
+                </motion.div>
               </div>
+
+              {/* Pricing Estimate Sidebar */}
+              <div className="lg:col-span-1">
+                <PricingEstimate estimate={estimate} breakdown={breakdown} />
+              </div>
+            </div>
+
+            <motion.div
+              className="text-center mt-8"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <p className="text-xs text-neutral-500 dark:text-neutral-500">
+                free consultation • no commitment • response within 24 hours
+              </p>
             </motion.div>
           </div>
         </section>

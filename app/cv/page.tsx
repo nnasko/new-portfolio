@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { motion, useTransform, useSpring } from "framer-motion";
-import { MinimalLink } from "../components/MinimalLink";
 import { useSound } from "../components/SoundProvider";
 import { AnimatedText } from "../components/AnimatedText";
+import { Navigation } from "../components/Navigation";
 import { 
   useScrollTracker, 
   useMousePosition, 
@@ -118,8 +118,7 @@ export default function CV() {
   const [isPdfMode, setIsPdfMode] = useState(false);
   const [theme, setTheme] = useState('light');
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
-  const [isNavVisible, setIsNavVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+
   
   // Make sound optional to prevent errors in headless environments
   let playClick = () => {}; // Default no-op function
@@ -130,38 +129,13 @@ export default function CV() {
     // Keep the no-op function if sound fails
   }
   
-  const { scrollY, scrollDirection } = useScrollTracker();
+  const { scrollY } = useScrollTracker();
   
   // Parallax effect for header - reduced on mobile
   const headerY = useTransform(scrollY, [0, 300], [0, -30]);
   const headerOpacity = useTransform(scrollY, [0, 200], [1, 0.9]);
   
-  // Transform scroll position to header opacity and blur (matching StickyHeader)
-  const navHeaderOpacity = useTransform(scrollY, [0, 100], [1, 0.95]);
-  const navHeaderScale = useTransform(scrollY, [0, 200], [1, 0.98]);
-  const blurValue = useTransform(scrollY, [0, 100], [0, 8]);
-  const backgroundOpacity = useTransform(scrollY, [0, 50], [0.8, 1]);
 
-  // Navigation scroll behavior (matching StickyHeader exactly)
-  useEffect(() => {
-    const unsubscribe = scrollY.on("change", (latest) => {
-      const currentScrollY = latest;
-      const scrollDifference = Math.abs(currentScrollY - lastScrollY);
-
-      // Show header when scrolling up or at the top
-      if (scrollDirection === "up" || currentScrollY < 100) {
-        setIsNavVisible(true);
-      }
-      // Hide header when scrolling down with sufficient velocity
-      else if (scrollDirection === "down" && scrollDifference > 10 && currentScrollY > 200) {
-        setIsNavVisible(false);
-      }
-
-      setLastScrollY(currentScrollY);
-    });
-
-    return () => unsubscribe();
-  }, [scrollY, scrollDirection, lastScrollY]);
 
   useEffect(() => {
     // Ensure we're in a browser environment
@@ -287,82 +261,43 @@ export default function CV() {
       
       {/* Enhanced navigation - mobile optimized */}
       {!isPdfMode && (
-        <motion.nav 
-          className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-          style={{
-            opacity: navHeaderOpacity,
-            backdropFilter: `blur(${blurValue}px)`,
-            scale: navHeaderScale,
-          }}
-          initial={{ y: 0 }}
-          animate={{
-            y: isNavVisible ? 0 : -100,
-          }}
-          transition={{
-            duration: 0.3,
-            ease: [0.25, 0.46, 0.45, 0.94],
-          }}
-        >
-          <div className="relative">
-            {/* Background with dynamic opacity */}
-            <motion.div
-              className="absolute inset-0 bg-neutral-50/80 dark:bg-neutral-900/80 border-b border-neutral-200/50 dark:border-neutral-800/50"
-              style={{
-                opacity: backgroundOpacity,
-              }}
-            />
-
-            {/* Content - mobile optimized */}
-            <div className="relative p-4 md:p-6 flex justify-between items-center">
-              <MagneticElement>
-                <MinimalLink
-                  href="/"
-                  className="text-sm hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+        <Navigation 
+          variant="sticky"
+          rightContent={
+            <button
+              onClick={handleDownloadPdf}
+              disabled={isGeneratingPdf}
+              className="text-xs md:text-sm border border-neutral-300 dark:border-neutral-700 px-3 md:px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span>{isGeneratingPdf ? 'generating...' : 'download cv'}</span>
+              {!isGeneratingPdf && (
+                <motion.svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-3 h-3 md:w-4 md:h-4 inline-block ml-2"
+                  whileHover={{ y: 2 }}
+                  transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <div>
-                    <div>atanas kyurkchiev</div>
-                    <div className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">web developer</div>
-                  </div>
-                </MinimalLink>
-              </MagneticElement>
-              
-              <MagneticElement>
-                <button
-                  onClick={handleDownloadPdf}
-                  disabled={isGeneratingPdf}
-                  className="text-xs md:text-sm border border-neutral-300 dark:border-neutral-700 px-3 md:px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span>{isGeneratingPdf ? 'generating...' : 'download cv'}</span>
-                  {!isGeneratingPdf && (
-                    <motion.svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-3 h-3 md:w-4 md:h-4 inline-block ml-2"
-                      whileHover={{ y: 2 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-                      />
-                    </motion.svg>
-                  )}
-                  {isGeneratingPdf && (
-                    <motion.div
-                      className="w-3 h-3 md:w-4 md:h-4 border border-current border-t-transparent rounded-full ml-2 inline-block"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    />
-                  )}
-                </button>
-              </MagneticElement>
-            </div>
-          </div>
-        </motion.nav>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+                  />
+                </motion.svg>
+              )}
+              {isGeneratingPdf && (
+                <motion.div
+                  className="w-3 h-3 md:w-4 md:h-4 border border-current border-t-transparent rounded-full ml-2 inline-block"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                />
+              )}
+            </button>
+          }
+        />
       )}
 
       <div className={`max-w-4xl mx-auto px-4 md:px-6 lg:px-12 ${isPdfMode ? "py-8 md:py-12" : "pt-24 md:pt-32 pb-12 md:pb-16"}`}>

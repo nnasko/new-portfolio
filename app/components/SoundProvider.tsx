@@ -6,10 +6,16 @@ import {
   useState,
   useCallback,
   useEffect,
+  useRef,
 } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "./Toast";
-import { RainEffect } from "./RainEffect";
+import dynamic from "next/dynamic";
+
+// Lazy load RainEffect only when needed
+const RainEffect = dynamic(() => import("./RainEffect").then(mod => ({ default: mod.RainEffect })), {
+  ssr: false,
+});
 
 interface SoundContextType {
   playClick: () => void;
@@ -30,67 +36,86 @@ export const useSound = () => {
 export const SoundProvider = ({ children }: { children: React.ReactNode }) => {
   const [isMuted, setIsMuted] = useState(true);
   const [isAmbientPlaying, setIsAmbientPlaying] = useState(false);
-  const [clickSound, setClickSound] = useState<HTMLAudioElement | null>(null);
-  const [rainSound, setRainSound] = useState<HTMLAudioElement | null>(null);
+  const clickSoundRef = useRef<HTMLAudioElement | null>(null);
+  const rainSoundRef = useRef<HTMLAudioElement | null>(null);
+  const soundsLoadedRef = useRef(false);
   const { showToast } = useToast();
 
+  // Lazy load sounds only when first needed
+  const loadSounds = useCallback(async () => {
+    if (soundsLoadedRef.current) return;
+    
+    try {
+      const [clickAudio, rainAudio] = await Promise.all([
+        new Promise<HTMLAudioElement>((resolve) => {
+          const audio = new Audio("/sounds/click.wav");
+          audio.volume = 0.15;
+          audio.addEventListener('canplaythrough', () => resolve(audio), { once: true });
+          audio.load();
+        }),
+        new Promise<HTMLAudioElement>((resolve) => {
+          const audio = new Audio("/sounds/rain.wav");
+          audio.volume = 0.05;
+          audio.loop = true;
+          audio.addEventListener('canplaythrough', () => resolve(audio), { once: true });
+          audio.load();
+        })
+      ]);
+
+      clickSoundRef.current = clickAudio;
+      rainSoundRef.current = rainAudio;
+      soundsLoadedRef.current = true;
+    } catch (error) {
+      console.error("Error loading sounds:", error);
+    }
+  }, []);
+
   useEffect(() => {
-    const click = new Audio("/sounds/click.wav");
-    const rain = new Audio("/sounds/rain.wav");
-
-    // Configure sounds
-    click.volume = 0.15;
-    rain.volume = 0.05;
-    rain.loop = true;
-
-    // Preload sounds
-    const preloadSounds = async () => {
-      try {
-        await Promise.all([click.load(), rain.load()]);
-        console.log("Sounds loaded successfully");
-      } catch (error) {
-        console.error("Error loading sounds:", error);
-      }
-    };
-
-    preloadSounds();
-
-    setClickSound(click);
-    setRainSound(rain);
-
+    // Cleanup on unmount
     return () => {
-      click.pause();
-      rain.pause();
-      click.remove();
-      rain.remove();
+      if (clickSoundRef.current) {
+        clickSoundRef.current.pause();
+        clickSoundRef.current.remove();
+      }
+      if (rainSoundRef.current) {
+        rainSoundRef.current.pause();
+        rainSoundRef.current.remove();
+      }
     };
   }, []);
 
   useEffect(() => {
-    if (rainSound) {
+    if (rainSoundRef.current) {
       try {
         if (isAmbientPlaying && !isMuted) {
-          rainSound.currentTime = 0;
-          const playPromise = rainSound.play();
+          rainSoundRef.current.currentTime = 0;
+          const playPromise = rainSoundRef.current.play();
           if (playPromise !== undefined) {
             playPromise.catch((error) => {
               console.error("Error playing rain sound:", error);
             });
           }
         } else {
-          rainSound.pause();
-          rainSound.currentTime = 0;
+          rainSoundRef.current.pause();
+          rainSoundRef.current.currentTime = 0;
         }
       } catch (error) {
         console.error("Error with rain sound:", error);
       }
     }
-  }, [isAmbientPlaying, isMuted, rainSound]);
+  }, [isAmbientPlaying, isMuted]);
 
-  const playClick = useCallback(() => {
-    if (!isMuted && clickSound) {
+  const playClick = useCallback(async () => {
+    if (isMuted) return;
+    
+    // Load sounds on first interaction
+    if (!soundsLoadedRef.current) {
+      await loadSounds();
+    }
+    
+    if (clickSoundRef.current) {
       try {
-        const sound = clickSound.cloneNode() as HTMLAudioElement;
+        const sound = clickSoundRef.current.cloneNode() as HTMLAudioElement;
         sound.volume = 0.15;
         sound.play().catch((error) => {
           console.error("Error playing click sound:", error);
@@ -99,18 +124,23 @@ export const SoundProvider = ({ children }: { children: React.ReactNode }) => {
         console.error("Error with click sound:", error);
       }
     }
-  }, [isMuted, clickSound]);
+  }, [isMuted, loadSounds]);
 
   const toggleMute = useCallback(() => {
     setIsMuted((prev) => !prev);
     showToast(isMuted ? "Sound enabled" : "Sound disabled");
   }, [isMuted, showToast]);
 
-  const toggleAmbient = useCallback(() => {
+  const toggleAmbient = useCallback(async () => {
+    // Load sounds on first interaction
+    if (!soundsLoadedRef.current) {
+      await loadSounds();
+    }
+    
     setIsAmbientPlaying((prev) => !prev);
     showToast(isAmbientPlaying ? "Rain disabled" : "Rain enabled");
     playClick();
-  }, [isAmbientPlaying, showToast, playClick]);
+  }, [isAmbientPlaying, showToast, playClick, loadSounds]);
 
   return (
     <SoundContext.Provider
@@ -189,7 +219,7 @@ export const SoundProvider = ({ children }: { children: React.ReactNode }) => {
           whileTap={{ scale: 0.9 }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          aria-label="Toggle UI sounds"
+          aria-label="Toggle sound"
         >
           {isMuted ? (
             <svg

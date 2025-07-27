@@ -214,7 +214,7 @@ export default function SignDocumentPage() {
             document signed
           </h1>
           <p className="text-neutral-600 dark:text-neutral-400 mb-6 lowercase">
-            thank you for signing the service agreement. you should receive a confirmation email shortly.
+            thank you for signing the service agreement.
           </p>
           <div className="space-y-3">
             <button
