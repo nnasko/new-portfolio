@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import { SoundProvider } from './SoundProvider';
+import { SoundProvider } from './SoundAndRainProvider';
 import { ToastProvider } from './Toast';
 import { PageLoadProgress } from './PageLoadProgress';
 import { ScrollToTop } from './ScrollToTop';

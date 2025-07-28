@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { motion, useTransform, useSpring } from "framer-motion";
-import { useSound } from "../components/SoundProvider";
+import { useSound } from "../components/SoundAndRainProvider";
 import { AnimatedText } from "../components/AnimatedText";
-import { Navigation } from "../components/Navigation";
+import Navigation from "../components/Navigation";
 import { 
   useScrollTracker, 
   useMousePosition, 

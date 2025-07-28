@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMediaQuery } from "../hooks/useMediaQuery";
-import { useSound } from "./SoundProvider";
+import { useSound } from "./SoundAndRainProvider";
 import { motion } from "framer-motion";
 
 interface ProjectCardProps {

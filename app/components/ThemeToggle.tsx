@@ -11,8 +11,8 @@ export function ThemeToggle() {
       onClick={toggleDarkMode}
       className={`fixed bottom-6 rounded-lg right-6 z-50 p-3 transition-all duration-300 shadow-lg
         ${isDarkMode 
-          ? 'bg-neutral-800 text-neutral-200 hover:bg-neutral-700 shadow-neutral-900/20' 
-          : 'bg-white text-neutral-800 hover:bg-neutral-100 shadow-neutral-400/20'
+          ? 'bg-neutral-800 rounded-lg text-neutral-200 hover:bg-neutral-700 shadow-neutral-900/20' 
+          : 'bg-white text-neutral-800 rounded-lg hover:bg-neutral-100 shadow-neutral-400/20'
         }`}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}

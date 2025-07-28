@@ -2,10 +2,10 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useSound } from "../components/SoundProvider";
+import { useSound } from "../components/SoundAndRainProvider";
 import { SectionTransition } from "../components/SectionTransition";
 import { AnimatedText } from "../components/AnimatedText";
-import { Navigation } from "../components/Navigation";
+import Navigation from "../components/Navigation";
 import { ScrollProgress } from "../components/ScrollProgress";
 import { CheckIcon } from "@heroicons/react/24/outline";
 

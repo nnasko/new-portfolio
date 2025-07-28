@@ -3,13 +3,13 @@
 import { useRef, useState, useEffect, lazy, Suspense, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { AnimatedText } from "../components/AnimatedText";
-import { useSound } from "../components/SoundProvider";
+import { useSound } from "../components/SoundAndRainProvider";
 import { useToast } from "../components/Toast";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Lazy load non-critical components
 const SectionTransition = lazy(() => import("../components/SectionTransition").then(module => ({ default: module.SectionTransition })));
-const Navigation = lazy(() => import("../components/Navigation").then(module => ({ default: module.Navigation })));
+const Navigation = lazy(() => import("../components/Navigation"));
 const ScrollProgress = lazy(() => import("../components/ScrollProgress").then(module => ({ default: module.ScrollProgress })));
 
 // Lightweight loading fallback

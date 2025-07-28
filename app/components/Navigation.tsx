@@ -16,7 +16,7 @@ interface NavigationProps {
   hideOnScroll?: boolean;
 }
 
-export const Navigation = ({ 
+const Navigation = ({ 
   variant = 'sticky',
   showLogo = true,
   showNavItems = true,
@@ -417,4 +417,6 @@ export const Navigation = ({
       </div>
     </motion.nav>
   );
-}; 
+};
+
+export default Navigation;

@@ -1,20 +1,16 @@
 "use client";
-
-import { motion, useTransform } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useMediaQuery } from "./hooks/useMediaQuery";
-import { useSound } from "./components/SoundProvider";
+import { useSound } from "./components/SoundAndRainProvider";
 import { AnimatedText } from "./components/AnimatedText";
 import { ProjectCard } from "./components/ProjectCard";
-
-import { useScrollTracker, staggerContainer, staggerItem } from "../lib/animation-utils";
 import { useState, useEffect, lazy, Suspense } from "react";
 
 // Lazy load non-critical components
 const SectionTransition = lazy(() => import("./components/SectionTransition").then(module => ({ default: module.SectionTransition })));
 const ScrollProgress = lazy(() => import("./components/ScrollProgress").then(module => ({ default: module.ScrollProgress })));
-const Navigation = lazy(() => import("./components/Navigation").then(module => ({ default: module.Navigation })));
+const Navigation = lazy(() => import("./components/Navigation"));
 
 // Lightweight loading fallback
 function ComponentLoader() {
@@ -72,12 +68,11 @@ interface Project {
 }
 
 export default function Home() {
-  const isMobile = useMediaQuery("(max-width: 768px)");
   const { playClick } = useSound();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  
   // Fallback projects data
   const fallbackProjects: Project[] = [
     {

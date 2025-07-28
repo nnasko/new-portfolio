@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSound } from "./SoundProvider";
+import { useSound } from "./SoundAndRainProvider";
 
 interface MinimalLinkProps {
   href: string;

@@ -8,7 +8,7 @@ import { staggerContainer, staggerItem } from "../../lib/animation-utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { InvoiceManagerDialog } from "../components/InvoiceManagerDialog";
-import { Navigation } from "../components/Navigation";
+import Navigation from "../components/Navigation";
 import { ScrollProgress } from "../components/ScrollProgress";
 import { 
   Briefcase, 

@@ -6,10 +6,10 @@ import { notFound } from "next/navigation";
 import { use, Suspense } from "react";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { MinimalLink } from "../../components/MinimalLink";
-import { useSound } from "../../components/SoundProvider";
+import { useSound } from "../../components/SoundAndRainProvider";
 import { ReadingTime } from "../../components/ReadingTime";
 import { ViewCounter } from "../../components/ViewCounter";
-import { Navigation } from "../../components/Navigation";
+import Navigation from "../../components/Navigation";
 import { useState, useEffect, useRef } from "react";
 import { siteConfig } from "../../metadata";
 import { 

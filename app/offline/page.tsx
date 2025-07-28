@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { MinimalLink } from "../components/MinimalLink";
 import { RevealText } from "../components/RevealText";
-import { Navigation } from "../components/Navigation";
+import Navigation from "../components/Navigation";
 
 export default function OfflinePage() {
 
