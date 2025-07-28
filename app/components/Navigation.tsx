@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useTransform } from "framer-motion";
+import { motion, useTransform, AnimatePresence } from "framer-motion";
 import { useScrollTracker } from "../../lib/animation-utils";
 import { MinimalLink } from "./MinimalLink";
 import Image from "next/image";
@@ -28,6 +28,7 @@ export const Navigation = ({
   const { scrollY, scrollDirection } = useScrollTracker();
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   // Pre-define transforms to avoid conditional hooks
   const logoScale = useTransform(scrollY, [0, 100], [1, 0.9]);
@@ -80,6 +81,11 @@ export const Navigation = ({
     return () => unsubscribe();
   }, [scrollY, scrollDirection, lastScrollY, hideOnScroll]);
 
+  // Close mobile menu when clicking outside or on menu item
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   // Simple variant - basic navigation without scroll effects
   if (variant === 'simple') {
     return (
@@ -89,30 +95,30 @@ export const Navigation = ({
         animate={{ y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="p-6 flex justify-between items-center">
+        <div className="px-4 py-3 md:px-6 md:py-4 flex justify-between items-center">
           {/* Logo */}
           {showLogo && (
             <MinimalLink
               href="/"
-              className="flex items-center gap-3 hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors font-medium"
+              className="flex items-center gap-2 md:gap-3 hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors font-medium"
             >
               <Image
                 src="/alogo.png"
                 alt="Atanas Kyurkchiev"
-                width={32}
-                height={32}
-                className="rounded-sm"
+                width={24}
+                height={24}
+                className="rounded-sm md:w-8 md:h-8"
               />
-              <div>
-                <div>atanas kyurkchiev</div>
+              <div className="hidden sm:block">
+                <div className="text-sm md:text-base">atanas kyurkchiev</div>
                 <div className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">web developer</div>
               </div>
             </MinimalLink>
           )}
 
-          {/* Navigation */}
+          {/* Desktop Navigation */}
           {showNavItems && (
-            <div className="space-x-6 text-sm">
+            <div className="hidden md:flex space-x-6 text-sm">
               {navItems.map((item) => (
                 <MinimalLink
                   key={item.href}
@@ -132,6 +138,45 @@ export const Navigation = ({
             </div>
           )}
 
+          {/* Mobile Hamburger Button */}
+          {showNavItems && (
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 -mr-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
+              aria-label="Toggle menu"
+            >
+              <motion.div
+                className="w-5 h-5 flex flex-col justify-center items-center"
+                animate={isMobileMenuOpen ? "open" : "closed"}
+              >
+                <motion.span
+                  className="w-5 h-0.5 bg-current block"
+                  variants={{
+                    closed: { rotate: 0, y: 0 },
+                    open: { rotate: 45, y: 2 }
+                  }}
+                  transition={{ duration: 0.3 }}
+                />
+                <motion.span
+                  className="w-5 h-0.5 bg-current block mt-1"
+                  variants={{
+                    closed: { opacity: 1 },
+                    open: { opacity: 0 }
+                  }}
+                  transition={{ duration: 0.3 }}
+                />
+                <motion.span
+                  className="w-5 h-0.5 bg-current block mt-1"
+                  variants={{
+                    closed: { rotate: 0, y: 0 },
+                    open: { rotate: -45, y: -2 }
+                  }}
+                  transition={{ duration: 0.3 }}
+                />
+              </motion.div>
+            </button>
+          )}
+
           {/* Right content */}
           {rightContent && (
             <div className="flex items-center">
@@ -139,6 +184,38 @@ export const Navigation = ({
             </div>
           )}
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isMobileMenuOpen && showNavItems && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="md:hidden border-t border-neutral-200/50 dark:border-neutral-800/50 bg-neutral-50/95 dark:bg-neutral-900/95 backdrop-blur-sm"
+            >
+              <div className="px-4 py-4 space-y-3">
+                {navItems.map((item, index) => (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.3 }}
+                  >
+                    <MinimalLink
+                      href={item.href}
+                      className="block py-2 text-base hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+                      onClick={closeMobileMenu}
+                    >
+                      {item.label}
+                    </MinimalLink>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.nav>
     );
   }
@@ -171,7 +248,7 @@ export const Navigation = ({
         />
 
         {/* Content */}
-        <div className="relative p-4 md:p-6 flex justify-between items-center">
+        <div className="relative px-4 py-3 md:px-6 md:py-4 flex justify-between items-center">
           {/* Logo with scroll-based animation */}
           {showLogo && (
             <motion.div
@@ -181,27 +258,27 @@ export const Navigation = ({
             >
               <MinimalLink
                 href="/"
-                className="flex items-center gap-3 hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors font-medium"
+                className="flex items-center gap-2 md:gap-3 hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors font-medium"
               >
                 <Image
                   src="/alogo.png"
                   alt="Atanas Kyurkchiev"
-                  width={32}
-                  height={32}
-                  className="rounded-sm"
+                  width={24}
+                  height={24}
+                  className="rounded-sm md:w-8 md:h-8"
                 />
-                <div>
-                  <div>atanas kyurkchiev</div>
+                <div className="hidden sm:block">
+                  <div className="text-sm md:text-base">atanas kyurkchiev</div>
                   <div className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">web developer</div>
                 </div>
               </MinimalLink>
             </motion.div>
           )}
 
-          {/* Navigation with staggered animations */}
+          {/* Desktop Navigation with staggered animations */}
           {showNavItems && (
             <motion.div
-              className="space-x-6 text-sm"
+              className="hidden md:flex space-x-6 text-sm"
               variants={{
                 hidden: { opacity: 0 },
                 visible: {
@@ -251,6 +328,46 @@ export const Navigation = ({
             </motion.div>
           )}
 
+          {/* Mobile Hamburger Button */}
+          {showNavItems && (
+            <motion.button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 -mr-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
+              aria-label="Toggle menu"
+              whileTap={{ scale: 0.95 }}
+            >
+              <motion.div
+                className="w-5 h-5 flex flex-col justify-center items-center"
+                animate={isMobileMenuOpen ? "open" : "closed"}
+              >
+                <motion.span
+                  className="w-5 h-0.5 bg-current block"
+                  variants={{
+                    closed: { rotate: 0, y: 0 },
+                    open: { rotate: 45, y: 2 }
+                  }}
+                  transition={{ duration: 0.3 }}
+                />
+                <motion.span
+                  className="w-5 h-0.5 bg-current block mt-1"
+                  variants={{
+                    closed: { opacity: 1 },
+                    open: { opacity: 0 }
+                  }}
+                  transition={{ duration: 0.3 }}
+                />
+                <motion.span
+                  className="w-5 h-0.5 bg-current block mt-1"
+                  variants={{
+                    closed: { rotate: 0, y: 0 },
+                    open: { rotate: -45, y: -2 }
+                  }}
+                  transition={{ duration: 0.3 }}
+                />
+              </motion.div>
+            </motion.button>
+          )}
+
           {/* Right content */}
           {rightContent && (
             <div className="flex items-center">
@@ -258,6 +375,45 @@ export const Navigation = ({
             </div>
           )}
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isMobileMenuOpen && showNavItems && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="md:hidden border-t border-neutral-200/50 dark:border-neutral-800/50"
+            >
+              <motion.div
+                className="bg-neutral-50/95 dark:bg-neutral-900/95 backdrop-blur-sm"
+                style={{
+                  backdropFilter: `blur(${blurValue}px)`,
+                }}
+              >
+                <div className="px-4 py-4 space-y-3">
+                  {navItems.map((item, index) => (
+                    <motion.div
+                      key={item.href}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1, duration: 0.3 }}
+                    >
+                      <MinimalLink
+                        href={item.href}
+                        className="block py-2 text-base hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+                        onClick={closeMobileMenu}
+                      >
+                        {item.label}
+                      </MinimalLink>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.nav>
   );

@@ -1,14 +1,21 @@
 'use client';
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, lazy, Suspense, useMemo, useCallback } from "react";
 import Link from "next/link";
-import { SectionTransition } from "../components/SectionTransition";
 import { AnimatedText } from "../components/AnimatedText";
 import { useSound } from "../components/SoundProvider";
 import { useToast } from "../components/Toast";
-import { Navigation } from "../components/Navigation";
-import { ScrollProgress } from "../components/ScrollProgress";
 import { motion, AnimatePresence } from "framer-motion";
+
+// Lazy load non-critical components
+const SectionTransition = lazy(() => import("../components/SectionTransition").then(module => ({ default: module.SectionTransition })));
+const Navigation = lazy(() => import("../components/Navigation").then(module => ({ default: module.Navigation })));
+const ScrollProgress = lazy(() => import("../components/ScrollProgress").then(module => ({ default: module.ScrollProgress })));
+
+// Lightweight loading fallback
+function ComponentLoader() {
+  return <div className="h-1 w-full bg-transparent" />;
+}
 
 // Pricing configuration
 const PRICING_CONFIG = {
@@ -166,8 +173,8 @@ const PRICING_CONFIG = {
   }
 };
 
-// Enhanced Form Field Component
-function FormField({ 
+// Enhanced Form Field Component with memoization
+const FormField = ({ 
   label, 
   children, 
   error, 
@@ -181,7 +188,7 @@ function FormField({
   required?: boolean,
   description?: string,
   className?: string
-}) {
+}) => {
   return (
     <motion.div
       className={`space-y-2 ${className}`}
@@ -220,10 +227,10 @@ function FormField({
       </AnimatePresence>
     </motion.div>
   );
-}
+};
 
-// Feature toggle component
-function FeatureToggle({ 
+// Memoized Feature toggle component
+const FeatureToggle = ({ 
   feature, 
   description,
   selected, 
@@ -235,7 +242,7 @@ function FeatureToggle({
   selected: boolean, 
   onToggle: () => void, 
   price: number 
-}) {
+}) => {
   return (
     <motion.button
       type="button"
@@ -272,13 +279,13 @@ function FeatureToggle({
       </div>
     </motion.button>
   );
-}
+};
 
-// Pricing estimate component
-function PricingEstimate({ estimate, breakdown }: { 
+// Memoized pricing estimate component
+const PricingEstimate = ({ estimate, breakdown }: { 
   estimate: { min: number, max: number }, 
   breakdown: Array<{ item: string, price: number | string }> 
-}) {
+}) => {
   return (
     <motion.div
       className="sticky top-8 p-6 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 rounded-md"
@@ -341,7 +348,7 @@ function PricingEstimate({ estimate, breakdown }: {
       </div>
     </motion.div>
   );
-}
+};
 
 // Form steps with better organization
 const formSteps = [
@@ -423,8 +430,8 @@ export default function HirePage() {
     }
   }, []);
 
-  // Calculate pricing estimate
-  const calculateEstimate = () => {
+  // Memoized pricing calculation to reduce re-renders
+  const calculateEstimate = useCallback(() => {
     const { projectType, selectedFeatures, selectedAdditionalServices, timeline } = formData;
     
     if (!projectType) {
@@ -464,10 +471,10 @@ export default function HirePage() {
     const totalMax = Math.round((baseMax + featureCosts + additionalServiceCosts) * timelineMultiplier);
 
     return { min: totalMin, max: totalMax };
-  };
+  }, [formData.projectType, formData.selectedFeatures, formData.selectedAdditionalServices, formData.timeline]);
 
-  // Get pricing breakdown
-  const getPricingBreakdown = () => {
+  // Memoized pricing breakdown to reduce re-renders
+  const getPricingBreakdown = useCallback(() => {
     const { projectType, selectedFeatures, selectedAdditionalServices, timeline, needsMaintenance, maintenanceLevel } = formData;
     const breakdown = [];
 
@@ -529,7 +536,11 @@ export default function HirePage() {
     }
 
     return breakdown;
-  };
+  }, [formData]);
+
+  // Memoize expensive calculations
+  const estimate = useMemo(() => calculateEstimate(), [calculateEstimate]);
+  const breakdown = useMemo(() => getPricingBreakdown(), [getPricingBreakdown]);
 
   const validateStep = (step: number): boolean => {
     const errors: Record<string, string> = {};
@@ -654,7 +665,8 @@ export default function HirePage() {
     setCurrentStep(prev => Math.max(prev - 1, 0));
   };
 
-  const handleInputChange = (field: string, value: string | boolean | string[]) => {
+  // Optimized input change handler to reduce re-renders
+  const handleInputChange = useCallback((field: string, value: string | boolean | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (formErrors[field]) {
       setFormErrors(prev => {
@@ -663,23 +675,29 @@ export default function HirePage() {
         return newErrors;
       });
     }
-  };
+  }, [formErrors]);
 
-  const toggleFeature = (feature: string) => {
-    const updatedFeatures = formData.selectedFeatures.includes(feature)
-      ? formData.selectedFeatures.filter(f => f !== feature)
-      : [...formData.selectedFeatures, feature];
-    
-    handleInputChange('selectedFeatures', updatedFeatures);
-  };
+  // Optimized feature toggle to reduce re-renders
+  const toggleFeature = useCallback((feature: string) => {
+    setFormData(prev => {
+      const updatedFeatures = prev.selectedFeatures.includes(feature)
+        ? prev.selectedFeatures.filter(f => f !== feature)
+        : [...prev.selectedFeatures, feature];
+      
+      return { ...prev, selectedFeatures: updatedFeatures };
+    });
+  }, []);
 
-  const toggleAdditionalService = (service: string) => {
-    const updatedServices = formData.selectedAdditionalServices.includes(service)
-      ? formData.selectedAdditionalServices.filter(s => s !== service)
-      : [...formData.selectedAdditionalServices, service];
-    
-    handleInputChange('selectedAdditionalServices', updatedServices);
-  };
+  // Optimized service toggle to reduce re-renders
+  const toggleAdditionalService = useCallback((service: string) => {
+    setFormData(prev => {
+      const updatedServices = prev.selectedAdditionalServices.includes(service)
+        ? prev.selectedAdditionalServices.filter(s => s !== service)
+        : [...prev.selectedAdditionalServices, service];
+      
+      return { ...prev, selectedAdditionalServices: updatedServices };
+    });
+  }, []);
 
   const renderFormStep = () => {
     switch (currentStep) {
@@ -1211,77 +1229,81 @@ export default function HirePage() {
     }
   };
 
-  const estimate = calculateEstimate();
-  const breakdown = getPricingBreakdown();
-
   return (
     <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900 relative">
-      <ScrollProgress />
-      <Navigation variant="sticky" />
+      <Suspense fallback={<ComponentLoader />}>
+        <ScrollProgress />
+      </Suspense>
+      <Suspense fallback={<ComponentLoader />}>
+        <Navigation variant="sticky" />
+      </Suspense>
 
       {/* Hero Section */}
-      <SectionTransition>
-        <section className="py-28 md:py-32 px-4 md:px-6 lg:px-12">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <AnimatedText
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight font-light"
-                type="words"
-                animationType="slide"
-                direction="up"
-                stagger={0.08}
+      <Suspense fallback={<ComponentLoader />}>
+        <SectionTransition>
+          <section className="py-28 md:py-32 px-4 md:px-6 lg:px-12">
+            <div className="max-w-4xl mx-auto text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
               >
-                let&apos;s build something amazing together
-              </AnimatedText>
+                <AnimatedText
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight font-light"
+                  type="words"
+                  animationType="slide"
+                  direction="up"
+                  stagger={0.08}
+                >
+                  let&apos;s build something amazing together
+                </AnimatedText>
+                
+                <AnimatedText
+                  className="text-base md:text-lg text-neutral-600 dark:text-neutral-400 mb-8 leading-relaxed max-w-2xl mx-auto"
+                  type="words"
+                  animationType="fade"
+                  delay={0.4}
+                  stagger={0.02}
+                >
+                  get an instant estimate and start your project with our detailed project planner. all features are explained in simple terms - no technical jargon.
+                </AnimatedText>
+              </motion.div>
               
-              <AnimatedText
-                className="text-base md:text-lg text-neutral-600 dark:text-neutral-400 mb-8 leading-relaxed max-w-2xl mx-auto"
-                type="words"
-                animationType="fade"
-                delay={0.4}
-                stagger={0.02}
+              <motion.div
+                className="flex flex-col sm:flex-row gap-4 justify-center"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
               >
-                get an instant estimate and start your project with our detailed project planner. all features are explained in simple terms - no technical jargon.
-              </AnimatedText>
-            </motion.div>
-            
-            <motion.div
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-            >
-              <button
-                onClick={() => {
-                  formRef.current?.scrollIntoView({ behavior: "smooth" });
-                  playClick();
-                }}
-                className="bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 md:px-8 py-3 rounded-md font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all duration-300"
-              >
-                start project planning
-              </button>
-              
-              <Link
-                href="/pricing"
-                className="border border-neutral-400 dark:border-neutral-600 bg-transparent text-neutral-900 dark:text-neutral-100 px-6 md:px-8 py-3 rounded-md font-medium hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-300"
-              >
-                view pricing
-              </Link>
-            </motion.div>
-          </div>
-        </section>
-      </SectionTransition>
+                <button
+                  onClick={() => {
+                    formRef.current?.scrollIntoView({ behavior: "smooth" });
+                    playClick();
+                  }}
+                  className="bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 md:px-8 py-3 rounded-md font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all duration-300"
+                >
+                  start project planning
+                </button>
+                
+                <Link
+                  href="/pricing"
+                  className="border border-neutral-400 dark:border-neutral-600 bg-transparent text-neutral-900 dark:text-neutral-100 px-6 md:px-8 py-3 rounded-md font-medium hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-300"
+                >
+                  view pricing
+                </Link>
+              </motion.div>
+            </div>
+          </section>
+        </SectionTransition>
+      </Suspense>
 
       {/* Enhanced Form Section */}
-      <SectionTransition>
-        <section
-          ref={formRef}
-          className="py-16 md:py-24 px-4 md:px-6 lg:px-12"
-        >
+      <Suspense fallback={<ComponentLoader />}>
+        <SectionTransition>
+          <section
+            ref={formRef}
+            className="py-16 md:py-24 px-4 md:px-6 lg:px-12"
+          >
           <div className="max-w-7xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
@@ -1422,6 +1444,7 @@ export default function HirePage() {
           </div>
         </section>
       </SectionTransition>
+      </Suspense>
     </main>
   );
 } 

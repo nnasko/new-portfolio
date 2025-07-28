@@ -23,12 +23,52 @@ const nextConfig = {
   // Enable compression
   compress: true,
   
-  // Optimize chunks (removed experimental features that cause issues)
+  // Optimize chunks and bundle splitting
   experimental: {
     optimizePackageImports: ['framer-motion', 'lucide-react'],
   },
   
-  // Add headers for service worker
+  // Webpack optimizations for mobile performance
+  webpack: (config, { dev, isServer }) => {
+    // Split chunks more aggressively for better caching
+    if (!dev && !isServer) {
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          default: {
+            minChunks: 2,
+            priority: -20,
+            reuseExistingChunk: true,
+          },
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            priority: -10,
+            chunks: 'all',
+          },
+          framerMotion: {
+            test: /[\\/]node_modules[\\/]framer-motion[\\/]/,
+            name: 'framer-motion',
+            priority: 10,
+            chunks: 'all',
+          },
+          react: {
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            name: 'react',
+            priority: 20,
+            chunks: 'all',
+          },
+        },
+      };
+    }
+
+    // Tree shaking optimizations (usedExports conflicts with Next.js caching)
+    config.optimization.sideEffects = false;
+
+    return config;
+  },
+  
+  // Add headers for service worker and caching
   async headers() {
     return [
       {
@@ -45,7 +85,80 @@ const nextConfig = {
         ],
       },
       {
-        // Cache static assets
+        // Cache static assets aggressively
+        source: '/_next/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        // Cache static images
+        source: '/:path*.png',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=2592000', // 30 days
+          },
+        ],
+      },
+      {
+        source: '/:path*.jpg',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=2592000', // 30 days
+          },
+        ],
+      },
+      {
+        source: '/:path*.jpeg',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=2592000', // 30 days
+          },
+        ],
+      },
+      {
+        source: '/:path*.webp',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=2592000', // 30 days
+          },
+        ],
+      },
+      {
+        source: '/:path*.avif',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=2592000', // 30 days
+          },
+        ],
+      },
+      {
+        source: '/:path*.svg',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=2592000', // 30 days
+          },
+        ],
+      },
+      {
+        source: '/:path*.ico',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=2592000', // 30 days
+          },
+        ],
+      },
+      {
         source: '/(.*)',
         headers: [
           {
@@ -59,6 +172,13 @@ const nextConfig = {
         ],
       },
     ];
+  },
+  
+  // Optimize CSS loading
+  modularizeImports: {
+    'framer-motion': {
+      transform: 'framer-motion/dist/es/{{ kebabCase member }}',
+    },
   },
 };
 
