@@ -120,20 +120,20 @@ const Navigation = ({
           {showNavItems && (
             <div className="hidden md:flex space-x-6 text-sm">
               {navItems.map((item) => (
-                <MinimalLink
-                  key={item.href}
-                  href={item.href}
-                  className="hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors relative group"
-                >
-                  {item.label}
-                  {/* Animated underline */}
-                  <motion.div
-                    className="absolute -bottom-1 left-0 h-px bg-neutral-800 dark:bg-neutral-200 origin-left"
-                    initial={{ scaleX: 0 }}
-                    whileHover={{ scaleX: 1 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
-                  />
-                </MinimalLink>
+                                  <MinimalLink
+                    key={item.href}
+                    href={item.href}
+                    className="nav-link-hover relative"
+                  >
+                    {item.label}
+                    {/* Animated underline */}
+                    <motion.div
+                      className="absolute -bottom-1 left-0 h-px bg-neutral-800 dark:bg-neutral-200 origin-left will-change-transform"
+                      initial={{ scaleX: 0 }}
+                      whileHover={{ scaleX: 1 }}
+                      transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    />
+                  </MinimalLink>
               ))}
             </div>
           )}
@@ -312,15 +312,15 @@ const Navigation = ({
                 >
                   <MinimalLink
                     href={item.href}
-                    className="hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors relative group"
+                    className="nav-link-hover relative"
                   >
                     {item.label}
                     {/* Animated underline */}
                     <motion.div
-                      className="absolute -bottom-1 left-0 h-px bg-neutral-800 dark:bg-neutral-200 origin-left"
+                      className="absolute -bottom-1 left-0 h-px bg-neutral-800 dark:bg-neutral-200 origin-left will-change-transform"
                       initial={{ scaleX: 0 }}
                       whileHover={{ scaleX: 1 }}
-                      transition={{ duration: 0.3, ease: "easeOut" }}
+                      transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
                     />
                   </MinimalLink>
                 </motion.span>
