@@ -81,11 +81,12 @@ const BirthdayBook = () => {
 
         .book-wrapper {
           background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #f3e8ff 100%);
-          height: 100vh;
+          min-height: 100vh;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
+          padding: 2rem 1rem;
         }
 
         .cover {
@@ -93,8 +94,10 @@ const BirthdayBook = () => {
           height: calc(var(--baseline) * 42.6);
           max-width: 90vw;
           max-height: 80vh;
-          box-shadow: 0 0 100px rgba(0, 0, 0, .3);
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
           position: relative;
+          border-radius: 8px;
+          overflow: hidden;
         }
 
         .book {
@@ -115,11 +118,12 @@ const BirthdayBook = () => {
           justify-content: center;
           position: relative;
           cursor: pointer;
-          transition: background-color 0.3s ease;
+          transition: all 0.3s ease;
         }
 
         .book__left:hover {
           background-color: rgba(190, 24, 93, 0.05);
+          transform: scale(1.02);
         }
 
         /* Right side container */
@@ -187,7 +191,7 @@ const BirthdayBook = () => {
 
         /* Content styling */
         .page__content {
-          padding: calc(var(--baseline) * 2);
+          padding: calc(var(--baseline) * 2.5);
           height: 100%;
           display: flex;
           flex-direction: column;
@@ -197,48 +201,54 @@ const BirthdayBook = () => {
         }
 
         .page__photo {
-          width: 80px;
-          height: 80px;
+          width: 90px;
+          height: 90px;
           border-radius: 50%;
           overflow: hidden;
-          margin-bottom: calc(var(--baseline) * 1.5);
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+          margin-bottom: calc(var(--baseline) * 2);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+          border: 3px solid rgba(255, 255, 255, 0.8);
         }
 
         .page__photo--small {
-          width: 60px;
-          height: 60px;
-          margin-bottom: calc(var(--baseline) * 1);
+          width: 70px;
+          height: 70px;
+          margin-bottom: calc(var(--baseline) * 1.5);
         }
 
         .page__emoji {
-          font-size: 2.5rem;
-          margin-bottom: calc(var(--baseline) * 1);
+          font-size: 3rem;
+          margin-bottom: calc(var(--baseline) * 1.5);
+          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
         }
 
         .page__title {
           font-family: var(--title);
-          font-size: calc(var(--base-size) * 1.6);
+          font-size: calc(var(--base-size) * 1.8);
           color: var(--pink-text);
-          margin-bottom: calc(var(--baseline) * 1.5);
+          margin-bottom: calc(var(--baseline) * 2);
+          font-weight: 600;
+          line-height: 1.3;
         }
 
         .page__text {
           font-family: var(--body);
-          font-size: calc(var(--base-size) * 0.9);
-          line-height: 1.6;
+          font-size: calc(var(--base-size) * 1);
+          line-height: 1.7;
           color: var(--dark-text);
-          max-width: 90%;
+          max-width: 85%;
+          opacity: 0.9;
         }
 
         .page__number {
           position: absolute;
-          bottom: calc(var(--baseline) * 1.5);
+          bottom: calc(var(--baseline) * 2);
           left: 50%;
           transform: translateX(-50%);
           font-family: var(--title);
-          font-size: calc(var(--base-size) * 0.7);
+          font-size: calc(var(--base-size) * 0.8);
           color: #999;
+          font-weight: 500;
         }
 
         /* Cover styles */
@@ -247,19 +257,27 @@ const BirthdayBook = () => {
         }
 
         .cover-photo {
-          width: 100px;
-          height: 100px;
+          width: 120px;
+          height: 120px;
           border-radius: 50%;
           overflow: hidden;
-          border: 4px solid rgba(255, 255, 255, 0.5);
-          margin-bottom: 1.5rem;
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+          border: 4px solid rgba(255, 255, 255, 0.3);
+          margin-bottom: 2rem;
+          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
         }
 
         .cover-title {
           font-family: var(--book-title);
-          font-size: calc(var(--base-size) * 2.2);
-          margin-bottom: 0.5rem;
+          font-size: calc(var(--base-size) * 2.5);
+          margin-bottom: 1rem;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .cover-subtitle {
+          font-family: var(--body);
+          font-size: calc(var(--base-size) * 0.9);
+          opacity: 0.9;
+          margin-top: 0.5rem;
         }
 
         /* Final page */
@@ -280,6 +298,7 @@ const BirthdayBook = () => {
           grid-template-columns: 1fr 1fr;
           gap: 1rem;
           padding: 1rem;
+          width: 100%;
         }
 
         .photo-collage img {
@@ -287,52 +306,232 @@ const BirthdayBook = () => {
           height: 80px;
           object-fit: cover;
           border-radius: 8px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+          transition: transform 0.2s ease;
+        }
+
+        .photo-collage img:hover {
+          transform: scale(1.05);
         }
 
         /* Navigation buttons */
         .nav-buttons {
           position: absolute;
-          bottom: -4rem;
+          bottom: -5rem;
           left: 50%;
           transform: translateX(-50%);
           display: flex;
-          gap: 1rem;
+          gap: 1.5rem;
         }
 
         .nav-button {
-          padding: 0.5rem 1.5rem;
-          background: #be185d;
+          padding: 0.75rem 2rem;
+          background: linear-gradient(135deg, #be185d, #ec4899);
           color: white;
           border: none;
-          border-radius: 20px;
+          border-radius: 25px;
           cursor: pointer;
           font-family: var(--body);
-          transition: all 0.3s;
+          font-weight: 600;
+          font-size: calc(var(--base-size) * 0.9);
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(190, 24, 93, 0.3);
         }
 
         .nav-button:hover {
-          background: #9f1239;
-          transform: scale(1.05);
+          background: linear-gradient(135deg, #9f1239, #be185d);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(190, 24, 93, 0.4);
         }
 
         .nav-button:disabled {
-          opacity: 0.4;
+          opacity: 0.5;
           cursor: not-allowed;
+          transform: none;
+          box-shadow: 0 2px 8px rgba(190, 24, 93, 0.2);
         }
 
         /* Left side content based on current page */
         .left-content {
-          opacity: 0.8;
-          transition: opacity 0.3s ease;
+          opacity: 0.85;
+          transition: all 0.3s ease;
         }
 
         .book__left:hover .left-content {
           opacity: 1;
         }
 
+        /* Final page improvements */
+        .final-page-content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          height: 100%;
+          padding: calc(var(--baseline) * 3);
+        }
+
+        .final-emoji {
+          font-size: 5rem;
+          margin-bottom: calc(var(--baseline) * 2);
+          animation: bounce 2s infinite;
+          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+        }
+
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+          }
+          40% {
+            transform: translateY(-15px);
+          }
+          60% {
+            transform: translateY(-7px);
+          }
+        }
+
+        .final-title {
+          font-family: var(--book-title);
+          font-size: calc(var(--base-size) * 3);
+          color: var(--pink-text);
+          margin-bottom: calc(var(--baseline) * 2);
+          text-shadow: 0 3px 6px rgba(190, 24, 93, 0.2);
+          line-height: 1.2;
+        }
+
+        .final-subtitle {
+          font-family: var(--title);
+          font-size: calc(var(--base-size) * 1.3);
+          color: var(--dark-text);
+          margin-bottom: calc(var(--baseline) * 2.5);
+          opacity: 0.85;
+          line-height: 1.6;
+          max-width: 90%;
+        }
+
+        .final-signature {
+          font-family: var(--book-title);
+          font-size: calc(var(--base-size) * 1.6);
+          color: var(--pink-text);
+          margin-top: calc(var(--baseline) * 2.5);
+          font-weight: 700;
+          text-shadow: 0 2px 4px rgba(190, 24, 93, 0.1);
+        }
+
+        .final-hearts {
+          font-size: 2rem;
+          margin-top: calc(var(--baseline) * 1.5);
+          animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+          0% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.3);
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
+
         /* Mobile */
         @media (max-width: 768px) {
+          .book-wrapper {
+            padding: 1rem 0.5rem;
+          }
+
+          .cover {
+            width: calc(var(--baseline) * 50);
+            height: calc(var(--baseline) * 35);
+            max-width: 95vw;
+            max-height: 85vh;
+          }
+
+          .page__content {
+            padding: calc(var(--baseline) * 2);
+          }
+
+          .page__photo {
+            width: 75px;
+            height: 75px;
+            margin-bottom: calc(var(--baseline) * 1.5);
+          }
+
+          .page__photo--small {
+            width: 60px;
+            height: 60px;
+          }
+
+          .page__emoji {
+            font-size: 2.5rem;
+            margin-bottom: calc(var(--baseline) * 1);
+          }
+
+          .page__title {
+            font-size: calc(var(--base-size) * 1.5);
+            margin-bottom: calc(var(--baseline) * 1.5);
+          }
+
+          .page__text {
+            font-size: calc(var(--base-size) * 0.9);
+            max-width: 90%;
+          }
+
+          .photo-collage {
+            gap: 0.75rem;
+            padding: 0.75rem;
+          }
+
+          .photo-collage img {
+            height: 70px;
+          }
+
+          .cover-photo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 1.5rem;
+          }
+
+          .cover-title {
+            font-size: calc(var(--base-size) * 2.2);
+          }
+
+          .final-emoji {
+            font-size: 4rem;
+            margin-bottom: calc(var(--baseline) * 1.5);
+          }
+
+          .final-title {
+            font-size: calc(var(--base-size) * 2.5);
+            margin-bottom: calc(var(--baseline) * 1.5);
+          }
+
+          .final-subtitle {
+            font-size: calc(var(--base-size) * 1.1);
+            margin-bottom: calc(var(--baseline) * 2);
+          }
+
+          .final-signature {
+            font-size: calc(var(--base-size) * 1.4);
+            margin-top: calc(var(--baseline) * 2);
+          }
+
+          .nav-buttons {
+            bottom: -4rem;
+            gap: 1rem;
+          }
+
+          .nav-button {
+            padding: 0.6rem 1.5rem;
+            font-size: calc(var(--base-size) * 0.85);
+          }
+        }
+
+        /* Small mobile */
+        @media (max-width: 480px) {
           .cover {
             width: calc(var(--baseline) * 45);
             height: calc(var(--baseline) * 32);
@@ -342,11 +541,69 @@ const BirthdayBook = () => {
             padding: calc(var(--baseline) * 1.5);
           }
 
+          .page__photo {
+            width: 65px;
+            height: 65px;
+          }
+
+          .page__photo--small {
+            width: 55px;
+            height: 55px;
+          }
+
+          .page__emoji {
+            font-size: 2rem;
+          }
+
           .page__title {
             font-size: calc(var(--base-size) * 1.3);
           }
 
           .page__text {
+            font-size: calc(var(--base-size) * 0.85);
+          }
+
+          .photo-collage {
+            gap: 0.5rem;
+            padding: 0.5rem;
+          }
+
+          .photo-collage img {
+            height: 60px;
+          }
+
+          .cover-photo {
+            width: 85px;
+            height: 85px;
+          }
+
+          .cover-title {
+            font-size: calc(var(--base-size) * 2);
+          }
+
+          .final-emoji {
+            font-size: 3.5rem;
+          }
+
+          .final-title {
+            font-size: calc(var(--base-size) * 2.2);
+          }
+
+          .final-subtitle {
+            font-size: calc(var(--base-size) * 1);
+          }
+
+          .final-signature {
+            font-size: calc(var(--base-size) * 1.3);
+          }
+
+          .nav-buttons {
+            bottom: -3.5rem;
+            gap: 0.75rem;
+          }
+
+          .nav-button {
+            padding: 0.5rem 1.25rem;
             font-size: calc(var(--base-size) * 0.8);
           }
         }
@@ -445,18 +702,18 @@ const BirthdayBook = () => {
                       💝
                     </motion.div>
                     <h1 className="cover-title">For My Amazing Mum</h1>
-                    <p className="text-white/90">Click to open</p>
+                    <p className="cover-subtitle">Click to open</p>
                   </div>
                 </div>
                 <div className="page__face page__face--back">
                   <div className="page__content">
                     <div className="photo-collage">
-                      <Image src="/mum1.jpeg" alt="Memory 1" width={100} height={100} />
-                      <Image src="/mum2.jpeg" alt="Memory 2" width={100} height={100} />
-                      <Image src="/mum3.jpeg" alt="Memory 3" width={100} height={100} />
-                      <Image src="/mum4.jpeg" alt="Memory 4" width={100} height={100} />
+                      <Image src="/mum1.jpeg" alt="Memory 1" width={120} height={80} className="object-cover w-full h-full" />
+                      <Image src="/mum2.jpeg" alt="Memory 2" width={120} height={80} className="object-cover w-full h-full" />
+                      <Image src="/mum3.jpeg" alt="Memory 3" width={120} height={80} className="object-cover w-full h-full" />
+                      <Image src="/mum4.jpeg" alt="Memory 4" width={120} height={80} className="object-cover w-full h-full" />
                     </div>
-                    <p className="page__text" style={{ marginTop: '1rem' }}>Memories we&apos;ve shared...</p>
+                    <p className="page__text" style={{ marginTop: '1rem', textAlign: 'center' }}>Memories we&apos;ve shared...</p>
                   </div>
                 </div>
               </div>
@@ -573,26 +830,23 @@ const BirthdayBook = () => {
               {/* Final Page */}
               <div className={`page page--4`}>
                 <div className="page__face page__face--front final-celebration">
-                  <div className="page__content">
+                  <div className="page__content final-page-content">
                     <motion.div
-                      className="text-6xl mb-4"
+                      className="final-emoji"
                       animate={{
-                        scale: [1, 1.3, 1],
-                        rotate: [0, 15, -15, 0]
+                        scale: [1, 1.2, 1]
                       }}
-                      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     >
                       🎂
                     </motion.div>
-                    <div className="final-message">
-                      <h1 className="page__title" style={{ fontSize: 'calc(var(--base-size) * 2)', marginBottom: '1rem' }}>
-                        Happy Birthday, Mum!
-                      </h1>
-                      <p className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                        Love always, Nasko 💖
-                      </p>
-                    </div>
-                    <div className="page__number">9</div>
+                    <h1 className="final-title">Happy Birthday, Mum!</h1>
+                    <p className="final-subtitle">
+                      Thank you for being the most amazing mum in the world.
+                      Your love and wisdom have shaped my life in countless ways.
+                    </p>
+                    <div className="final-hearts">💖💖💖</div>
+                    <p className="final-signature">Love always, Nasko 💖</p>
                   </div>
                 </div>
               </div>
