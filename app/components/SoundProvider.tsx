@@ -165,10 +165,10 @@ export const SoundProvider = ({ children }: { children: React.ReactNode }) => {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="fixed bottom-6 right-24 z-50 flex gap-4">
+      <div className="fixed bottom-6 right-20 z-50 flex gap-2">
         <motion.button
           onClick={toggleAmbient}
-          className="p-3 rounded-none transition-all duration-300 shadow-lg bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
+          className="p-3 rounded-lg transition-all duration-300 shadow-lg bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           initial={{ opacity: 0, y: 20 }}
@@ -214,7 +214,7 @@ export const SoundProvider = ({ children }: { children: React.ReactNode }) => {
         </motion.button>
         <motion.button
           onClick={toggleMute}
-          className="p-3 rounded-none transition-all duration-300 shadow-lg bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
+          className="p-3 rounded-lg transition-all duration-300 shadow-lg bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           initial={{ opacity: 0, y: 20 }}

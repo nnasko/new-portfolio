@@ -31,7 +31,7 @@ export const ScrollToTop = () => {
       {isVisible && (
         <motion.button
           onClick={scrollToTop}
-          className="fixed bottom-6 left-6 z-50 p-3 rounded-none bg-neutral-100 dark:bg-neutral-800 shadow-lg cursor-pointer"
+          className="fixed bottom-6 left-6 z-50 p-3 rounded-lg bg-neutral-100 dark:bg-neutral-800 shadow-lg cursor-pointer"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
