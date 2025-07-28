@@ -380,7 +380,7 @@ const BirthdayBook = () => {
                       />
                     </div>
                     <p className="page__text">
-                      "A mother's love is the fuel that enables a normal human being to do the impossible."
+                      &quot;A mother&apos;s love is the fuel that enables a normal human being to do the impossible.&quot;
                     </p>
                   </>
                 ) : currentPage === 2 ? (
@@ -456,7 +456,7 @@ const BirthdayBook = () => {
                       <Image src="/mum3.jpeg" alt="Memory 3" width={100} height={100} />
                       <Image src="/mum4.jpeg" alt="Memory 4" width={100} height={100} />
                     </div>
-                    <p className="page__text" style={{ marginTop: '1rem' }}>Memories we've shared...</p>
+                    <p className="page__text" style={{ marginTop: '1rem' }}>Memories we&apos;ve shared...</p>
                   </div>
                 </div>
               </div>
@@ -491,7 +491,7 @@ const BirthdayBook = () => {
                       <Image src="/mum5.jpeg" alt="Memory" width={60} height={60} className="object-cover w-full h-full" />
                     </div>
                     <p className="page__text">
-                      "A mother's love is the fuel that enables a normal human being to do the impossible."
+                      &quot;A mother&apos;s love is the fuel that enables a normal human being to do the impossible.&quot;
                     </p>
                     <p className="page__text" style={{ marginTop: '1rem', fontSize: '0.8rem', fontStyle: 'italic' }}>
                       - Marion C. Garretty
@@ -555,7 +555,7 @@ const BirthdayBook = () => {
                     <div className="page__emoji">👑</div>
                     <h2 className="page__title">My Hero</h2>
                     <p className="page__text">
-                      My inspiration, my biggest supporter, and the most beautiful soul I've ever known.
+                      My inspiration, my biggest supporter, and the most beautiful soul I&apos;ve ever known.
                     </p>
                     <div className="page__number">7</div>
                   </div>
