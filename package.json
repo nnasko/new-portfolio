@@ -33,7 +33,7 @@
     "puppeteer": "^24.1.1",
     "puppeteer-core": "^24.2.1",
     "react": "^19.0.0",
-    "react-day-picker": "^8.10.1",
+    "react-day-picker": "^9.8.1",
     "react-dom": "^19.0.0",
     "resend": "^4.0.1",
     "stripe": "^18.3.0",
