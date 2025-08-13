@@ -5,9 +5,11 @@ import Link from "next/link";
 import { useSound } from "../components/SoundAndRainProvider";
 import { SectionTransition } from "../components/SectionTransition";
 import { AnimatedText } from "../components/AnimatedText";
-import Navigation from "../components/Navigation";
 import { ScrollProgress } from "../components/ScrollProgress";
 import { CheckIcon } from "@heroicons/react/24/outline";
+import dynamic from "next/dynamic";
+
+const ThreeShowcase = dynamic(() => import("../components/ThreeShowcase"), { ssr: false });
 
 interface PricingTier {
   name: string;
@@ -231,12 +233,15 @@ export default function PricingPage() {
   const { playClick } = useSound();
 
   return (
-    <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900 relative">
+    <main className="min-h-screen relative">
       <ScrollProgress />
-      <Navigation variant="sticky" />
       
       <SectionTransition>
         <div className="w-full px-4 md:px-6 lg:px-8 py-16 md:py-24">
+          {/* 3D Showcase */}
+          <div className="max-w-6xl mx-auto mb-12 md:mb-16">
+            <ThreeShowcase />
+          </div>
           {/* Header */}
           <motion.div
             className="text-center mb-16 md:mb-20"

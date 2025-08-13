@@ -90,7 +90,7 @@ const Navigation = ({
   if (variant === 'simple') {
     return (
       <motion.nav
-        className={`fixed top-0 left-0 right-0 z-50 bg-neutral-50/80 dark:bg-neutral-900/80 border-b border-neutral-200/50 dark:border-neutral-800/50 backdrop-blur-sm ${className}`}
+        className={`fixed top-0 left-0 right-0 z-50 bg-white/5 dark:bg-black/5 border-b border-neutral-200/30 dark:border-neutral-800/40 backdrop-blur-md ${className}`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.3 }}
@@ -239,9 +239,9 @@ const Navigation = ({
       }}
     >
       <div className="relative">
-        {/* Background with dynamic opacity */}
+        {/* Background with dynamic opacity; translucent to reveal backdrop */}
         <motion.div
-          className="absolute inset-0 bg-neutral-50/80 dark:bg-neutral-900/80 border-b border-neutral-200/50 dark:border-neutral-800/50"
+          className="pointer-events-none absolute inset-0 bg-white/5 dark:bg-black/5 border-b border-neutral-200/30 dark:border-neutral-800/40"
           style={{
             opacity: backgroundOpacity,
           }}

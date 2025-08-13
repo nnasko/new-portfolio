@@ -9,7 +9,6 @@ import { MinimalLink } from "../../components/MinimalLink";
 import { useSound } from "../../components/SoundAndRainProvider";
 import { ReadingTime } from "../../components/ReadingTime";
 import { ViewCounter } from "../../components/ViewCounter";
-import Navigation from "../../components/Navigation";
 import { useState, useEffect, useRef } from "react";
 import { siteConfig } from "../../metadata";
 import { 
@@ -425,16 +424,8 @@ function ProjectContent({ slug }: { slug: string }) {
           __html: JSON.stringify(getProjectSchema(project))
         }}
       />
-      <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
+      <main className="min-h-screen">
         <ScrollProgressBar />
-        
-        {/* Enhanced navigation */}
-        <Navigation 
-          variant="sticky"
-          customNavItems={[
-            { href: "/#work", label: "back to work" }
-          ]}
-        />
 
         <div className="pt-24 px-6 md:px-12 max-w-6xl mx-auto">
           {/* Project header */}

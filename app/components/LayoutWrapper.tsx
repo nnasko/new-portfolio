@@ -12,6 +12,10 @@ import { ThemeToggle } from './ThemeToggle';
 import { ScrollProgress } from './ScrollProgress';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
+import dynamic from 'next/dynamic';
+
+const ParallaxBackdrop = dynamic(() => import('./ParallaxBackdrop'), { ssr: false });
+const Navigation = dynamic(() => import('./Navigation'), { ssr: false });
 
 const getTransitionDirection = (currentPath: string, previousPath: string | null) => {
   // If no previous path, default to slide in from right
@@ -57,6 +61,9 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const prevPathnameRef = useRef<string | null>(null);
   const [isReady, setIsReady] = useState(false);
+  
+  // Check if we're on the CV page to handle special navigation
+  const isCvPage = pathname === '/cv';
 
   // Service worker registration
   useEffect(() => {
@@ -118,7 +125,11 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
           <ScrollProgress />
           <PageLoadProgress />
           <ScrollToTop />
+          {/* Global sticky navigation - above all content (except CV page which handles its own) */}
+          {!isCvPage && <Navigation variant="sticky" />}
           <div className="relative w-full">
+            {/* Global background layer (behind content) */}
+            <ParallaxBackdrop />
             <AnimatePresence mode="wait" initial={false}>
               <motion.main
                 key={pathname}
@@ -146,7 +157,7 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
                   ease: [0.4, 0, 0.2, 1],
                   opacity: { duration: 0.3 },
                 }}
-                className="w-full"
+                className="relative z-10 w-full"
                 style={{
                   // Ensure smooth hardware acceleration
                   willChange: 'transform, opacity',

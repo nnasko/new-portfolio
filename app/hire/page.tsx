@@ -6,10 +6,13 @@ import { AnimatedText } from "../components/AnimatedText";
 import { useSound } from "../components/SoundAndRainProvider";
 import { useToast } from "../components/Toast";
 import { motion, AnimatePresence } from "framer-motion";
+import dynamic from "next/dynamic";
+
+const ThreeShowcase = dynamic(() => import("../components/ThreeShowcase"), { ssr: false });
 
 // Lazy load non-critical components
 const SectionTransition = lazy(() => import("../components/SectionTransition").then(module => ({ default: module.SectionTransition })));
-const Navigation = lazy(() => import("../components/Navigation"));
+
 const ScrollProgress = lazy(() => import("../components/ScrollProgress").then(module => ({ default: module.ScrollProgress })));
 
 // Lightweight loading fallback
@@ -1230,12 +1233,9 @@ export default function HirePage() {
   };
 
   return (
-    <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900 relative">
+    <main className="min-h-screen relative">
       <Suspense fallback={<ComponentLoader />}>
         <ScrollProgress />
-      </Suspense>
-      <Suspense fallback={<ComponentLoader />}>
-        <Navigation variant="sticky" />
       </Suspense>
 
       {/* Hero Section */}
@@ -1243,6 +1243,9 @@ export default function HirePage() {
         <SectionTransition>
           <section className="py-28 md:py-32 px-4 md:px-6 lg:px-12">
             <div className="max-w-4xl mx-auto text-center">
+              <div className="mb-10 md:mb-12">
+                <ThreeShowcase />
+              </div>
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}

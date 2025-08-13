@@ -256,7 +256,7 @@ export default function CV() {
   };
 
   return (
-    <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900 relative">
+    <main className="min-h-screen relative">
       {!isPdfMode && <ScrollProgress />}
       
       {/* Enhanced navigation - mobile optimized */}

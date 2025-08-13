@@ -113,6 +113,7 @@ export default function RootLayout({
         <link rel="canonical" href={siteConfig.url} />
         <meta name="theme-color" content="#171717" />
         <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="/alogo.png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
