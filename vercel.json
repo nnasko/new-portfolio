@@ -4,5 +4,7 @@
       "memory": 1024,
       "maxDuration": 60
     }
-  }
+  },
+  "buildCommand": "npm install && npx prisma generate && next build",
+  "installCommand": "npm ci"
 } 
