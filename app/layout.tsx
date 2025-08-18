@@ -17,9 +17,12 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": ["Person", "ProfessionalService", "LocalBusiness"],
   name: siteConfig.author,
+  alternateName: ["Atanas Kyurkchiev", "Atanas K", "Web Developer Norwich"],
   url: siteConfig.url,
   jobTitle: "Web Developer & Digital Solutions Specialist",
   description: siteConfig.description,
+  familyName: "Kyurkchiev",
+  givenName: "Atanas",
   serviceType: [
     "Web Development",
     "Website Design", 
@@ -124,6 +127,9 @@ export const metadata: Metadata = {
   keywords: siteConfig.keywords,
   authors: [{ name: siteConfig.author }],
   creator: siteConfig.author,
+  verification: {
+    google: process.env.GOOGLE_VERIFICATION_CODE,
+  },
   openGraph: {
     type: "website",
     locale: "en_GB",
