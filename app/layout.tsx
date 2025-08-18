@@ -47,6 +47,11 @@ const jsonLd = {
     "@type": "Service",
     name: "Professional Web Development Services",
     description: "Custom web development solutions for businesses including websites, web applications, and e-commerce platforms"
+  },
+  memberOf: {
+    "@type": "Organization",
+    name: "Kyurkchiev Group",
+    description: "Digital solutions company specializing in web development and business automation"
   }
 };
 

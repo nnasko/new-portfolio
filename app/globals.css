@@ -119,16 +119,40 @@ html {
   will-change: opacity;
 }
 
-.will-change-auto {
-  will-change: auto;
+/* Mobile performance optimizations */
+@media (max-width: 768px) {
+  * {
+    /* Force hardware acceleration on mobile */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
+  }
+  
+  /* Reduce animation complexity on mobile */
+  @media (prefers-reduced-motion: no-preference) {
+    .motion-reduce-mobile {
+      animation-duration: 0.3s !important;
+      transition-duration: 0.3s !important;
+    }
+  }
 }
 
-/* GPU acceleration for animated elements */
-[data-framer-motion] {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
+/* Disable animations for low-end devices */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
+
+
 
 /* 3D Transform Utilities for Card Opening Animation */
 .perspective-1000 {

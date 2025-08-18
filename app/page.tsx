@@ -808,6 +808,11 @@ export default function Home() {
                       value: "linkedin.com/in/atanas-kyurkchiev",
                       href: "https://www.linkedin.com/in/atanas-kyurkchiev-36a609291/",
                     },
+                    {
+                      label: "services by:",
+                      value: "kyurkchiev group",
+                      href: null,
+                    },
                   ].map((item, index) => (
                     <p
                       key={index}
@@ -830,6 +835,10 @@ export default function Home() {
                         >
                           {item.value}
                         </a>
+                      ) : item.value ? (
+                        <span className="text-neutral-600 dark:text-neutral-400 font-medium">
+                          {item.value}
+                        </span>
                       ) : null}
                     </p>
                   ))}

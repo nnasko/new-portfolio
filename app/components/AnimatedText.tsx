@@ -124,6 +124,9 @@ export const AnimatedText = ({
     },
   };
 
+  // Detect if user prefers reduced motion
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   // Determine animation state: if once is true and has animated, stay visible
   const animationState = once && hasAnimated ? "visible" : isIntersecting ? "visible" : "hidden";
 
@@ -134,12 +137,14 @@ export const AnimatedText = ({
       variants={container}
       initial="hidden"
       animate={animationState}
+      style={{ willChange: prefersReducedMotion ? 'auto' : 'transform, opacity' }}
     >
       {textArray.map((text, index) => (
         <motion.span
           key={index}
-          variants={item}
+          variants={prefersReducedMotion ? { hidden: { opacity: 0 }, visible: { opacity: 1 } } : item}
           className={type === "words" ? "inline-block mr-1" : "inline-block"}
+          style={{ willChange: prefersReducedMotion ? 'auto' : 'transform, opacity' }}
         >
           {text}
           {type === "words" && index < textArray.length - 1 ? " " : ""}

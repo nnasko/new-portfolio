@@ -423,7 +423,7 @@ export default function CV() {
               >
                 <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
                 <div className="pl-6 md:pl-8">
-                  <h3 className="text-base md:text-lg mb-2 font-medium">developer @ engage media</h3>
+                  <h3 className="text-base md:text-lg mb-2 font-medium">wordpress developer @ engage media</h3>
                   <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2025</p>
                   <motion.ul 
                     className="space-y-2 md:space-y-3 text-sm"
@@ -433,10 +433,10 @@ export default function CV() {
                     viewport={{ once: true }}
                   >
                     {[
-                      "fixed bugs in wordpress components to improve functionality",
-                      "developed and implemented new custom components",
-                      "updated styling and enhanced user interface design",
-                      "optimized development processes and workflows"
+                      "developed and implemented custom wordpress components",
+                      "fixed bugs in existing components to improve functionality", 
+                      "enhanced user interface design and styling",
+                      "optimized development workflows and processes"
                     ].map((item, index) => (
                       <motion.li 
                         key={index}
@@ -459,7 +459,7 @@ export default function CV() {
               >
                 <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
                 <div className="pl-6 md:pl-8">
-                  <h3 className="text-base md:text-lg mb-2 font-medium">developer lead @ surplush</h3>
+                  <h3 className="text-base md:text-lg mb-2 font-medium">senior lead developer @ surplush</h3>
                   <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2024 - present</p>
                   <motion.ul 
                     className="space-y-2 md:space-y-3 text-sm"
@@ -495,8 +495,8 @@ export default function CV() {
               >
                 <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
                 <div className="pl-6 md:pl-8">
-                  <h3 className="text-base md:text-lg mb-2 font-medium">founder @ kronos clothing</h3>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2024 - present</p>
+                  <h3 className="text-base md:text-lg mb-2 font-medium">founder @ kyurkchiev group</h3>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2023 - present</p>
                   <motion.ul 
                     className="space-y-2 md:space-y-3 text-sm"
                     variants={staggerContainer}
@@ -505,10 +505,10 @@ export default function CV() {
                     viewport={{ once: true }}
                   >
                     {[
-                      "developed and launched a custom e-commerce platform",
-                      "implemented secure payment processing and inventory management",
-                      "created automated email marketing systems",
-                      "managed all technical aspects of the business"
+                      "founded and lead a digital solutions company",
+                      "provide web development and e-commerce platforms",
+                      "deliver business automation services to scale digital presence",
+                      "manage multiple client projects"
                     ].map((item, index) => (
                       <motion.li 
                         key={index}

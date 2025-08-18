@@ -391,7 +391,7 @@ export function generateInvoiceHTML(data: InvoiceGenerationData) {
         <div class="container">
           <header class="header">
             <div class="logo">${process.env.NEXT_PUBLIC_ACCOUNT_NAME}</div>
-            <div class="company-tagline">professional web development services</div>
+            <div class="company-tagline">professional web development services • kyurkchiev group</div>
             
             <div class="invoice-meta">
               <div>

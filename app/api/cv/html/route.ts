@@ -44,6 +44,11 @@ function generateCVHTML(theme: string = 'light') {
     .dark .text-neutral-600 { color: #a3a3a3; }
     .dark .text-neutral-700 { color: #d4d4d4; }
     
+    /* Light theme - ensure text is always dark on light background */
+    body:not(.dark) { background: #ffffff; color: #000000; }
+    body:not(.dark) .text-neutral-600 { color: #525252; }
+    body:not(.dark) .text-neutral-700 { color: #374151; }
+    
     @media print {
       body { font-size: 12pt; }
       .container { padding: 1rem; }
@@ -80,7 +85,16 @@ function generateCVHTML(theme: string = 'light') {
         
         <div class="space-y-2">
           <div class="flex justify-between items-start">
-            <h3 class="text-lg">Developer Lead</h3>
+            <h3 class="text-lg">Founder</h3>
+            <span class="text-sm text-neutral-600">2023 - Present</span>
+          </div>
+          <p class="text-neutral-700" style="font-weight: 500;">Kyurkchiev Group</p>
+          <p class="text-sm leading-relaxed">Founded and lead a digital solutions company providing web development, e-commerce platforms, and business automation services to help companies scale their digital presence.</p>
+        </div>
+        
+        <div class="space-y-2">
+          <div class="flex justify-between items-start">
+            <h3 class="text-lg">Senior Developer</h3>
             <span class="text-sm text-neutral-600">2024 - Present</span>
           </div>
           <p class="text-neutral-700" style="font-weight: 500;">Surplush</p>
@@ -89,17 +103,26 @@ function generateCVHTML(theme: string = 'light') {
         
         <div class="space-y-2">
           <div class="flex justify-between items-start">
-            <h3 class="text-lg">Founder & Developer</h3>
-            <span class="text-sm text-neutral-600">2023 - Present</span>
+            <h3 class="text-lg">WordPress Developer</h3>
+            <span class="text-sm text-neutral-600">2025</span>
           </div>
-          <p class="text-neutral-700" style="font-weight: 500;">Kronos Clothing</p>
-          <p class="text-sm leading-relaxed">Created and maintain a custom e-commerce platform for my clothing brand. Handles inventory, orders, and customer management.</p>
+          <p class="text-neutral-700" style="font-weight: 500;">Engage Media</p>
+          <p class="text-sm leading-relaxed">Developed and implemented custom WordPress components, fixed bugs to improve functionality, and enhanced user interface design and development workflows.</p>
         </div>
       </section>
 
       <!-- Education -->
       <section class="space-y-6">
         <h2 class="text-2xl border-b">Education</h2>
+        
+        <div class="space-y-2">
+          <div class="flex justify-between items-start">
+            <h3 class="text-lg">Computer Science</h3>
+            <span class="text-sm text-neutral-600">2025 - Present</span>
+          </div>
+          <p class="text-neutral-700" style="font-weight: 500;">University of Lancaster</p>
+          <p class="text-sm leading-relaxed">Pursuing higher education while actively freelancing, balancing academic studies with professional development work and applying theoretical concepts to real-world client projects.</p>
+        </div>
         
         <div class="space-y-2">
           <div class="flex justify-between items-start">
