@@ -181,6 +181,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <head>
         <link rel="canonical" href={siteConfig.url} />
+        <meta name="description" content={siteConfig.description} />
         <meta name="theme-color" content="#171717" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/alogo.png" />
