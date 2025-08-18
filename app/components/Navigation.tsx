@@ -111,7 +111,7 @@ const Navigation = ({
               />
               <div className="hidden sm:block">
                 <div className="text-sm md:text-base">atanas kyurkchiev</div>
-                <div className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">web developer</div>
+                <div className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">web developer • part of kyurkchiev group</div>
               </div>
             </MinimalLink>
           )}
@@ -269,7 +269,7 @@ const Navigation = ({
                 />
                 <div className="hidden sm:block">
                   <div className="text-sm md:text-base">atanas kyurkchiev</div>
-                  <div className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">web developer</div>
+                  <div className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">web developer • part of kyurkchiev group</div>
                 </div>
               </MinimalLink>
             </motion.div>
