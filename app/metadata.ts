@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "atanas kyurkchiev | web developer & digital solutions",
+  title: "web developer norwich | website design norwich | atanas kyurkchiev",
   description:
-    "professional web development services for businesses. custom websites, web applications, and digital solutions that drive results. get your project started today.",
+    "professional web developer in norwich offering website design, e-commerce development, and digital solutions for norwich businesses. custom websites that drive results. serving norfolk, uk.",
   manifest: "/manifest.json",
   themeColor: "#000000",
   appleWebApp: {
@@ -27,11 +27,11 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "en_GB",
     url: "https://atanaskyurkchiev.info",
-    title: "atanas kyurkchiev | web developer & digital solutions",
+    title: "web developer norwich | website design norwich | atanas kyurkchiev",
     description:
-      "professional web development services for businesses. custom websites, web applications, and digital solutions that drive results. get your project started today.",
+      "professional web developer in norwich offering website design, e-commerce development, and digital solutions for norwich businesses. custom websites that drive results. serving norfolk, uk.",
     images: [
       {
         url: "https://atanaskyurkchiev.info/og-image.jpg",
@@ -43,32 +43,45 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "atanas kyurkchiev | web developer & digital solutions",
+    title: "web developer norwich | website design norwich | atanas kyurkchiev",
     description:
-      "professional web development services for businesses. custom websites, web applications, and digital solutions that drive results. get your project started today.",
+      "professional web developer in norwich offering website design, e-commerce development, and digital solutions for norwich businesses. custom websites that drive results. serving norfolk, uk.",
     images: ["https://atanaskyurkchiev.info/og-image.jpg"],
   },
 };
 
 export const siteConfig = {
   title: "atanas kyurkchiev | web developer & digital solutions",
-  description: "professional web development services helping businesses grow online. specializing in custom websites, web applications, e-commerce solutions, and digital transformation using modern technologies like Next.js, React, and TypeScript.",
+  description: "professional web developer creating modern, high-performance websites and web applications. custom solutions, e-commerce development, and digital transformation that drive real business results.",
   url: "https://atanaskyurkchiev.info",
   author: "atanas kyurkchiev",
   ogImage: "https://atanaskyurkchiev.info/og-image.jpg",
   keywords: [
-    "web developer",
-    "web development services",
-    "business websites",
-    "custom web applications",
-    "e-commerce development",
-    "digital solutions",
-    "next.js developer",
-    "react developer",
-    "typescript",
-    "professional web development",
+    "web developer norwich",
+    "website design norwich", 
+    "norwich web developer",
+    "norwich website design",
+    "web developer norfolk",
+    "website developer norwich",
+    "norwich web design",
+    "freelance web developer norwich",
+    "business websites norwich",
+    "e-commerce development norwich",
+    "custom web applications norwich",
+    "digital solutions norwich",
+    "web development services norwich",
+    "professional web development norfolk",
+    "local web developer norwich",
+    "next.js developer norwich",
+    "react developer norwich",
     "uk web developer",
+    "east anglia web developer",
     "atanas kyurkchiev",
+    "norwich business websites",
+    "norfolk web development",
+    "responsive web design norwich",
+    "small business websites norwich",
+    "startup websites norwich"
   ],
 };
 

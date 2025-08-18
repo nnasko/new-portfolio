@@ -1261,15 +1261,15 @@ export default function HirePage() {
                   let&apos;s build something amazing together
                 </AnimatedText>
                 
-                <AnimatedText
-                  className="text-base md:text-lg text-neutral-600 dark:text-neutral-400 mb-8 leading-relaxed max-w-2xl mx-auto"
-                  type="words"
-                  animationType="fade"
-                  delay={0.4}
-                  stagger={0.02}
-                >
-                  get an instant estimate and start your project with our detailed project planner. all features are explained in simple terms - no technical jargon.
-                </AnimatedText>
+                                  <AnimatedText
+                    className="text-base md:text-lg text-neutral-600 dark:text-neutral-400 mb-8 leading-relaxed max-w-2xl mx-auto"
+                    type="words"
+                    animationType="fade"
+                    delay={0.4}
+                    stagger={0.02}
+                  >
+                    get an instant estimate and start your project with our detailed project planner. all features are explained in simple terms - no technical jargon.
+                  </AnimatedText>
               </motion.div>
               
               <motion.div

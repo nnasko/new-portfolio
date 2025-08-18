@@ -15,44 +15,103 @@ const spaceGrotesk = Space_Grotesk({
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": ["Person", "ProfessionalService"],
+  "@type": ["Person", "ProfessionalService", "LocalBusiness"],
   name: siteConfig.author,
   url: siteConfig.url,
   jobTitle: "Web Developer & Digital Solutions Specialist",
   description: siteConfig.description,
   serviceType: [
     "Web Development",
+    "Website Design", 
     "Custom Web Applications",
-    "E-commerce Development", 
-    "Website Design",
+    "E-commerce Development",
     "Digital Solutions",
-    "API Development"
+    "API Development",
+    "Responsive Web Design",
+    "Business Website Development"
   ],
-  areaServed: "Worldwide",
+  areaServed: [
+    {
+      "@type": "City",
+      "name": "Norwich",
+      "containedInPlace": {
+        "@type": "AdministrativeArea",
+        "name": "Norfolk"
+      }
+    },
+    {
+      "@type": "AdministrativeArea", 
+      "name": "Norfolk"
+    },
+    {
+      "@type": "AdministrativeArea",
+      "name": "East Anglia"
+    },
+    "United Kingdom"
+  ],
+  address: {
+    "@type": "PostalAddress",
+    "addressLocality": "Norwich",
+    "addressRegion": "Norfolk", 
+    "addressCountry": "GB"
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    "latitude": 52.6309,
+    "longitude": 1.2974
+  },
   sameAs: [
     "https://github.com/nnasko",
     "https://www.linkedin.com/in/atanas-kyurkchiev-36a609291/",
   ],
   knowsAbout: [
-    "Web Development",
+    "Web Development Norwich",
+    "Website Design Norwich",
     "Full Stack Development",
     "Next.js",
-    "TypeScript",
+    "TypeScript", 
     "React",
     "E-commerce Solutions",
     "API Development",
-    "Business Websites"
+    "Business Websites",
+    "Local Business Websites",
+    "Norwich Web Development",
+    "Norfolk Web Design"
   ],
-  offers: {
-    "@type": "Service",
-    name: "Professional Web Development Services",
-    description: "Custom web development solutions for businesses including websites, web applications, and e-commerce platforms"
-  },
+  offers: [
+    {
+      "@type": "Service",
+      name: "Website Design Norwich",
+      description: "Professional website design services for Norwich businesses, including responsive design and modern web development",
+      areaServed: "Norwich, Norfolk"
+    },
+    {
+      "@type": "Service", 
+      name: "E-commerce Development",
+      description: "Custom e-commerce solutions for Norwich businesses to sell products online",
+      areaServed: "Norwich, Norfolk"
+    },
+    {
+      "@type": "Service",
+      name: "Business Website Development", 
+      description: "Custom business websites for Norwich companies to generate leads and grow online",
+      areaServed: "Norwich, Norfolk"
+    }
+  ],
   memberOf: {
     "@type": "Organization",
     name: "Kyurkchiev Group",
-    description: "Digital solutions company specializing in web development and business automation"
-  }
+    description: "Digital solutions company specializing in web development and business automation",
+    address: {
+      "@type": "PostalAddress",
+      "addressLocality": "Norwich",
+      "addressRegion": "Norfolk",
+      "addressCountry": "GB"
+    }
+  },
+  priceRange: "£300-£8000",
+  paymentAccepted: ["Cash", "Credit Card", "Bank Transfer"],
+  currenciesAccepted: "GBP"
 };
 
 export const metadata: Metadata = {
@@ -67,7 +126,7 @@ export const metadata: Metadata = {
   creator: siteConfig.author,
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "en_GB",
     url: siteConfig.url,
     title: siteConfig.title,
     description: siteConfig.description,

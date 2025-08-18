@@ -221,7 +221,7 @@ export default function Home() {
                       direction="up"
                       stagger={0.1}
                     >
-                      web development services
+                      hi, i'm atanas
                     </AnimatedText>
                     <AnimatedText
                       className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-neutral-600 dark:text-neutral-400 mb-6 md:mb-8 font-light leading-relaxed"
@@ -231,7 +231,7 @@ export default function Home() {
                       stagger={0.08}
                       delay={0.3}
                     >
-                      custom websites, e-commerce stores & web applications
+                      web developer & digital solutions specialist
                     </AnimatedText>
                     <AnimatedText
                       className="text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed max-w-3xl"
@@ -603,6 +603,10 @@ export default function Home() {
                     </p>
                     <p className="text-sm md:text-base text-neutral-700 dark:text-neutral-300">
                       From startup MVPs to enterprise platforms, I focus on delivering value through clean code, great UX, and scalable architecture.
+                    </p>
+                    <p className="text-sm md:text-base text-neutral-700 dark:text-neutral-300">
+                      Need a <Link href="/web-developer-norwich" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">web developer</Link>? 
+                      I work with businesses of all sizes to create digital solutions that drive growth.
                     </p>
                   </div>
                   
