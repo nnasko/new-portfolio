@@ -333,6 +333,25 @@ export default function CV() {
               </p>
             </motion.div>
             
+            {/* Professional Summary */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="mt-6 md:mt-8"
+            >
+              <h2 className="text-sm md:text-base text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4 tracking-wider uppercase">
+                Professional Summary
+              </h2>
+              <p className="text-sm md:text-base text-neutral-700 dark:text-neutral-300 leading-relaxed max-w-3xl">
+                Experienced full-stack developer with 2+ years of professional experience, specializing in modern web technologies and e-commerce solutions. 
+                Currently balancing <a href="https://lancaster.ac.uk" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Computer Science studies at Lancaster University</a> while running <a href="https://kyurkchiev.group" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Kyurkchiev Group</a>, a digital solutions company. 
+                Proven track record in leading complex development projects, from <a href="https://wordpress.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">WordPress</a> customizations to full-scale business platforms with 
+                integrated payment systems, inventory management, and third-party service integrations. Passionate about creating scalable, 
+                user-focused applications that drive business growth. Based in <a href="/web-developer-norwich" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Norwich, Norfolk</a>.
+              </p>
+            </motion.div>
+            
             <motion.div
               className="flex flex-col sm:flex-row sm:flex-wrap gap-4 md:gap-6 text-sm text-neutral-500 dark:text-neutral-400"
               variants={staggerContainer}
@@ -495,8 +514,8 @@ export default function CV() {
               >
                 <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
                 <div className="pl-6 md:pl-8">
-                  <h3 className="text-base md:text-lg mb-2 font-medium">founder @ kyurkchiev group</h3>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2023 - present</p>
+                  <h3 className="text-base md:text-lg mb-2 font-medium">founder & ceo @ kyurkchiev group</h3>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2025 - present</p>
                   <motion.ul 
                     className="space-y-2 md:space-y-3 text-sm"
                     variants={staggerContainer}
@@ -505,10 +524,11 @@ export default function CV() {
                     viewport={{ once: true }}
                   >
                     {[
-                      "founded and lead a digital solutions company",
-                      "provide web development and e-commerce platforms",
-                      "deliver business automation services to scale digital presence",
-                      "manage multiple client projects"
+                      "founded and lead a digital solutions company specializing in web development",
+                      "built comprehensive business management platform with invoicing and client systems",
+                      "developed custom e-commerce solutions with payment processing integrations",
+                      "manage end-to-end project delivery from consultation to deployment",
+                      "established company operations while transitioning to kyurkchiev.group domain"
                     ].map((item, index) => (
                       <motion.li 
                         key={index}
@@ -580,7 +600,7 @@ export default function CV() {
                 <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
                 <div className="pl-6 md:pl-8">
                   <h3 className="text-base md:text-lg mb-2 font-medium">software development @ access creative college</h3>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2023 - 2024 (completed)</p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2023 - 2025 (completed)</p>
                   <motion.ul 
                     className="space-y-2 md:space-y-3 text-sm"
                     variants={staggerContainer}

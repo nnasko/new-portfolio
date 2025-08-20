@@ -1251,16 +1251,16 @@ export default function HirePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
               >
-                <AnimatedText
-                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight font-light"
-                  type="words"
-                  animationType="slide"
-                  direction="up"
-                  stagger={0.08}
-                >
-                  let&apos;s build something amazing together
-                </AnimatedText>
-                
+                                  <AnimatedText
+                    className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight font-light"
+                    type="words"
+                    animationType="slide"
+                    direction="up"
+                    stagger={0.08}
+                  >
+                    looking for professional development services?
+                  </AnimatedText>
+                  
                                   <AnimatedText
                     className="text-base md:text-lg text-neutral-600 dark:text-neutral-400 mb-8 leading-relaxed max-w-2xl mx-auto"
                     type="words"
@@ -1268,7 +1268,8 @@ export default function HirePage() {
                     delay={0.4}
                     stagger={0.02}
                   >
-                    get an instant estimate and start your project with our detailed project planner. all features are explained in simple terms - no technical jargon.
+                    this is my personal portfolio showcasing my work as a computer science student and developer. 
+                    for professional web development services and business inquiries, please visit kyurkchiev.group.
                   </AnimatedText>
               </motion.div>
               
@@ -1278,21 +1279,36 @@ export default function HirePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.8 }}
               >
-                <button
-                  onClick={() => {
-                    formRef.current?.scrollIntoView({ behavior: "smooth" });
-                    playClick();
-                  }}
-                  className="bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 md:px-8 py-3 rounded-md font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all duration-300"
+                <a
+                  href="https://kyurkchiev.group"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 md:px-8 py-3 rounded-md font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all duration-300 inline-flex items-center gap-2"
+                  onClick={playClick}
                 >
-                  start project planning
-                </button>
+                  visit kyurkchiev.group
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-4 h-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                    />
+                  </svg>
+                </a>
                 
                 <Link
-                  href="/pricing"
+                  href="/about"
                   className="border border-neutral-400 dark:border-neutral-600 bg-transparent text-neutral-900 dark:text-neutral-100 px-6 md:px-8 py-3 rounded-md font-medium hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-300"
+                  onClick={playClick}
                 >
-                  view pricing
+                  about me
                 </Link>
               </motion.div>
             </div>
@@ -1300,153 +1316,130 @@ export default function HirePage() {
         </SectionTransition>
       </Suspense>
 
-      {/* Enhanced Form Section */}
+      {/* Business Redirect Section */}
       <Suspense fallback={<ComponentLoader />}>
         <SectionTransition>
-          <section
-            ref={formRef}
-            className="py-16 md:py-24 px-4 md:px-6 lg:px-12"
-          >
-          <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="text-center mb-8 md:mb-12"
-            >
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-light mb-4">
-                project planner & estimate
-              </h2>
-              <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-400">
-                answer a few questions to get an instant price estimate
-              </p>
-            </motion.div>
-
-            <div className="grid lg:grid-cols-3 gap-8">
-              {/* Form */}
-              <div className="lg:col-span-2">
-                <motion.div 
-                  className="border border-neutral-300 dark:border-neutral-700 p-6 md:p-8 bg-neutral-100/50 dark:bg-neutral-800/50 rounded-md"
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
-                >
-                  {/* Progress indicator */}
-                  <div className="flex justify-between mb-8 md:mb-12">
-                    {formSteps.map((step, index) => (
-                      <div
-                        key={step.title}
-                        className={`flex-1 text-center transition-all duration-500 ${
-                          index === currentStep
-                            ? 'text-neutral-900 dark:text-neutral-100'
-                            : index < currentStep
-                            ? 'text-neutral-700 dark:text-neutral-300'
-                            : 'text-neutral-400 dark:text-neutral-600'
-                        }`}
-                      >
-                        <div className="relative">
-                          <div
-                            className={`w-8 h-8 md:w-10 md:h-10 mx-auto flex items-center justify-center mb-2 md:mb-3 border-2 rounded-md transition-all duration-500 ${
-                              index === currentStep
-                                ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100'
-                                : index < currentStep
-                                ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100'
-                                : 'border-neutral-300 dark:border-neutral-700'
-                            }`}
-                          >
-                            {index < currentStep ? (
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-4 w-4 md:h-5 md:w-5 text-neutral-50 dark:text-neutral-900"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            ) : (
-                              <span className={`text-xs md:text-sm ${index === currentStep ? 'text-neutral-50 dark:text-neutral-900' : ''}`}>
-                                {index + 1}
-                              </span>
-                            )}
-                          </div>
-                          {index < formSteps.length - 1 && (
-                            <div
-                              className={`absolute top-4 md:top-5 left-full w-full h-0.5 -translate-y-1/2 transition-all duration-500 ${
-                                index < currentStep
-                                  ? 'bg-neutral-900 dark:bg-neutral-100'
-                                  : 'bg-neutral-300 dark:bg-neutral-700'
-                              }`}
-                            />
-                          )}
-                        </div>
-                        <span className="text-xs md:text-sm hidden sm:block font-medium">{step.title}</span>
-                        <span className="text-xs text-neutral-500 dark:text-neutral-500 hidden md:block mt-1">{step.description}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Form content */}
-                  <AnimatePresence mode="wait">
-                    <div className="mb-6 md:mb-8">
-                      {renderFormStep()}
-                    </div>
-                  </AnimatePresence>
-
-                  {/* Navigation buttons */}
-                  <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 md:pt-8 border-t border-neutral-200 dark:border-neutral-800">
-                    <button
-                      onClick={prevStep}
-                      disabled={currentStep === 0}
-                      className={`border border-neutral-400 dark:border-neutral-600 bg-transparent text-neutral-900 dark:text-neutral-100 px-6 py-3 rounded-md font-medium transition-all duration-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 ${currentStep === 0 ? 'opacity-0 pointer-events-none' : ''}`}
+          <section className="py-16 md:py-24 px-4 md:px-6 lg:px-12">
+            <div className="max-w-4xl mx-auto">
+              {/* Business Redirect Card */}
+              <motion.div
+                className="mb-16 md:mb-20"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+              >
+                <div className="p-8 md:p-12 border-2 border-neutral-900 dark:border-neutral-100 rounded-md text-center bg-neutral-50 dark:bg-neutral-800">
+                  <div className="w-20 h-20 mx-auto mb-6 bg-neutral-900 dark:bg-neutral-100 rounded-md flex items-center justify-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-10 h-10 text-neutral-50 dark:text-neutral-900"
                     >
-                      previous
-                    </button>
-                    
-                    {currentStep === formSteps.length - 1 ? (
-                      <button
-                        onClick={handleFormSubmit}
-                        className="bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 py-3 rounded-md font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all duration-300"
-                      >
-                        send project inquiry
-                      </button>
-                    ) : (
-                      <button
-                        onClick={nextStep}
-                        className="bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 py-3 rounded-md font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all duration-300"
-                      >
-                        next step
-                      </button>
-                    )}
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                      />
+                    </svg>
                   </div>
-                </motion.div>
-              </div>
+                  <h2 className="text-3xl md:text-4xl font-light mb-4">
+                    professional web development services
+                  </h2>
+                  <p className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 mb-8 leading-relaxed max-w-2xl mx-auto">
+                    for business inquiries, project quotes, and professional web development services, 
+                    please visit kyurkchiev.group where you can explore our full service offerings, 
+                    view detailed pricing, and submit project inquiries through our comprehensive project planner.
+                  </p>
+                  <div className="space-y-4 mb-8">
+                    <a
+                      href="https://kyurkchiev.group"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={playClick}
+                      className="inline-flex items-center gap-3 bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-8 py-4 rounded-md font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all duration-300 text-lg"
+                    >
+                      visit kyurkchiev.group
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={2}
+                        stroke="currentColor"
+                        className="w-5 h-5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                        />
+                      </svg>
+                    </a>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-neutral-600 dark:text-neutral-400">
+                    <div className="flex items-center justify-center gap-2">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      instant project estimates
+                    </div>
+                    <div className="flex items-center justify-center gap-2">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      detailed service packages
+                    </div>
+                    <div className="flex items-center justify-center gap-2">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      professional project planner
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
 
-              {/* Pricing Estimate Sidebar */}
-              <div className="lg:col-span-1">
-                <PricingEstimate estimate={estimate} breakdown={breakdown} />
-              </div>
+              {/* Personal Contact Section */}
+              <motion.div
+                className="text-center"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <h3 className="text-2xl font-light mb-4">or just say hello</h3>
+                <p className="text-neutral-600 dark:text-neutral-400 mb-6 max-w-xl mx-auto">
+                  interested in my personal work, want to collaborate on a project, or just want to chat about technology and development? 
+                  feel free to reach out directly.
+                </p>
+                <a
+                  href="mailto:me@atanaskyurkchiev.info"
+                  onClick={playClick}
+                  className="inline-flex items-center gap-2 border border-neutral-400 dark:border-neutral-600 bg-transparent text-neutral-900 dark:text-neutral-100 px-6 py-3 rounded-md font-medium hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-300"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-4 h-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+                    />
+                  </svg>
+                  me@atanaskyurkchiev.info
+                </a>
+              </motion.div>
             </div>
-
-            <motion.div
-              className="text-center mt-8"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <p className="text-xs text-neutral-500 dark:text-neutral-500">
-                free consultation • no commitment • response within 24 hours
-              </p>
-            </motion.div>
-          </div>
-        </section>
-      </SectionTransition>
+          </section>
+        </SectionTransition>
       </Suspense>
     </main>
   );

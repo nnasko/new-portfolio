@@ -36,7 +36,6 @@ const Navigation = ({
   // Default navigation items
   const defaultNavItems = [
     { href: "/", label: "home" },
-    { href: "/pricing", label: "pricing" },
     { href: "/hire", label: "get started" },
   ];
 
@@ -44,7 +43,6 @@ const Navigation = ({
   const homeNavItems = [
     { href: "#services", label: "services" },
     { href: "#work", label: "work" },
-    { href: "/pricing", label: "pricing" },
     { href: "/hire", label: "get started" },
   ];
 

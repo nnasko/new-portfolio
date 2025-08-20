@@ -52,26 +52,28 @@ export default function AboutPage() {
           >
             <div className="space-y-6 text-base md:text-lg leading-relaxed">
               <p>
-                Hi, I'm Atanas Kyurkchiev, a professional web developer and digital solutions specialist based in Norwich, Norfolk. 
-                I create modern, high-performance websites and web applications that help businesses grow and succeed online.
+                Hi, I'm Atanas Kyurkchiev, an 18-year-old web developer and computer science student from <a href="/web-developer-norwich" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Norwich, Norfolk</a>. 
+                I'm passionate about creating modern web applications and learning new technologies while studying at <a href="https://lancaster.ac.uk" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Lancaster University</a>.
               </p>
               
               <p>
-                With expertise in modern web technologies including React, Next.js, TypeScript, and Node.js, I build everything 
-                from simple business websites to complex e-commerce platforms and custom web applications. My focus is on 
-                delivering clean, user-focused solutions that drive real business results.
+                With expertise in modern web technologies including <a href="https://react.dev" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">React</a>, 
+                <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Next.js</a>, 
+                <a href="https://typescriptlang.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">TypeScript</a>, and 
+                <a href="https://nodejs.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Node.js</a>, I build everything 
+                from personal portfolios to complex full-stack applications. My focus is on clean code, great user experiences, and continuous learning.
               </p>
               
               <p>
-                I work with businesses of all sizes - from local Norwich startups to established companies across the UK. 
-                Whether you need a professional business website, an e-commerce store, or a custom web application, 
-                I provide end-to-end development services with transparent pricing and clear communication.
+                Currently balancing my Computer Science studies with running <a href="https://kyurkchiev.group" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Kyurkchiev Group</a>, 
+                my digital solutions company. Whether it's academic projects, personal experiments, or professional work, 
+                I enjoy tackling challenging problems and building solutions that make a difference.
               </p>
               
               <p>
-                My approach combines technical excellence with business understanding. I don't just build websites - 
-                I create digital solutions that solve real problems and help businesses achieve their goals. Every project 
-                is built with performance, scalability, and user experience as top priorities.
+                My approach combines academic learning with practical application. I believe in building with modern best practices, 
+                performance optimization, and accessibility in mind. Every project is an opportunity to learn something new and 
+                push the boundaries of what's possible with web technologies. You can see some of my work in my <Link href="/work" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">project portfolio</Link>.
               </p>
             </div>
           </motion.div>
@@ -91,10 +93,10 @@ export default function AboutPage() {
               <div>
                 <h3 className="text-lg font-medium mb-4">frontend development</h3>
                 <ul className="space-y-2 text-neutral-600 dark:text-neutral-400">
-                  <li>React & Next.js</li>
-                  <li>TypeScript & JavaScript</li>
-                  <li>HTML5 & CSS3</li>
-                  <li>Tailwind CSS</li>
+                  <li><a href="https://react.dev" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">React</a> & <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Next.js</a></li>
+                  <li><a href="https://typescriptlang.org" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">TypeScript</a> & <a href="https://javascript.info" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">JavaScript</a></li>
+                  <li><a href="https://html.spec.whatwg.org" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">HTML5</a> & <a href="https://css3.info" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">CSS3</a></li>
+                  <li><a href="https://tailwindcss.com" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Tailwind CSS</a></li>
                   <li>Responsive Design</li>
                 </ul>
               </div>
@@ -102,22 +104,22 @@ export default function AboutPage() {
               <div>
                 <h3 className="text-lg font-medium mb-4">backend development</h3>
                 <ul className="space-y-2 text-neutral-600 dark:text-neutral-400">
-                  <li>Node.js & Express</li>
-                  <li>Database Design</li>
-                  <li>API Development</li>
+                  <li><a href="https://nodejs.org" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Node.js</a> & <a href="https://expressjs.com" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Express</a></li>
+                  <li><a href="https://prisma.io" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Prisma</a> & Database Design</li>
+                  <li>REST API Development</li>
                   <li>Authentication Systems</li>
                   <li>Server Management</li>
                 </ul>
               </div>
               
               <div>
-                <h3 className="text-lg font-medium mb-4">business solutions</h3>
+                <h3 className="text-lg font-medium mb-4">tools & platforms</h3>
                 <ul className="space-y-2 text-neutral-600 dark:text-neutral-400">
-                  <li>E-commerce Platforms</li>
-                  <li>Payment Integration</li>
-                  <li>SEO Optimization</li>
+                  <li><a href="https://git-scm.com" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Git</a> & <a href="https://github.com/nnasko" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">GitHub</a></li>
+                  <li><a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Vercel</a> Deployment</li>
+                  <li><a href="https://figma.com" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Figma</a> Design</li>
                   <li>Performance Optimization</li>
-                  <li>Business Automation</li>
+                  <li><Link href="/cv" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">View Full CV</Link></li>
                 </ul>
               </div>
             </div>

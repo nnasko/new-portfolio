@@ -231,21 +231,27 @@ export default function Home() {
                       stagger={0.08}
                       delay={0.3}
                     >
-                      web developer & digital solutions specialist
+                      web developer & creative technologist
                     </AnimatedText>
-                    <AnimatedText
-                      className="text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed max-w-3xl"
-                      type="words"
-                      animationType="slide"
-                      direction="up"
-                      stagger={0.05}
-                      delay={0.6}
-                    >
-                      i build modern, high-performance websites and web
-                      applications that help businesses grow. from simple
-                      business sites to complex e-commerce platforms, i deliver
-                      clean, user-focused solutions that drive results.
-                    </AnimatedText>
+                    <div className="text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed max-w-3xl">
+                      <AnimatedText
+                        type="words"
+                        animationType="slide"
+                        direction="up"
+                        stagger={0.05}
+                        delay={0.6}
+                      >
+                        computer science student at lancaster university, 
+                        founder of kyurkchiev group, and passionate about creating
+                        innovative web experiences. i love building things that 
+                        solve real problems and look beautiful doing it.
+                      </AnimatedText>
+                      <p className="mt-4 text-xs text-neutral-500 dark:text-neutral-500">
+                        studying at <a href="https://lancaster.ac.uk" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors">lancaster university</a> • 
+                        business at <a href="https://kyurkchiev.group" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors">kyurkchiev.group</a> • 
+                        based in <a href="/web-developer-norwich" className="underline hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors">norwich, uk</a>
+                      </p>
+                    </div>
                   </div>
 
                   <div
@@ -254,20 +260,11 @@ export default function Home() {
                   >
                     <div className="hover:scale-105 transition-transform">
                       <Link
-                        href="/pricing"
+                        href="/cv"
                         className="inline-block w-full sm:w-auto text-center border border-neutral-900 bg-neutral-900 dark:bg-neutral-100 dark:border-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 py-3 md:px-4 md:py-2 hover:bg-transparent hover:text-neutral-900 dark:hover:bg-transparent dark:hover:text-neutral-100 transition-colors rounded-lg"
                         onClick={playClick}
                       >
-                        view pricing
-                      </Link>
-                    </div>
-                    <div className="hover:scale-105 transition-transform">
-                      <Link
-                        href="/hire"
-                        className="inline-block w-full sm:w-auto text-center border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-6 py-3 md:px-4 md:py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors rounded-lg"
-                        onClick={playClick}
-                      >
-                        start project
+                        view cv/resume
                       </Link>
                     </div>
                     <div className="hover:scale-105 transition-transform">
@@ -276,7 +273,16 @@ export default function Home() {
                         className="inline-block w-full sm:w-auto text-center border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-6 py-3 md:px-4 md:py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors rounded-lg"
                         onClick={playClick}
                       >
-                        view work
+                        view projects
+                      </Link>
+                    </div>
+                    <div className="hover:scale-105 transition-transform">
+                      <Link
+                        href="/about"
+                        className="inline-block w-full sm:w-auto text-center border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-6 py-3 md:px-4 md:py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors rounded-lg"
+                        onClick={playClick}
+                      >
+                        about me
                       </Link>
                     </div>
                     {isAuthenticated && (
@@ -324,25 +330,25 @@ export default function Home() {
                     direction="up"
                     stagger={0.08}
                   >
-                    why choose me
+                    about me
                   </AnimatedText>
                   <p className="text-neutral-600 dark:text-neutral-400 text-base md:text-lg leading-relaxed">
-                    clean, reliable, and results-focused delivery. i blend product
-                    thinking with engineering to ship fast, maintainable solutions
-                    that look great and perform even better.
+                    i'm an 18-year-old computer science student and developer who's passionate 
+                    about building things that make a difference. currently studying at lancaster 
+                    university while running my own company, kyurkchiev group.
                   </p>
                   <ul className="mt-6 md:mt-8 space-y-3 text-sm md:text-base text-neutral-700 dark:text-neutral-300">
                     <li className="flex items-start gap-3">
                       <span className="mt-1.5 inline-block h-1.5 w-1.5 rounded-full bg-neutral-900 dark:bg-neutral-100 flex-shrink-0" />
-                      performance-first builds with lighthouse A scores
+                      computer science student at lancaster university
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="mt-1.5 inline-block h-1.5 w-1.5 rounded-full bg-neutral-900 dark:bg-neutral-100 flex-shrink-0" />
-                      clear communication, milestones, and predictable timelines
+                      founder & ceo of kyurkchiev group digital solutions
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="mt-1.5 inline-block h-1.5 w-1.5 rounded-full bg-neutral-900 dark:bg-neutral-100 flex-shrink-0" />
-                      modern stack, best practices, and long-term maintainability
+                      2+ years of professional development experience
                     </li>
                   </ul>
                 </div>
@@ -365,22 +371,22 @@ export default function Home() {
         </SectionTransition>
       </Suspense>
 
-      {/* services section - services left, text right (zigzag pattern) */}
+      {/* skills & technologies section */}
       <Suspense fallback={<ComponentLoader />}>
         <SectionTransition delay={0.05}>
           <section
-            id="services"
+            id="skills"
             className="py-16 md:py-24 px-4 md:px-6 lg:px-12"
           >
             <div className="max-w-7xl mx-auto">
               <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16">
-                {/* Services grid on the left */}
+                {/* Skills grid on the left */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 order-2 lg:order-1">
                   {[
                     {
-                      title: "personal websites",
+                      title: "frontend development",
                       description:
-                        "simple portfolio or personal brand websites to showcase your work and establish your online presence",
+                        "react, next.js, typescript, tailwind css - building responsive, interactive user interfaces",
                       icon: (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -393,15 +399,15 @@ export default function Home() {
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                            d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"
                           />
                         </svg>
                       ),
                     },
                     {
-                      title: "business websites",
+                      title: "backend development",
                       description:
-                        "professional websites that convert visitors into customers and represent your brand with modern design and essential features",
+                        "node.js, express, prisma, databases - creating robust server-side applications and apis",
                       icon: (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -414,36 +420,15 @@ export default function Home() {
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            d="M2.25 21h19.5m-18-18v18m2.25-18v18m13.5-18v18m2.25-18v18M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.75m-.75 3h.75m-.75 3h.75m-3.75-18.75h3.75a1.125 1.125 0 011.125 1.125v3.375M21 10.125h.375c.621 0 1.125.504 1.125 1.125"
+                            d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7m0 0a3 3 0 01-3 3"
                           />
                         </svg>
                       ),
                     },
                     {
-                      title: "e-commerce platforms",
+                      title: "full-stack applications",
                       description:
-                        "complete online stores with secure payment processing, inventory management, and customer-friendly shopping experiences",
-                      icon: (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="w-5 h-5 md:w-6 md:h-6"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-                          />
-                        </svg>
-                      ),
-                    },
-                    {
-                      title: "custom web applications",
-                      description:
-                        "bespoke web applications with custom functionality, user authentication, and advanced features tailored to your specific needs",
+                        "end-to-end development of complete web applications with authentication, databases, and integrations",
                       icon: (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -462,9 +447,9 @@ export default function Home() {
                       ),
                     },
                     {
-                      title: "enterprise solutions",
+                      title: "business solutions",
                       description:
-                        "large-scale custom solutions with unlimited features, dedicated support, and advanced security for complex business requirements",
+                        "e-commerce platforms, payment processing, inventory management, and business automation tools",
                       icon: (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -477,48 +462,27 @@ export default function Home() {
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            d="M3.75 21h16.5M4.5 3h15l-.75 18H5.25L4.5 3z"
+                            d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 00-2.25-1.016c-.896 0-1.7.393-2.25 1.016A3.001 3.001 0 003.75 8.734V9.35z"
                           />
                         </svg>
                       ),
                     },
-                    {
-                      title: "additional services",
-                      description:
-                        "ongoing maintenance and support services to keep your website running smoothly and up-to-date",
-                      icon: (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="w-5 h-5 md:w-6 md:h-6"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z"
-                          />
-                        </svg>
-                      ),
-                    },
-                  ].map((service, index) => (
+                  ].map((skill, index) => (
                     <div
-                      key={service.title}
+                      key={skill.title}
                       className="group p-4 md:p-6 border border-neutral-300 dark:border-neutral-700 bg-neutral-100/50 dark:bg-neutral-800/50 hover:bg-neutral-200/50 dark:hover:bg-neutral-700/50 transition-all duration-300 rounded-lg hover:-translate-y-1 opacity-0 animate-fade-in"
                       style={{ animationDelay: `${0.4 + index * 0.1}s` }}
                     >
                       <div className="flex items-start gap-3">
                         <div className="text-neutral-800 dark:text-neutral-200 group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors flex-shrink-0 mt-0.5">
-                          {service.icon}
+                          {skill.icon}
                         </div>
                         <div>
                           <h3 className="text-base md:text-lg font-medium mb-2">
-                            {service.title}
+                            {skill.title}
                           </h3>
                           <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed group-hover:text-neutral-700 dark:group-hover:text-neutral-300 transition-colors">
-                            {service.description}
+                            {skill.description}
                           </p>
                         </div>
                       </div>
@@ -535,7 +499,7 @@ export default function Home() {
                     direction="up"
                     stagger={0.1}
                   >
-                    services i offer
+                    skills & expertise
                   </AnimatedText>
                   <AnimatedText
                     className="text-base md:text-lg text-neutral-600 dark:text-neutral-400 lg:ml-auto max-w-xl"
@@ -544,8 +508,9 @@ export default function Home() {
                     delay={0.3}
                     stagger={0.02}
                   >
-                    comprehensive web development solutions tailored to help
-                    your business succeed in the digital landscape
+                    from frontend interfaces to backend systems, i enjoy 
+                    working across the full technology stack to create 
+                    complete digital solutions
                   </AnimatedText>
 
                   <div
@@ -553,13 +518,15 @@ export default function Home() {
                     style={{ animationDelay: "0.6s" }}
                   >
                     <div className="hover:scale-105 transition-transform inline-block">
-                      <Link
-                        href="/hire"
+                      <a
+                        href="https://kyurkchiev.group"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="inline-block border border-neutral-900 dark:border-neutral-100 rounded-lg bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 md:px-8 py-3 hover:bg-transparent hover:text-neutral-900 dark:hover:bg-transparent dark:hover:text-neutral-100 transition-colors text-sm"
                         onClick={playClick}
                       >
-                        start your project
-                      </Link>
+                        visit kyurkchiev group
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -584,7 +551,7 @@ export default function Home() {
                     direction="up"
                     stagger={0.1}
                   >
-                    client success stories
+                    selected projects
                   </AnimatedText>
                   <AnimatedText
                     className="text-base md:text-lg text-neutral-600 dark:text-neutral-400"
@@ -593,20 +560,22 @@ export default function Home() {
                     delay={0.3}
                     stagger={0.02}
                   >
-                    real projects, real results. see how i&apos;ve helped
-                    businesses grow through innovative web solutions.
+                    a showcase of my work - from e-commerce platforms to 
+                    business websites, each built with modern technology 
+                    and attention to detail.
                   </AnimatedText>
                   
                   <div className="mt-8 md:mt-12 space-y-4">
                     <p className="text-sm md:text-base text-neutral-700 dark:text-neutral-300">
-                      Each project represents a unique challenge solved with custom solutions, modern technology, and attention to detail.
+                      These projects represent different challenges and technologies i've worked with, 
+                      from React and Next.js frontends to custom backend systems.
                     </p>
                     <p className="text-sm md:text-base text-neutral-700 dark:text-neutral-300">
-                      From startup MVPs to enterprise platforms, I focus on delivering value through clean code, great UX, and scalable architecture.
+                      Each project taught me something new and helped me grow as a developer. 
+                      I'm always looking for interesting problems to solve.
                     </p>
                     <p className="text-sm md:text-base text-neutral-700 dark:text-neutral-300">
-                      Need a <Link href="/web-developer-norwich" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">web developer</Link>? 
-                      I work with businesses of all sizes to create digital solutions that drive growth.
+                      For business inquiries, visit <a href="https://kyurkchiev.group" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">kyurkchiev.group</a>
                     </p>
                   </div>
                   
@@ -620,7 +589,7 @@ export default function Home() {
                         className="inline-block border border-neutral-900 dark:border-neutral-100 rounded-lg bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 md:px-8 py-3 hover:bg-transparent hover:text-neutral-900 dark:hover:bg-transparent dark:hover:text-neutral-100 transition-colors text-sm"
                         onClick={playClick}
                       >
-                        let&apos;s build something amazing
+                        get in touch
                       </Link>
                     </div>
                   </div>
@@ -688,7 +657,7 @@ export default function Home() {
                   direction="up"
                   stagger={0.1}
                 >
-                  ready to grow your business online?
+                  let's work together
                 </AnimatedText>
                 <AnimatedText
                   className="text-base md:text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto"
@@ -697,8 +666,9 @@ export default function Home() {
                   delay={0.3}
                   stagger={0.02}
                 >
-                  let&apos;s discuss your project and create a digital solution
-                  that drives real results for your business
+                  interested in collaborating? always open to discussing 
+                  interesting projects, learning opportunities, or just 
+                  having a chat about technology and development
                 </AnimatedText>
               </div>
 
@@ -707,12 +677,14 @@ export default function Home() {
                 style={{ animationDelay: "0.6s" }}
               >
                 <div className="hover:scale-105 transition-transform">
-                  <Link
-                    href="/hire"
+                  <a
+                    href="https://kyurkchiev.group"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center rounded-md gap-3 border-2 border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 md:px-8 py-3 md:py-4 hover:bg-transparent hover:text-neutral-900 dark:hover:bg-transparent dark:hover:text-neutral-100 transition-colors text-sm md:text-base font-medium"
                     onClick={playClick}
                   >
-                    start your project today
+                    business inquiries
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -727,7 +699,7 @@ export default function Home() {
                         d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
                       />
                     </svg>
-                  </Link>
+                  </a>
                 </div>
 
                 <div className="hover:scale-105 transition-transform">
@@ -736,7 +708,7 @@ export default function Home() {
                     className="inline-flex items-center rounded-md gap-3 border border-neutral-400 dark:border-neutral-600 bg-transparent text-neutral-900 dark:text-neutral-100 px-6 md:px-8 py-3 md:py-4 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-sm md:text-base"
                     onClick={playClick}
                   >
-                    send a quick email
+                    say hello
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -760,7 +732,7 @@ export default function Home() {
                 style={{ animationDelay: "0.9s" }}
               >
                 <p className="text-xs md:text-sm text-neutral-500 dark:text-neutral-500">
-                  free consultation • no commitment • quick response
+                  always happy to chat • quick response • based in norwich, uk
                 </p>
               </div>
             </div>
@@ -813,9 +785,9 @@ export default function Home() {
                       href: "https://www.linkedin.com/in/atanas-kyurkchiev-36a609291/",
                     },
                     {
-                      label: "services by:",
-                      value: "kyurkchiev group",
-                      href: null,
+                      label: "business:",
+                      value: "kyurkchiev.group",
+                      href: "https://kyurkchiev.group",
                     },
                   ].map((item, index) => (
                     <p
