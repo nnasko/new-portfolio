@@ -16,7 +16,7 @@ export const ScrollProgress = () => {
         scaleX,
         transformOrigin: "left",
       }}
-      className="fixed top-0 left-0 right-0 h-[1px] bg-neutral-800 dark:bg-neutral-200 z-50"
+      className="fixed top-0 left-0 right-0 h-[1px] bg-emerald-800 dark:bg-emerald-500 z-50"
     />
   );
 };

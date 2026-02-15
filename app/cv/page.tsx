@@ -81,7 +81,7 @@ function ScrollProgress() {
 
   return (
     <motion.div
-      className="fixed top-0 left-0 right-0 h-px bg-neutral-300 dark:bg-neutral-700 z-50 origin-left"
+      className="fixed top-0 left-0 right-0 h-px bg-emerald-800 dark:bg-emerald-600 z-50 origin-left"
       style={{ scaleX }}
     />
   );
@@ -145,20 +145,13 @@ export default function CV() {
       // Check if we're in PDF generation mode
       const urlParams = new URLSearchParams(window.location.search);
       const isPdf = urlParams.get("pdf") === "true";
-      const urlTheme = urlParams.get("theme") || 'light';
-      
       setIsPdfMode(isPdf);
-      setTheme(urlTheme);
+      setTheme('light');
 
-      // Add class to body when in PDF mode
+      // Add class to body when in PDF mode; CV is always light theme
       if (isPdf) {
         document.body.classList.add("pdf-mode");
-        // Apply theme for PDF
-        if (urlTheme === 'dark') {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
+        document.documentElement.classList.remove('dark');
       } else {
         // Detect current theme from system/user preference
         try {
@@ -200,7 +193,7 @@ export default function CV() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ theme }),
+        body: JSON.stringify({ theme: 'light' }),
       });
 
       if (!response.ok) {
@@ -211,7 +204,7 @@ export default function CV() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `atanas-kyurkchiev-cv-${theme}.pdf`;
+      a.download = 'atanas-kyurkchiev-cv.pdf';
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -222,7 +215,7 @@ export default function CV() {
       // Try browser print as fallback
       try {
         const originalTitle = document.title;
-        document.title = `atanas-kyurkchiev-cv-${theme}`;
+        document.title = 'atanas-kyurkchiev-cv';
         document.body.classList.add("pdf-mode");
         
         // Open print dialog
@@ -267,7 +260,7 @@ export default function CV() {
             <button
               onClick={handleDownloadPdf}
               disabled={isGeneratingPdf}
-              className="text-xs md:text-sm border border-neutral-300 dark:border-neutral-700 px-3 md:px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-xs md:text-sm border border-emerald-800/60 dark:border-emerald-600/60 px-3 md:px-4 py-2 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-emerald-900 dark:text-emerald-100 transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span>{isGeneratingPdf ? 'generating...' : 'download cv'}</span>
               {!isGeneratingPdf && (
@@ -340,15 +333,11 @@ export default function CV() {
               transition={{ duration: 0.8, delay: 0.5 }}
               className="mt-6 md:mt-8"
             >
-              <h2 className="text-sm md:text-base text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4 tracking-wider uppercase">
-                Professional Summary
+              <h2 className="text-sm md:text-base text-emerald-800 dark:text-emerald-400 mb-3 md:mb-4 tracking-wider font-medium">
+                professional summary
               </h2>
               <p className="text-sm md:text-base text-neutral-700 dark:text-neutral-300 leading-relaxed max-w-3xl">
-                Experienced full-stack developer with 2+ years of professional experience, specializing in modern web technologies and e-commerce solutions. 
-                Currently balancing <a href="https://lancaster.ac.uk" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Computer Science studies at Lancaster University</a> while running <a href="https://kyurkchiev.group" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Kyurkchiev Group</a>, a digital solutions company. 
-                Proven track record in leading complex development projects, from <a href="https://wordpress.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">WordPress</a> customizations to full-scale business platforms with 
-                integrated payment systems, inventory management, and third-party service integrations. Passionate about creating scalable, 
-                user-focused applications that drive business growth. Based in <a href="/web-developer-norwich" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Norwich, Norfolk</a>.
+                web developer and computer science student with hands-on experience building full-stack and front-end applications. currently junior front end developer at lancaster university and founder of kyurkchiev group. focused on clean code, accessible interfaces, and modern tooling (react, next.js, typescript). comfortable working in agile teams and shipping features from idea to production.
               </p>
             </motion.div>
             
@@ -419,7 +408,7 @@ export default function CV() {
           {/* Enhanced experience section - mobile optimized */}
           <AnimatedSection delay={0.1}>
             <AnimatedText
-              className="text-lg md:text-xl mb-6 md:mb-8 tracking-wider"
+              className="text-lg md:text-xl mb-6 md:mb-8 tracking-wider text-emerald-800 dark:text-emerald-300"
               type="words"
               animationType="slide"
               direction="up"
@@ -437,10 +426,46 @@ export default function CV() {
               <motion.div 
                 variants={staggerItem}
                 className="relative group"
-                whileHover={{ x: window.innerWidth <= 768 ? 0 : 10 }}
+                whileHover={{ x: typeof window !== 'undefined' && window.innerWidth <= 768 ? 0 : 10 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-emerald-800/50 dark:bg-emerald-700/50 group-hover:bg-emerald-700 dark:group-hover:bg-emerald-600 transition-colors"></div>
+                <div className="pl-6 md:pl-8">
+                  <h3 className="text-base md:text-lg mb-2 font-medium">junior front end developer @ lancaster university</h3>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2025 - present</p>
+                  <motion.ul 
+                    className="space-y-2 md:space-y-3 text-sm"
+                    variants={staggerContainer}
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true }}
+                  >
+                    {[
+                      "building and maintaining university web applications and internal tools",
+                      "implementing accessible, responsive interfaces with modern front-end stack",
+                      "collaborating with designers and backend teams in an agile environment",
+                      "contributing to code quality, testing, and documentation"
+                    ].map((item, index) => (
+                      <motion.li 
+                        key={index}
+                        variants={staggerItem}
+                        className="flex items-start gap-3"
+                      >
+                        <span className="w-1.5 h-1.5 bg-emerald-700 dark:bg-emerald-500 rounded-full mt-2 flex-shrink-0"></span>
+                        {item}
+                      </motion.li>
+                    ))}
+                  </motion.ul>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                variants={staggerItem}
+                className="relative group"
+                whileHover={{ x: typeof window !== 'undefined' && window.innerWidth <= 768 ? 0 : 10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-emerald-800/50 dark:bg-emerald-700/50 group-hover:bg-emerald-700 dark:group-hover:bg-emerald-600 transition-colors"></div>
                 <div className="pl-6 md:pl-8">
                   <h3 className="text-base md:text-lg mb-2 font-medium">wordpress developer @ engage media</h3>
                   <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2025</p>
@@ -462,7 +487,7 @@ export default function CV() {
                         variants={staggerItem}
                         className="flex items-start gap-3"
                       >
-                        <span className="w-1 h-1 bg-neutral-400 rounded-full mt-2 flex-shrink-0"></span>
+                        <span className="w-1.5 h-1.5 bg-emerald-700 dark:bg-emerald-500 rounded-full mt-2 flex-shrink-0"></span>
                         {item}
                       </motion.li>
                     ))}
@@ -473,10 +498,10 @@ export default function CV() {
               <motion.div 
                 variants={staggerItem}
                 className="relative group"
-                whileHover={{ x: window.innerWidth <= 768 ? 0 : 10 }}
+                whileHover={{ x: typeof window !== 'undefined' && window.innerWidth <= 768 ? 0 : 10 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-emerald-800/50 dark:bg-emerald-700/50 group-hover:bg-emerald-700 dark:group-hover:bg-emerald-600 transition-colors"></div>
                 <div className="pl-6 md:pl-8">
                   <h3 className="text-base md:text-lg mb-2 font-medium">senior lead developer @ surplush</h3>
                   <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2024 - present</p>
@@ -498,7 +523,7 @@ export default function CV() {
                         variants={staggerItem}
                         className="flex items-start gap-3"
                       >
-                        <span className="w-1 h-1 bg-neutral-400 rounded-full mt-2 flex-shrink-0"></span>
+                        <span className="w-1.5 h-1.5 bg-emerald-700 dark:bg-emerald-500 rounded-full mt-2 flex-shrink-0"></span>
                         {item}
                       </motion.li>
                     ))}
@@ -509,10 +534,10 @@ export default function CV() {
               <motion.div 
                 variants={staggerItem}
                 className="relative group"
-                whileHover={{ x: window.innerWidth <= 768 ? 0 : 10 }}
+                whileHover={{ x: typeof window !== 'undefined' && window.innerWidth <= 768 ? 0 : 10 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-emerald-800/50 dark:bg-emerald-700/50 group-hover:bg-emerald-700 dark:group-hover:bg-emerald-600 transition-colors"></div>
                 <div className="pl-6 md:pl-8">
                   <h3 className="text-base md:text-lg mb-2 font-medium">founder & ceo @ kyurkchiev group</h3>
                   <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2025 - present</p>
@@ -535,7 +560,7 @@ export default function CV() {
                         variants={staggerItem}
                         className="flex items-start gap-3"
                       >
-                        <span className="w-1 h-1 bg-neutral-400 rounded-full mt-2 flex-shrink-0"></span>
+                        <span className="w-1.5 h-1.5 bg-emerald-700 dark:bg-emerald-500 rounded-full mt-2 flex-shrink-0"></span>
                         {item}
                       </motion.li>
                     ))}
@@ -548,7 +573,7 @@ export default function CV() {
           {/* Enhanced education section - mobile optimized */}
           <AnimatedSection delay={0.2}>
             <AnimatedText
-              className="text-lg md:text-xl mb-6 md:mb-8 tracking-wider"
+              className="text-lg md:text-xl mb-6 md:mb-8 tracking-wider text-emerald-800 dark:text-emerald-300"
               type="words"
               animationType="slide"
               direction="up"
@@ -559,12 +584,12 @@ export default function CV() {
             <div className="space-y-8 md:space-y-12">
               <motion.div 
                 className="relative group"
-                whileHover={{ x: window.innerWidth <= 768 ? 0 : 10 }}
+                whileHover={{ x: typeof window !== 'undefined' && window.innerWidth <= 768 ? 0 : 10 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-emerald-800/50 dark:bg-emerald-700/50 group-hover:bg-emerald-700 dark:group-hover:bg-emerald-600 transition-colors"></div>
                 <div className="pl-6 md:pl-8">
-                  <h3 className="text-base md:text-lg mb-2 font-medium">computer science @ university of lancaster (current)</h3>
+                  <h3 className="text-base md:text-lg mb-2 font-medium">computer science @ lancaster university (current)</h3>
                   <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2025 - present</p>
                   <motion.ul 
                     className="space-y-2 md:space-y-3 text-sm"
@@ -584,7 +609,7 @@ export default function CV() {
                         variants={staggerItem}
                         className="flex items-start gap-3"
                       >
-                        <span className="w-1 h-1 bg-neutral-400 rounded-full mt-2 flex-shrink-0"></span>
+                        <span className="w-1.5 h-1.5 bg-emerald-700 dark:bg-emerald-500 rounded-full mt-2 flex-shrink-0"></span>
                         {item}
                       </motion.li>
                     ))}
@@ -594,13 +619,13 @@ export default function CV() {
 
               <motion.div 
                 className="relative group"
-                whileHover={{ x: window.innerWidth <= 768 ? 0 : 10 }}
+                whileHover={{ x: typeof window !== 'undefined' && window.innerWidth <= 768 ? 0 : 10 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-emerald-800/50 dark:bg-emerald-700/50 group-hover:bg-emerald-700 dark:group-hover:bg-emerald-600 transition-colors"></div>
                 <div className="pl-6 md:pl-8">
                   <h3 className="text-base md:text-lg mb-2 font-medium">software development @ access creative college</h3>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2023 - 2025 (completed)</p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2023 – 2025 (completed)</p>
                   <motion.ul 
                     className="space-y-2 md:space-y-3 text-sm"
                     variants={staggerContainer}
@@ -620,7 +645,7 @@ export default function CV() {
                         variants={staggerItem}
                         className="flex items-start gap-3"
                       >
-                        <span className="w-1 h-1 bg-neutral-400 rounded-full mt-2 flex-shrink-0"></span>
+                        <span className="w-1.5 h-1.5 bg-emerald-700 dark:bg-emerald-500 rounded-full mt-2 flex-shrink-0"></span>
                         {item}
                       </motion.li>
                     ))}
@@ -630,10 +655,10 @@ export default function CV() {
 
               <motion.div 
                 className="relative group"
-                whileHover={{ x: window.innerWidth <= 768 ? 0 : 10 }}
+                whileHover={{ x: typeof window !== 'undefined' && window.innerWidth <= 768 ? 0 : 10 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800 group-hover:bg-neutral-400 dark:group-hover:bg-neutral-600 transition-colors"></div>
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-emerald-800/50 dark:bg-emerald-700/50 group-hover:bg-emerald-700 dark:group-hover:bg-emerald-600 transition-colors"></div>
                 <div className="pl-6 md:pl-8">
                   <h3 className="text-base md:text-lg mb-2 font-medium">gcses @ reepham high school</h3>
                   <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2023</p>
@@ -657,7 +682,7 @@ export default function CV() {
                         variants={staggerItem}
                         className="flex items-start gap-3"
                       >
-                        <span className="w-1 h-1 bg-neutral-400 rounded-full mt-2 flex-shrink-0"></span>
+                        <span className="w-1.5 h-1.5 bg-emerald-700 dark:bg-emerald-500 rounded-full mt-2 flex-shrink-0"></span>
                         {item}
                       </motion.li>
                     ))}
@@ -670,7 +695,7 @@ export default function CV() {
           {/* Enhanced skills section - mobile optimized */}
           <AnimatedSection delay={0.3}>
             <AnimatedText
-              className="text-lg md:text-xl mb-6 md:mb-8 tracking-wider"
+              className="text-lg md:text-xl mb-6 md:mb-8 tracking-wider text-emerald-800 dark:text-emerald-300"
               type="words"
               animationType="slide"
               direction="up"
@@ -691,7 +716,7 @@ export default function CV() {
                     ease: [0.33, 1, 0.68, 1]
                   }}
                 >
-                  <h3 className="text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4 text-sm tracking-wider">
+                  <h3 className="text-emerald-800 dark:text-emerald-400 mb-3 md:mb-4 text-sm tracking-wider font-medium">
                     {category}
                   </h3>
                   <ul className="space-y-1 md:space-y-2 text-sm">

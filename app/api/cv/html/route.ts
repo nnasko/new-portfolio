@@ -1,10 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-function generateCVHTML(theme: string = 'light') {
-  const isDark = theme === 'dark';
-  
+function generateCVHTML() {
   return `<!DOCTYPE html>
-<html class="${isDark ? 'dark' : ''}">
+<html lang="en">
 <head>
   <title>Atanas Kyurkchiev - CV</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,7 +21,7 @@ function generateCVHTML(theme: string = 'light') {
     .text-lg { font-size: 1.125rem; font-weight: 500; }
     .text-sm { font-size: 0.875rem; }
     .text-xs { font-size: 0.75rem; }
-    .border-b { border-bottom: 1px solid #e5e5e5; padding-bottom: 0.5rem; }
+    .border-b { border-bottom: 2px solid #047857; padding-bottom: 0.5rem; }
     .skill-tag { display: inline-block; padding: 0.25rem 0.5rem; margin: 0.125rem; border: 1px solid #e5e5e5; background: #f5f5f5; font-size: 0.75rem; }
     .flex { display: flex; }
     .flex-wrap { flex-wrap: wrap; }
@@ -37,17 +35,10 @@ function generateCVHTML(theme: string = 'light') {
     .leading-relaxed { line-height: 1.625; }
     .mb-3 { margin-bottom: 0.75rem; }
     
-    /* Dark theme */
-    .dark { background: #1a1a1a; color: #e5e5e5; }
-    .dark .border-b { border-color: #404040; }
-    .dark .skill-tag { background: #2a2a2a; border-color: #404040; color: #e5e5e5; }
-    .dark .text-neutral-600 { color: #a3a3a3; }
-    .dark .text-neutral-700 { color: #d4d4d4; }
-    
-    /* Light theme - ensure text is always dark on light background */
-    body:not(.dark) { background: #ffffff; color: #000000; }
-    body:not(.dark) .text-neutral-600 { color: #525252; }
-    body:not(.dark) .text-neutral-700 { color: #374151; }
+    body { background: #ffffff; color: #000000; }
+    .text-neutral-600 { color: #525252; }
+    .text-neutral-700 { color: #374151; }
+    .skill-tag { background: #ecfdf5; border-color: #047857; color: #065f46; }
     
     @media print {
       body { font-size: 12pt; }
@@ -55,13 +46,13 @@ function generateCVHTML(theme: string = 'light') {
     }
   </style>
 </head>
-<body class="${isDark ? 'dark' : ''}">
+<body>
   <div class="container">
     <div class="space-y-12">
       <!-- Header -->
       <header class="text-center space-y-4">
-        <h1 class="text-4xl">Atanas Kyurkchiev</h1>
-        <p class="text-xl text-neutral-600">Web Developer & Digital Solutions Specialist</p>
+        <h1 class="text-4xl">atanas kyurkchiev</h1>
+        <p class="text-xl text-neutral-600">web developer & digital solutions specialist</p>
         <div class="flex justify-center space-x-6 text-sm">
           <span>me@atanaskyurkchiev.info</span>
           <span>github.com/nnasko</span>
@@ -71,106 +62,108 @@ function generateCVHTML(theme: string = 'light') {
 
       <!-- About -->
       <section class="space-y-4">
-        <h2 class="text-2xl border-b">About</h2>
-        <p class="leading-relaxed">
-          I'm a passionate web developer dedicated to helping businesses succeed in the digital world. 
-          With expertise in modern technologies and a client-first approach, I create solutions that not only look great 
-          but drive real business results. I believe in building long-term partnerships with my clients.
+        <h2 class="text-2xl border-b">professional summary</h2>
+        <p class="leading-relaxed text-neutral-700">
+          web developer and computer science student with hands-on experience building full-stack and front-end applications. currently junior front end developer at lancaster university and founder of kyurkchiev group. focused on clean code, accessible interfaces, and modern tooling (react, next.js, typescript). comfortable working in agile teams and shipping features from idea to production.
         </p>
       </section>
 
       <!-- Experience -->
       <section class="space-y-6">
-        <h2 class="text-2xl border-b">Experience</h2>
+        <h2 class="text-2xl border-b">experience</h2>
         
         <div class="space-y-2">
           <div class="flex justify-between items-start">
-            <h3 class="text-lg">Founder</h3>
-            <span class="text-sm text-neutral-600">2023 - Present</span>
+            <h3 class="text-lg">junior front end developer</h3>
+            <span class="text-sm text-neutral-600">2025 - present</span>
           </div>
-          <p class="text-neutral-700" style="font-weight: 500;">Kyurkchiev Group</p>
-          <p class="text-sm leading-relaxed">Founded and lead a digital solutions company providing web development, e-commerce platforms, and business automation services to help companies scale their digital presence.</p>
+          <p class="text-neutral-700" style="font-weight: 500;">lancaster university</p>
+          <p class="text-sm leading-relaxed">building and maintaining university web applications and internal tools. implementing accessible, responsive interfaces with modern front-end stack. collaborating with designers and backend teams in an agile environment. contributing to code quality, testing, and documentation.</p>
         </div>
         
         <div class="space-y-2">
           <div class="flex justify-between items-start">
-            <h3 class="text-lg">Senior Developer</h3>
-            <span class="text-sm text-neutral-600">2024 - Present</span>
-          </div>
-          <p class="text-neutral-700" style="font-weight: 500;">Surplush</p>
-          <p class="text-sm leading-relaxed">Leading development of a B2B platform connecting businesses with surplus supplies. Built with Next.js, PostgreSQL, and modern web technologies.</p>
-        </div>
-        
-        <div class="space-y-2">
-          <div class="flex justify-between items-start">
-            <h3 class="text-lg">WordPress Developer</h3>
+            <h3 class="text-lg">wordpress developer</h3>
             <span class="text-sm text-neutral-600">2025</span>
           </div>
-          <p class="text-neutral-700" style="font-weight: 500;">Engage Media</p>
-          <p class="text-sm leading-relaxed">Developed and implemented custom WordPress components, fixed bugs to improve functionality, and enhanced user interface design and development workflows.</p>
+          <p class="text-neutral-700" style="font-weight: 500;">engage media</p>
+          <p class="text-sm leading-relaxed">developed and implemented custom wordpress components, fixed bugs to improve functionality, and enhanced user interface design and development workflows.</p>
+        </div>
+        
+        <div class="space-y-2">
+          <div class="flex justify-between items-start">
+            <h3 class="text-lg">senior lead developer</h3>
+            <span class="text-sm text-neutral-600">2024 - present</span>
+          </div>
+          <p class="text-neutral-700" style="font-weight: 500;">surplush</p>
+          <p class="text-sm leading-relaxed">leading development of a b2b platform connecting businesses with surplus supplies. built with next.js, postgresql, and modern web technologies.</p>
+        </div>
+        
+        <div class="space-y-2">
+          <div class="flex justify-between items-start">
+            <h3 class="text-lg">founder & ceo</h3>
+            <span class="text-sm text-neutral-600">2025 - present</span>
+          </div>
+          <p class="text-neutral-700" style="font-weight: 500;">kyurkchiev group</p>
+          <p class="text-sm leading-relaxed">founded and lead a digital solutions company providing web development, e-commerce platforms, and business automation services to help companies scale their digital presence.</p>
         </div>
       </section>
 
       <!-- Education -->
       <section class="space-y-6">
-        <h2 class="text-2xl border-b">Education</h2>
+        <h2 class="text-2xl border-b">education</h2>
         
         <div class="space-y-2">
           <div class="flex justify-between items-start">
-            <h3 class="text-lg">Computer Science</h3>
-            <span class="text-sm text-neutral-600">2025 - Present</span>
+            <h3 class="text-lg">computer science</h3>
+            <span class="text-sm text-neutral-600">2025 - present</span>
           </div>
-          <p class="text-neutral-700" style="font-weight: 500;">University of Lancaster</p>
-          <p class="text-sm leading-relaxed">Pursuing higher education while actively freelancing, balancing academic studies with professional development work and applying theoretical concepts to real-world client projects.</p>
+          <p class="text-neutral-700" style="font-weight: 500;">lancaster university</p>
+          <p class="text-sm leading-relaxed">pursuing higher education while actively freelancing, balancing academic studies with professional development work and applying theoretical concepts to real-world client projects.</p>
         </div>
         
         <div class="space-y-2">
           <div class="flex justify-between items-start">
-            <h3 class="text-lg">Software Development</h3>
+            <h3 class="text-lg">software development</h3>
             <span class="text-sm text-neutral-600">2023 - 2025</span>
           </div>
-          <p class="text-neutral-700" style="font-weight: 500;">Access Creative College</p>
-          <p class="text-sm leading-relaxed">Comprehensive program covering full-stack development, database design, and software engineering principles.</p>
+          <p class="text-neutral-700" style="font-weight: 500;">access creative college</p>
+          <p class="text-sm leading-relaxed">comprehensive program covering full-stack development, database design, and software engineering principles.</p>
         </div>
       </section>
 
       <!-- Skills -->
       <section class="space-y-6">
-        <h2 class="text-2xl border-b">Skills</h2>
+        <h2 class="text-2xl border-b">skills</h2>
         <div class="grid-3">
           <div>
-            <h3 class="text-lg mb-3">Technical</h3>
+            <h3 class="text-lg mb-3">technical</h3>
             <div class="flex flex-wrap gap-2">
-              <span class="skill-tag">JavaScript/TypeScript</span>
-              <span class="skill-tag">React</span>
-              <span class="skill-tag">Next.js</span>
-              <span class="skill-tag">Node.js</span>
-              <span class="skill-tag">Python</span>
-              <span class="skill-tag">PostgreSQL</span>
-              <span class="skill-tag">Prisma</span>
-              <span class="skill-tag">Git</span>
-              <span class="skill-tag">Docker</span>
-              <span class="skill-tag">AWS</span>
+              <span class="skill-tag">javascript / typescript</span>
+              <span class="skill-tag">react</span>
+              <span class="skill-tag">next.js</span>
+              <span class="skill-tag">node.js</span>
+              <span class="skill-tag">python</span>
+              <span class="skill-tag">postgresql</span>
+              <span class="skill-tag">prisma</span>
+              <span class="skill-tag">git</span>
+              <span class="skill-tag">tailwind css</span>
             </div>
           </div>
           <div>
-            <h3 class="text-lg mb-3">Design</h3>
+            <h3 class="text-lg mb-3">design</h3>
             <div class="flex flex-wrap gap-2">
-              <span class="skill-tag">UI/UX Design</span>
-              <span class="skill-tag">Responsive Design</span>
-              <span class="skill-tag">Tailwind CSS</span>
-              <span class="skill-tag">Figma</span>
-              <span class="skill-tag">Adobe Creative Suite</span>
+              <span class="skill-tag">ui/ux</span>
+              <span class="skill-tag">responsive design</span>
+              <span class="skill-tag">figma</span>
             </div>
           </div>
           <div>
-            <h3 class="text-lg mb-3">Soft Skills</h3>
+            <h3 class="text-lg mb-3">other</h3>
             <div class="flex flex-wrap gap-2">
-              <span class="skill-tag">Problem Solving</span>
-              <span class="skill-tag">Team Leadership</span>
-              <span class="skill-tag">Project Management</span>
-              <span class="skill-tag">Communication</span>
-              <span class="skill-tag">Adaptability</span>
+              <span class="skill-tag">problem solving</span>
+              <span class="skill-tag">communication</span>
+              <span class="skill-tag">agile</span>
             </div>
           </div>
         </div>
@@ -181,12 +174,9 @@ function generateCVHTML(theme: string = 'light') {
 </html>`;
 }
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const theme = searchParams.get('theme') || 'light';
-  
-  const html = generateCVHTML(theme);
-  
+export async function GET() {
+  const html = generateCVHTML();
+
   return new NextResponse(html, {
     headers: {
       'Content-Type': 'text/html',

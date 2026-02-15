@@ -52,20 +52,20 @@ export default function AboutPage() {
           >
             <div className="space-y-6 text-base md:text-lg leading-relaxed">
               <p>
-                Hi, I'm Atanas Kyurkchiev, an 18-year-old web developer and computer science student from <a href="/web-developer-norwich" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Norwich, Norfolk</a>. 
-                I'm passionate about creating modern web applications and learning new technologies while studying at <a href="https://lancaster.ac.uk" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Lancaster University</a>.
+                Hi, I'm Atanas Kyurkchiev, an 18-year-old web developer and computer science student from <a href="/web-developer-norwich" className="underline hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Norwich, Norfolk</a>. 
+                I'm passionate about creating modern web applications and learning new technologies while studying at <a href="https://lancaster.ac.uk" target="_blank" rel="noopener noreferrer" className="underline hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Lancaster University</a>.
               </p>
               
               <p>
-                With expertise in modern web technologies including <a href="https://react.dev" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">React</a>, 
-                <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Next.js</a>, 
-                <a href="https://typescriptlang.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">TypeScript</a>, and 
-                <a href="https://nodejs.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Node.js</a>, I build everything 
+                With expertise in modern web technologies including <a href="https://react.dev" target="_blank" rel="noopener noreferrer" className="underline hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">React</a>, 
+                <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Next.js</a>, 
+                <a href="https://typescriptlang.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">TypeScript</a>, and 
+                <a href="https://nodejs.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Node.js</a>, I build everything 
                 from personal portfolios to complex full-stack applications. My focus is on clean code, great user experiences, and continuous learning.
               </p>
               
               <p>
-                Currently balancing my Computer Science studies with running <a href="https://kyurkchiev.group" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Kyurkchiev Group</a>, 
+                Currently balancing my Computer Science studies with running <a href="https://kyurkchiev.group" target="_blank" rel="noopener noreferrer" className="underline hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Kyurkchiev Group</a>, 
                 my digital solutions company. Whether it's academic projects, personal experiments, or professional work, 
                 I enjoy tackling challenging problems and building solutions that make a difference.
               </p>
@@ -73,7 +73,7 @@ export default function AboutPage() {
               <p>
                 My approach combines academic learning with practical application. I believe in building with modern best practices, 
                 performance optimization, and accessibility in mind. Every project is an opportunity to learn something new and 
-                push the boundaries of what's possible with web technologies. You can see some of my work in my <Link href="/work" className="underline hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">project portfolio</Link>.
+                push the boundaries of what's possible with web technologies. You can see some of my work in my <Link href="/work" className="underline hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">project portfolio</Link>.
               </p>
             </div>
           </motion.div>
@@ -142,14 +142,14 @@ export default function AboutPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/hire"
-                className="inline-flex items-center gap-2 bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-8 py-4 rounded-md font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all duration-300"
+                className="inline-flex items-center gap-2 bg-emerald-800 dark:bg-emerald-600 text-white px-8 py-4 rounded-md font-medium hover:bg-emerald-700 dark:hover:bg-emerald-500 transition-all duration-300"
               >
                 start a project
               </Link>
               
               <a
                 href="mailto:me@atanaskyurkchiev.info"
-                className="inline-flex items-center gap-2 border border-neutral-400 dark:border-neutral-600 bg-transparent text-neutral-900 dark:text-neutral-100 px-8 py-4 rounded-md font-medium hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-300"
+                className="inline-flex items-center gap-2 border border-emerald-700/60 dark:border-emerald-500/60 bg-transparent text-emerald-900 dark:text-emerald-100 px-8 py-4 rounded-md font-medium hover:bg-emerald-50 dark:hover:bg-emerald-950/50 transition-all duration-300"
               >
                 send email
               </a>

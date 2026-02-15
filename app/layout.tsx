@@ -182,7 +182,7 @@ export default function RootLayout({
       <head>
         <link rel="canonical" href={siteConfig.url} />
         <meta name="description" content={siteConfig.description} />
-        <meta name="theme-color" content="#171717" />
+        <meta name="theme-color" content="#047857" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/alogo.png" />
         <script
@@ -190,7 +190,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${spaceGrotesk.variable} font-sans text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-900 transition-colors`}>
+      <body className={`${spaceGrotesk.variable} font-sans text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-900 transition-colors [--brand-green:#047857]`}>
         <ClientLayout>{children}</ClientLayout>
         <ClientGoogleAds />
         <Analytics />

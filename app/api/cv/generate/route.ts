@@ -5,9 +5,8 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export async function POST(request: NextRequest) {
   try {
-    const { theme } = await request.json();
-    console.log('Starting PDF generation...');
-    console.log('Theme:', theme);
+    await request.json();
+    console.log('Starting PDF generation (light theme only)...');
     
     const browser = await puppeteer.launch({
       headless: true,
@@ -33,7 +32,7 @@ export async function POST(request: NextRequest) {
       ? 'https://atanaskyurkchiev.info' 
       : 'http://localhost:3000';
     
-    const url = `${baseUrl}/api/cv/html?theme=${theme}`;
+    const url = `${baseUrl}/api/cv/html`;
     
     console.log('Navigating to:', url);
     
@@ -85,7 +84,7 @@ export async function POST(request: NextRequest) {
     return new NextResponse(pdf, {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="atanas-kyurkchiev-cv-${theme}.pdf"`,
+        'Content-Disposition': 'attachment; filename="atanas-kyurkchiev-cv.pdf"',
         'Content-Length': pdf.length.toString()
       }
     });

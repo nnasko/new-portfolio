@@ -247,9 +247,9 @@ export default function Home() {
                         solve real problems and look beautiful doing it.
                       </AnimatedText>
                       <p className="mt-4 text-xs text-neutral-500 dark:text-neutral-500">
-                        studying at <a href="https://lancaster.ac.uk" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors">lancaster university</a> • 
-                        business at <a href="https://kyurkchiev.group" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors">kyurkchiev.group</a> • 
-                        based in <a href="/web-developer-norwich" className="underline hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors">norwich, uk</a>
+                        studying at <a href="https://lancaster.ac.uk" target="_blank" rel="noopener noreferrer" className="underline hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">lancaster university</a> • 
+business at <a href="https://kyurkchiev.group" target="_blank" rel="noopener noreferrer" className="underline hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">kyurkchiev.group</a> •
+                        based in <a href="/web-developer-norwich" className="underline hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">norwich, uk</a>
                       </p>
                     </div>
                   </div>
@@ -261,7 +261,7 @@ export default function Home() {
                     <div className="hover:scale-105 transition-transform">
                       <Link
                         href="/cv"
-                        className="inline-block w-full sm:w-auto text-center border border-neutral-900 bg-neutral-900 dark:bg-neutral-100 dark:border-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 py-3 md:px-4 md:py-2 hover:bg-transparent hover:text-neutral-900 dark:hover:bg-transparent dark:hover:text-neutral-100 transition-colors rounded-lg"
+                        className="inline-block w-full sm:w-auto text-center border border-emerald-800 bg-emerald-800 dark:bg-emerald-600 dark:border-emerald-600 text-white px-6 py-3 md:px-4 md:py-2 hover:bg-transparent hover:text-emerald-800 dark:hover:bg-transparent dark:hover:text-emerald-400 transition-colors rounded-lg"
                         onClick={playClick}
                       >
                         view cv/resume
@@ -270,7 +270,7 @@ export default function Home() {
                     <div className="hover:scale-105 transition-transform">
                       <Link
                         href="#work"
-                        className="inline-block w-full sm:w-auto text-center border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-6 py-3 md:px-4 md:py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors rounded-lg"
+                        className="inline-block w-full sm:w-auto text-center border border-emerald-800/50 bg-emerald-50/80 dark:bg-emerald-950/30 dark:border-emerald-700/50 px-6 py-3 md:px-4 md:py-2 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 hover:border-emerald-700 transition-colors rounded-lg text-emerald-900 dark:text-emerald-100"
                         onClick={playClick}
                       >
                         view projects
@@ -279,7 +279,7 @@ export default function Home() {
                     <div className="hover:scale-105 transition-transform">
                       <Link
                         href="/about"
-                        className="inline-block w-full sm:w-auto text-center border border-neutral-300 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 px-6 py-3 md:px-4 md:py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors rounded-lg"
+                        className="inline-block w-full sm:w-auto text-center border border-emerald-800/50 bg-emerald-50/80 dark:bg-emerald-950/30 dark:border-emerald-700/50 px-6 py-3 md:px-4 md:py-2 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 hover:border-emerald-700 transition-colors rounded-lg text-emerald-900 dark:text-emerald-100"
                         onClick={playClick}
                       >
                         about me
@@ -339,15 +339,15 @@ export default function Home() {
                   </p>
                   <ul className="mt-6 md:mt-8 space-y-3 text-sm md:text-base text-neutral-700 dark:text-neutral-300">
                     <li className="flex items-start gap-3">
-                      <span className="mt-1.5 inline-block h-1.5 w-1.5 rounded-full bg-neutral-900 dark:bg-neutral-100 flex-shrink-0" />
+                      <span className="mt-1.5 inline-block h-1.5 w-1.5 rounded-full bg-emerald-700 dark:bg-emerald-500 flex-shrink-0" />
                       computer science student at lancaster university
                     </li>
                     <li className="flex items-start gap-3">
-                      <span className="mt-1.5 inline-block h-1.5 w-1.5 rounded-full bg-neutral-900 dark:bg-neutral-100 flex-shrink-0" />
+                      <span className="mt-1.5 inline-block h-1.5 w-1.5 rounded-full bg-emerald-700 dark:bg-emerald-500 flex-shrink-0" />
                       founder & ceo of kyurkchiev group digital solutions
                     </li>
                     <li className="flex items-start gap-3">
-                      <span className="mt-1.5 inline-block h-1.5 w-1.5 rounded-full bg-neutral-900 dark:bg-neutral-100 flex-shrink-0" />
+                      <span className="mt-1.5 inline-block h-1.5 w-1.5 rounded-full bg-emerald-700 dark:bg-emerald-500 flex-shrink-0" />
                       2+ years of professional development experience
                     </li>
                   </ul>
@@ -522,7 +522,7 @@ export default function Home() {
                         href="https://kyurkchiev.group"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-block border border-neutral-900 dark:border-neutral-100 rounded-lg bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 md:px-8 py-3 hover:bg-transparent hover:text-neutral-900 dark:hover:bg-transparent dark:hover:text-neutral-100 transition-colors text-sm"
+                        className="inline-block border border-emerald-800 dark:border-emerald-500 rounded-lg bg-emerald-800 dark:bg-emerald-600 text-white px-6 md:px-8 py-3 hover:bg-transparent hover:text-emerald-800 dark:hover:bg-transparent dark:hover:text-emerald-400 transition-colors text-sm"
                         onClick={playClick}
                       >
                         visit kyurkchiev group
@@ -586,7 +586,7 @@ export default function Home() {
                     <div className="hover:scale-105 transition-transform inline-block">
                       <Link
                         href="#contact"
-                        className="inline-block border border-neutral-900 dark:border-neutral-100 rounded-lg bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 md:px-8 py-3 hover:bg-transparent hover:text-neutral-900 dark:hover:bg-transparent dark:hover:text-neutral-100 transition-colors text-sm"
+                        className="inline-block border border-emerald-800 dark:border-emerald-500 rounded-lg bg-emerald-800 dark:bg-emerald-600 text-white px-6 md:px-8 py-3 hover:bg-transparent hover:text-emerald-800 dark:hover:bg-transparent dark:hover:text-emerald-400 transition-colors text-sm"
                         onClick={playClick}
                       >
                         get in touch
@@ -681,7 +681,7 @@ export default function Home() {
                     href="https://kyurkchiev.group"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center rounded-md gap-3 border-2 border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 md:px-8 py-3 md:py-4 hover:bg-transparent hover:text-neutral-900 dark:hover:bg-transparent dark:hover:text-neutral-100 transition-colors text-sm md:text-base font-medium"
+                    className="inline-flex items-center rounded-md gap-3 border-2 border-emerald-800 dark:border-emerald-500 bg-emerald-800 dark:bg-emerald-600 text-white px-6 md:px-8 py-3 md:py-4 hover:bg-transparent hover:text-emerald-800 dark:hover:bg-transparent dark:hover:text-emerald-400 transition-colors text-sm md:text-base font-medium"
                     onClick={playClick}
                   >
                     business inquiries
@@ -705,7 +705,7 @@ export default function Home() {
                 <div className="hover:scale-105 transition-transform">
                   <a
                     href="mailto:me@atanaskyurkchiev.info"
-                    className="inline-flex items-center rounded-md gap-3 border border-neutral-400 dark:border-neutral-600 bg-transparent text-neutral-900 dark:text-neutral-100 px-6 md:px-8 py-3 md:py-4 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-sm md:text-base"
+                    className="inline-flex items-center rounded-md gap-3 border border-emerald-700/60 dark:border-emerald-500/60 bg-transparent text-emerald-900 dark:text-emerald-100 px-6 md:px-8 py-3 md:py-4 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 transition-colors text-sm md:text-base"
                     onClick={playClick}
                   >
                     say hello
@@ -807,7 +807,7 @@ export default function Home() {
                               ? "noopener noreferrer"
                               : undefined
                           }
-                          className="underline hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors break-all"
+                          className="underline hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors break-all"
                         >
                           {item.value}
                         </a>

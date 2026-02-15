@@ -1283,7 +1283,7 @@ export default function HirePage() {
                   href="https://kyurkchiev.group"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-6 md:px-8 py-3 rounded-md font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all duration-300 inline-flex items-center gap-2"
+                  className="bg-emerald-800 dark:bg-emerald-600 text-white px-6 md:px-8 py-3 rounded-md font-medium hover:bg-emerald-700 dark:hover:bg-emerald-500 transition-all duration-300 inline-flex items-center gap-2"
                   onClick={playClick}
                 >
                   visit kyurkchiev.group
@@ -1360,7 +1360,7 @@ export default function HirePage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={playClick}
-                      className="inline-flex items-center gap-3 bg-neutral-900 dark:bg-neutral-100 text-neutral-50 dark:text-neutral-900 px-8 py-4 rounded-md font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all duration-300 text-lg"
+                      className="inline-flex items-center gap-3 bg-emerald-800 dark:bg-emerald-600 text-white px-8 py-4 rounded-md font-medium hover:bg-emerald-700 dark:hover:bg-emerald-500 transition-all duration-300 text-lg"
                     >
                       visit kyurkchiev.group
                       <svg

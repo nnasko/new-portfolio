@@ -28,6 +28,14 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-space-grotesk)"],
       },
+      colors: {
+        brand: {
+          green: "#047857",
+          "green-light": "#059669",
+          "green-dark": "#065f46",
+          "green-muted": "rgba(4, 120, 87, 0.15)",
+        },
+      },
     },
   },
   plugins: [scrollbarHidePlugin],
