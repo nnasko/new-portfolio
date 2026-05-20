@@ -52,7 +52,7 @@ export default function AboutPage() {
           >
             <div className="space-y-6 text-base md:text-lg leading-relaxed">
               <p>
-                Hi, I'm Atanas Kyurkchiev, an 18-year-old web developer and computer science student from <a href="/web-developer-norwich" className="underline hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Norwich, Norfolk</a>. 
+                Hi, I'm Atanas Kyurkchiev, a 19-year-old web developer and computer science student from <a href="/web-developer-norwich" className="underline hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Norwich, Norfolk</a>. 
                 I'm passionate about creating modern web applications and learning new technologies while studying at <a href="https://lancaster.ac.uk" target="_blank" rel="noopener noreferrer" className="underline hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Lancaster University</a>.
               </p>
               

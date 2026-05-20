@@ -64,7 +64,7 @@ function generateCVHTML() {
       <section class="space-y-4">
         <h2 class="text-2xl border-b">professional summary</h2>
         <p class="leading-relaxed text-neutral-700">
-          web developer and computer science student with hands-on experience building full-stack and front-end applications. currently junior front end developer at lancaster university and founder of kyurkchiev group. focused on clean code, accessible interfaces, and modern tooling (react, next.js, typescript). comfortable working in agile teams and shipping features from idea to production.
+          web developer and computer science student with hands-on experience building full-stack and front-end applications. currently junior front end developer at lancaster university and co-founder of propvantage limited. focused on clean code, accessible interfaces, and modern tooling (react, next.js, typescript). comfortable working in agile teams and shipping features from idea to production.
         </p>
       </section>
 
@@ -74,22 +74,22 @@ function generateCVHTML() {
         
         <div class="space-y-2">
           <div class="flex justify-between items-start">
+            <h3 class="text-lg">co-founder & director</h3>
+            <span class="text-sm text-neutral-600">2025 - present</span>
+          </div>
+          <p class="text-neutral-700" style="font-weight: 500;">propvantage limited</p>
+          <p class="text-sm leading-relaxed">co-founded propvantage limited, a proptech startup building propscribe, software that turns on-site iphone dictation into rics-compliant home survey reports using ai. shape product direction alongside my co-founder (a practising chartered surveyor) and built the product end-to-end: ios app, web dashboard, backend and ai rewrite pipeline. currently in private beta.</p>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex justify-between items-start">
             <h3 class="text-lg">junior front end developer</h3>
             <span class="text-sm text-neutral-600">2025 - present</span>
           </div>
           <p class="text-neutral-700" style="font-weight: 500;">lancaster university</p>
           <p class="text-sm leading-relaxed">building and maintaining university web applications and internal tools. implementing accessible, responsive interfaces with modern front-end stack. collaborating with designers and backend teams in an agile environment. contributing to code quality, testing, and documentation.</p>
         </div>
-        
-        <div class="space-y-2">
-          <div class="flex justify-between items-start">
-            <h3 class="text-lg">wordpress developer</h3>
-            <span class="text-sm text-neutral-600">2025</span>
-          </div>
-          <p class="text-neutral-700" style="font-weight: 500;">engage media</p>
-          <p class="text-sm leading-relaxed">developed and implemented custom wordpress components, fixed bugs to improve functionality, and enhanced user interface design and development workflows.</p>
-        </div>
-        
+
         <div class="space-y-2">
           <div class="flex justify-between items-start">
             <h3 class="text-lg">senior lead developer</h3>
@@ -98,14 +98,14 @@ function generateCVHTML() {
           <p class="text-neutral-700" style="font-weight: 500;">surplush</p>
           <p class="text-sm leading-relaxed">leading development of a b2b platform connecting businesses with surplus supplies. built with next.js, postgresql, and modern web technologies.</p>
         </div>
-        
+
         <div class="space-y-2">
           <div class="flex justify-between items-start">
-            <h3 class="text-lg">founder & ceo</h3>
-            <span class="text-sm text-neutral-600">2025 - present</span>
+            <h3 class="text-lg">wordpress developer</h3>
+            <span class="text-sm text-neutral-600">2025</span>
           </div>
-          <p class="text-neutral-700" style="font-weight: 500;">kyurkchiev group</p>
-          <p class="text-sm leading-relaxed">founded and lead a digital solutions company providing web development, e-commerce platforms, and business automation services to help companies scale their digital presence.</p>
+          <p class="text-neutral-700" style="font-weight: 500;">engage media</p>
+          <p class="text-sm leading-relaxed">developed and implemented custom wordpress components, fixed bugs to improve functionality, and enhanced user interface design and development workflows.</p>
         </div>
       </section>
 

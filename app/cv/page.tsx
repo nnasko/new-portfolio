@@ -322,7 +322,7 @@ export default function CV() {
               transition={{ duration: 0.8, delay: 0.3 }}
             >
               <p className="text-base md:text-lg lg:text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-2xl">
-                18-year-old web developer & digital solutions specialist from the UK, helping businesses grow online through custom applications and modern web experiences
+                19-year-old web developer & digital solutions specialist from the UK, helping businesses grow online through custom applications and modern web experiences
               </p>
             </motion.div>
             
@@ -337,7 +337,7 @@ export default function CV() {
                 professional summary
               </h2>
               <p className="text-sm md:text-base text-neutral-700 dark:text-neutral-300 leading-relaxed max-w-3xl">
-                web developer and computer science student with hands-on experience building full-stack and front-end applications. currently junior front end developer at lancaster university and founder of kyurkchiev group. focused on clean code, accessible interfaces, and modern tooling (react, next.js, typescript). comfortable working in agile teams and shipping features from idea to production.
+                web developer and computer science student with hands-on experience building full-stack and front-end applications. currently junior front end developer at lancaster university and co-founder of propvantage limited. focused on clean code, accessible interfaces, and modern tooling (react, next.js, typescript). comfortable working in agile teams and shipping features from idea to production.
               </p>
             </motion.div>
             
@@ -423,7 +423,44 @@ export default function CV() {
               whileInView="show"
               viewport={{ once: true }}
             >
-              <motion.div 
+              <motion.div
+                variants={staggerItem}
+                className="relative group"
+                whileHover={{ x: typeof window !== 'undefined' && window.innerWidth <= 768 ? 0 : 10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-emerald-800/50 dark:bg-emerald-700/50 group-hover:bg-emerald-700 dark:group-hover:bg-emerald-600 transition-colors"></div>
+                <div className="pl-6 md:pl-8">
+                  <h3 className="text-base md:text-lg mb-2 font-medium">co-founder & director @ propvantage limited</h3>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2025 - present</p>
+                  <motion.ul
+                    className="space-y-2 md:space-y-3 text-sm"
+                    variants={staggerContainer}
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true }}
+                  >
+                    {[
+                      "co-founded propvantage limited, a proptech startup building propscribe for uk chartered surveyors",
+                      "propscribe turns on-site iphone dictation into rics-compliant home survey reports using ai, cutting hours off the typical write-up",
+                      "shape product direction and roadmap alongside my co-founder, a practising chartered surveyor",
+                      "built the product end-to-end: ios app, web dashboard, backend and ai rewrite pipeline",
+                      "currently in private beta with surveyors recruited through our rics network"
+                    ].map((item, index) => (
+                      <motion.li
+                        key={index}
+                        variants={staggerItem}
+                        className="flex items-start gap-3"
+                      >
+                        <span className="w-1.5 h-1.5 bg-emerald-700 dark:bg-emerald-500 rounded-full mt-2 flex-shrink-0"></span>
+                        {item}
+                      </motion.li>
+                    ))}
+                  </motion.ul>
+                </div>
+              </motion.div>
+
+              <motion.div
                 variants={staggerItem}
                 className="relative group"
                 whileHover={{ x: typeof window !== 'undefined' && window.innerWidth <= 768 ? 0 : 10 }}
@@ -433,7 +470,7 @@ export default function CV() {
                 <div className="pl-6 md:pl-8">
                   <h3 className="text-base md:text-lg mb-2 font-medium">junior front end developer @ lancaster university</h3>
                   <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2025 - present</p>
-                  <motion.ul 
+                  <motion.ul
                     className="space-y-2 md:space-y-3 text-sm"
                     variants={staggerContainer}
                     initial="hidden"
@@ -446,7 +483,7 @@ export default function CV() {
                       "collaborating with designers and backend teams in an agile environment",
                       "contributing to code quality, testing, and documentation"
                     ].map((item, index) => (
-                      <motion.li 
+                      <motion.li
                         key={index}
                         variants={staggerItem}
                         className="flex items-start gap-3"
@@ -459,43 +496,7 @@ export default function CV() {
                 </div>
               </motion.div>
 
-              <motion.div 
-                variants={staggerItem}
-                className="relative group"
-                whileHover={{ x: typeof window !== 'undefined' && window.innerWidth <= 768 ? 0 : 10 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="absolute left-0 top-0 bottom-0 w-px bg-emerald-800/50 dark:bg-emerald-700/50 group-hover:bg-emerald-700 dark:group-hover:bg-emerald-600 transition-colors"></div>
-                <div className="pl-6 md:pl-8">
-                  <h3 className="text-base md:text-lg mb-2 font-medium">wordpress developer @ engage media</h3>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2025</p>
-                  <motion.ul 
-                    className="space-y-2 md:space-y-3 text-sm"
-                    variants={staggerContainer}
-                    initial="hidden"
-                    whileInView="show"
-                    viewport={{ once: true }}
-                  >
-                    {[
-                      "developed and implemented custom wordpress components",
-                      "fixed bugs in existing components to improve functionality", 
-                      "enhanced user interface design and styling",
-                      "optimized development workflows and processes"
-                    ].map((item, index) => (
-                      <motion.li 
-                        key={index}
-                        variants={staggerItem}
-                        className="flex items-start gap-3"
-                      >
-                        <span className="w-1.5 h-1.5 bg-emerald-700 dark:bg-emerald-500 rounded-full mt-2 flex-shrink-0"></span>
-                        {item}
-                      </motion.li>
-                    ))}
-                  </motion.ul>
-                </div>
-              </motion.div>
-
-              <motion.div 
+              <motion.div
                 variants={staggerItem}
                 className="relative group"
                 whileHover={{ x: typeof window !== 'undefined' && window.innerWidth <= 768 ? 0 : 10 }}
@@ -505,7 +506,7 @@ export default function CV() {
                 <div className="pl-6 md:pl-8">
                   <h3 className="text-base md:text-lg mb-2 font-medium">senior lead developer @ surplush</h3>
                   <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2024 - present</p>
-                  <motion.ul 
+                  <motion.ul
                     className="space-y-2 md:space-y-3 text-sm"
                     variants={staggerContainer}
                     initial="hidden"
@@ -518,7 +519,7 @@ export default function CV() {
                       "integrating multiple third-party services (stripe, klaviyo, zedify)",
                       "optimizing performance and user experience"
                     ].map((item, index) => (
-                      <motion.li 
+                      <motion.li
                         key={index}
                         variants={staggerItem}
                         className="flex items-start gap-3"
@@ -531,7 +532,7 @@ export default function CV() {
                 </div>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 variants={staggerItem}
                 className="relative group"
                 whileHover={{ x: typeof window !== 'undefined' && window.innerWidth <= 768 ? 0 : 10 }}
@@ -539,9 +540,9 @@ export default function CV() {
               >
                 <div className="absolute left-0 top-0 bottom-0 w-px bg-emerald-800/50 dark:bg-emerald-700/50 group-hover:bg-emerald-700 dark:group-hover:bg-emerald-600 transition-colors"></div>
                 <div className="pl-6 md:pl-8">
-                  <h3 className="text-base md:text-lg mb-2 font-medium">founder & ceo @ kyurkchiev group</h3>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2025 - present</p>
-                  <motion.ul 
+                  <h3 className="text-base md:text-lg mb-2 font-medium">wordpress developer @ engage media</h3>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2025</p>
+                  <motion.ul
                     className="space-y-2 md:space-y-3 text-sm"
                     variants={staggerContainer}
                     initial="hidden"
@@ -549,13 +550,12 @@ export default function CV() {
                     viewport={{ once: true }}
                   >
                     {[
-                      "founded and lead a digital solutions company specializing in web development",
-                      "built comprehensive business management platform with invoicing and client systems",
-                      "developed custom e-commerce solutions with payment processing integrations",
-                      "manage end-to-end project delivery from consultation to deployment",
-                      "established company operations while transitioning to kyurkchiev.group domain"
+                      "developed and implemented custom wordpress components",
+                      "fixed bugs in existing components to improve functionality",
+                      "enhanced user interface design and styling",
+                      "optimized development workflows and processes"
                     ].map((item, index) => (
-                      <motion.li 
+                      <motion.li
                         key={index}
                         variants={staggerItem}
                         className="flex items-start gap-3"

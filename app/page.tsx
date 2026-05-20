@@ -333,7 +333,7 @@ business at <a href="https://kyurkchiev.group" target="_blank" rel="noopener nor
                     about me
                   </AnimatedText>
                   <p className="text-neutral-600 dark:text-neutral-400 text-base md:text-lg leading-relaxed">
-                    i'm an 18-year-old computer science student and developer who's passionate 
+                    i'm a 19-year-old computer science student and developer who's passionate
                     about building things that make a difference. currently studying at lancaster 
                     university while running my own company, kyurkchiev group.
                   </p>
