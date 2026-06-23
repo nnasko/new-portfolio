@@ -244,8 +244,8 @@ export default function CV() {
 
   const skills = {
     languages: ["typescript/javascript", "html/css", "sql", "python"],
-    frameworks: ["next.js", "react", "tailwind css", "prisma"],
-    tools: ["git", "vs code", "figma", "postman"]
+    frameworks: ["next.js", "react", "tailwind css", "prisma", "gsap", "framer motion"],
+    tools: ["git", "vs code", "figma", "postman", "stripe", "vercel"]
   };
 
   return (
@@ -337,7 +337,7 @@ export default function CV() {
                 professional summary
               </h2>
               <p className="text-sm md:text-base text-neutral-700 dark:text-neutral-300 leading-relaxed max-w-3xl">
-                web developer and computer science student with hands-on experience building full-stack and front-end applications. currently junior front end developer at lancaster university and co-founder of propvantage limited. focused on clean code, accessible interfaces, and modern tooling (react, next.js, typescript). comfortable working in agile teams and shipping features from idea to production.
+                i'm a web developer and computer science student, and i've been building full-stack web apps for a few years now. i run my own agency, kyurkchiev group, co-founded a proptech startup called propvantage, and work as a junior front end dev at lancaster uni. i care about clean code and interfaces that actually work for people, and i'd rather ship something than overthink it. mostly react, next.js and typescript.
               </p>
             </motion.div>
             
@@ -441,11 +441,47 @@ export default function CV() {
                     viewport={{ once: true }}
                   >
                     {[
-                      "co-founded propvantage limited, a proptech startup building propscribe for uk chartered surveyors",
-                      "propscribe turns on-site iphone dictation into rics-compliant home survey reports using ai, cutting hours off the typical write-up",
-                      "shape product direction and roadmap alongside my co-founder, a practising chartered surveyor",
-                      "built the product end-to-end: ios app, web dashboard, backend and ai rewrite pipeline",
-                      "currently in private beta with surveyors recruited through our rics network"
+                      "co-founded propvantage, a proptech startup. we build propscribe for uk chartered surveyors",
+                      "propscribe turns iphone dictation on site into rics-compliant survey reports with ai, saves hours of writing up",
+                      "i work on the product direction with my co-founder, who's a practising chartered surveyor",
+                      "built the whole thing: ios app, web dashboard, backend and the ai rewrite pipeline",
+                      "in private beta right now with surveyors from our rics network"
+                    ].map((item, index) => (
+                      <motion.li
+                        key={index}
+                        variants={staggerItem}
+                        className="flex items-start gap-3"
+                      >
+                        <span className="w-1.5 h-1.5 bg-emerald-700 dark:bg-emerald-500 rounded-full mt-2 flex-shrink-0"></span>
+                        {item}
+                      </motion.li>
+                    ))}
+                  </motion.ul>
+                </div>
+              </motion.div>
+
+              <motion.div
+                variants={staggerItem}
+                className="relative group"
+                whileHover={{ x: typeof window !== 'undefined' && window.innerWidth <= 768 ? 0 : 10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-emerald-800/50 dark:bg-emerald-700/50 group-hover:bg-emerald-700 dark:group-hover:bg-emerald-600 transition-colors"></div>
+                <div className="pl-6 md:pl-8">
+                  <h3 className="text-base md:text-lg mb-2 font-medium">founder & web developer @ kyurkchiev group</h3>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2024 - present</p>
+                  <motion.ul
+                    className="space-y-2 md:space-y-3 text-sm"
+                    variants={staggerContainer}
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true }}
+                  >
+                    {[
+                      "my own web agency in norwich, building sites and web apps for businesses",
+                      "i do the lot, design, the build, and dealing with clients",
+                      "built the whole back office myself: stripe invoicing, contract e-signing and a blog cms",
+                      "the marketing sites lean heavy on motion, next.js with gsap and three.js"
                     ].map((item, index) => (
                       <motion.li
                         key={index}
@@ -478,10 +514,10 @@ export default function CV() {
                     viewport={{ once: true }}
                   >
                     {[
-                      "building and maintaining university web applications and internal tools",
-                      "implementing accessible, responsive interfaces with modern front-end stack",
-                      "collaborating with designers and backend teams in an agile environment",
-                      "contributing to code quality, testing, and documentation"
+                      "building and looking after the university's web apps and internal tools",
+                      "mostly front end work, keeping things responsive and accessible",
+                      "working in a proper team with designers and backend devs",
+                      "writing tests and docs and keeping the code tidy"
                     ].map((item, index) => (
                       <motion.li
                         key={index}
@@ -514,10 +550,10 @@ export default function CV() {
                     viewport={{ once: true }}
                   >
                     {[
-                      "leading development of a sustainable business supplies platform",
-                      "implementing complex inventory and order management systems",
-                      "integrating multiple third-party services (stripe, klaviyo, zedify)",
-                      "optimizing performance and user experience"
+                      "lead dev on a sustainable business supplies platform",
+                      "built the inventory and order management side of it",
+                      "wired up stripe, klaviyo and zedify",
+                      "spent a lot of time on speed and making it nice to use"
                     ].map((item, index) => (
                       <motion.li
                         key={index}
@@ -550,10 +586,10 @@ export default function CV() {
                     viewport={{ once: true }}
                   >
                     {[
-                      "developed and implemented custom wordpress components",
-                      "fixed bugs in existing components to improve functionality",
-                      "enhanced user interface design and styling",
-                      "optimized development workflows and processes"
+                      "built custom wordpress components",
+                      "fixed up bugs in the existing ones",
+                      "tidied up the ui and styling",
+                      "made the day to day dev workflow a bit smoother"
                     ].map((item, index) => (
                       <motion.li
                         key={index}
@@ -599,10 +635,10 @@ export default function CV() {
                     viewport={{ once: true }}
                   >
                     {[
-                      "pursuing higher education while actively freelancing",
-                      "balancing academic studies with professional development work",
-                      "continuing to expand technical knowledge and skills",
-                      "applying theoretical concepts to real-world client projects"
+                      "studying cs while running my own work on the side",
+                      "putting what i learn straight into real projects",
+                      "filling in the gaps in the self-taught stuff",
+                      "fitting it around the freelance and agency work"
                     ].map((item, index) => (
                       <motion.li 
                         key={index}
@@ -625,7 +661,7 @@ export default function CV() {
                 <div className="absolute left-0 top-0 bottom-0 w-px bg-emerald-800/50 dark:bg-emerald-700/50 group-hover:bg-emerald-700 dark:group-hover:bg-emerald-600 transition-colors"></div>
                 <div className="pl-6 md:pl-8">
                   <h3 className="text-base md:text-lg mb-2 font-medium">software development @ access creative college</h3>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2023 – 2025 (completed)</p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3 md:mb-4">2023 – 2025 · distinction (aaa)</p>
                   <motion.ul 
                     className="space-y-2 md:space-y-3 text-sm"
                     variants={staggerContainer}
@@ -634,11 +670,11 @@ export default function CV() {
                     viewport={{ once: true }}
                   >
                     {[
+                      "graduated with a distinction (aaa)",
                       "full-stack web development",
                       "software engineering principles",
                       "agile methodologies",
-                      "database design and management",
-                      "successfully completed with practical project experience"
+                      "database design and management"
                     ].map((item, index) => (
                       <motion.li 
                         key={index}

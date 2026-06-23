@@ -64,7 +64,7 @@ function generateCVHTML() {
       <section class="space-y-4">
         <h2 class="text-2xl border-b">professional summary</h2>
         <p class="leading-relaxed text-neutral-700">
-          web developer and computer science student with hands-on experience building full-stack and front-end applications. currently junior front end developer at lancaster university and co-founder of propvantage limited. focused on clean code, accessible interfaces, and modern tooling (react, next.js, typescript). comfortable working in agile teams and shipping features from idea to production.
+          i'm a web developer and computer science student, and i've been building full-stack web apps for a few years now. i run my own agency, kyurkchiev group, co-founded a proptech startup called propvantage, and work as a junior front end dev at lancaster uni. i care about clean code and interfaces that actually work for people, and i'd rather ship something than overthink it. mostly react, next.js and typescript.
         </p>
       </section>
 
@@ -78,7 +78,16 @@ function generateCVHTML() {
             <span class="text-sm text-neutral-600">2025 - present</span>
           </div>
           <p class="text-neutral-700" style="font-weight: 500;">propvantage limited</p>
-          <p class="text-sm leading-relaxed">co-founded propvantage limited, a proptech startup building propscribe, software that turns on-site iphone dictation into rics-compliant home survey reports using ai. shape product direction alongside my co-founder (a practising chartered surveyor) and built the product end-to-end: ios app, web dashboard, backend and ai rewrite pipeline. currently in private beta.</p>
+          <p class="text-sm leading-relaxed">co-founded propvantage, a proptech startup. we build propscribe, which turns iphone dictation on site into rics-compliant survey reports with ai and saves surveyors hours of writing up. i work on product direction with my co-founder (a practising chartered surveyor) and built the whole thing: ios app, web dashboard, backend and the ai rewrite pipeline. in private beta right now.</p>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex justify-between items-start">
+            <h3 class="text-lg">founder & web developer</h3>
+            <span class="text-sm text-neutral-600">2024 - present</span>
+          </div>
+          <p class="text-neutral-700" style="font-weight: 500;">kyurkchiev group</p>
+          <p class="text-sm leading-relaxed">my own web agency in norwich, building sites and web apps for businesses. i do the lot, the design, the build and dealing with clients. built the whole back office myself (stripe invoicing, contract e-signing and a blog cms), and the marketing sites lean heavy on motion with next.js, gsap and three.js.</p>
         </div>
 
         <div class="space-y-2">
@@ -87,7 +96,7 @@ function generateCVHTML() {
             <span class="text-sm text-neutral-600">2025 - present</span>
           </div>
           <p class="text-neutral-700" style="font-weight: 500;">lancaster university</p>
-          <p class="text-sm leading-relaxed">building and maintaining university web applications and internal tools. implementing accessible, responsive interfaces with modern front-end stack. collaborating with designers and backend teams in an agile environment. contributing to code quality, testing, and documentation.</p>
+          <p class="text-sm leading-relaxed">building and looking after the university's web apps and internal tools. mostly front end work, keeping things responsive and accessible, in a proper team with designers and backend devs. writing tests and docs and keeping the code tidy.</p>
         </div>
 
         <div class="space-y-2">
@@ -96,7 +105,7 @@ function generateCVHTML() {
             <span class="text-sm text-neutral-600">2024 - present</span>
           </div>
           <p class="text-neutral-700" style="font-weight: 500;">surplush</p>
-          <p class="text-sm leading-relaxed">leading development of a b2b platform connecting businesses with surplus supplies. built with next.js, postgresql, and modern web technologies.</p>
+          <p class="text-sm leading-relaxed">lead dev on a sustainable business supplies platform. built the inventory and order management side of it, wired up stripe, klaviyo and zedify, and spent a lot of time on speed and making it nice to use.</p>
         </div>
 
         <div class="space-y-2">
@@ -105,7 +114,7 @@ function generateCVHTML() {
             <span class="text-sm text-neutral-600">2025</span>
           </div>
           <p class="text-neutral-700" style="font-weight: 500;">engage media</p>
-          <p class="text-sm leading-relaxed">developed and implemented custom wordpress components, fixed bugs to improve functionality, and enhanced user interface design and development workflows.</p>
+          <p class="text-sm leading-relaxed">built custom wordpress components, fixed up bugs in the existing ones, tidied up the ui and styling, and made the day to day dev workflow a bit smoother.</p>
         </div>
       </section>
 
@@ -119,16 +128,16 @@ function generateCVHTML() {
             <span class="text-sm text-neutral-600">2025 - present</span>
           </div>
           <p class="text-neutral-700" style="font-weight: 500;">lancaster university</p>
-          <p class="text-sm leading-relaxed">pursuing higher education while actively freelancing, balancing academic studies with professional development work and applying theoretical concepts to real-world client projects.</p>
+          <p class="text-sm leading-relaxed">studying computer science while running my own work on the side, and putting what i learn straight into real client projects.</p>
         </div>
         
         <div class="space-y-2">
           <div class="flex justify-between items-start">
             <h3 class="text-lg">software development</h3>
-            <span class="text-sm text-neutral-600">2023 - 2025</span>
+            <span class="text-sm text-neutral-600">2023 - 2025 · distinction (aaa)</span>
           </div>
           <p class="text-neutral-700" style="font-weight: 500;">access creative college</p>
-          <p class="text-sm leading-relaxed">comprehensive program covering full-stack development, database design, and software engineering principles.</p>
+          <p class="text-sm leading-relaxed">graduated with a distinction (aaa). covered full-stack development, databases, agile and software engineering.</p>
         </div>
       </section>
 
@@ -148,6 +157,9 @@ function generateCVHTML() {
               <span class="skill-tag">prisma</span>
               <span class="skill-tag">git</span>
               <span class="skill-tag">tailwind css</span>
+              <span class="skill-tag">gsap</span>
+              <span class="skill-tag">framer motion</span>
+              <span class="skill-tag">stripe</span>
             </div>
           </div>
           <div>
